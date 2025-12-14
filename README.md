@@ -4,6 +4,7 @@
 Skupinski projekt za fitness aplikacijo.
 
 ## Struktura
+<pre>
 Home
 |-- Getting Started
 |   |-- Setup Guide
@@ -41,6 +42,7 @@ Home
     |-- Web App
     |-- Mobile App
     `-- FAQ
+</pre>
 
 ## Navodila in pomoč
 ### 1. Pred začetkom dela

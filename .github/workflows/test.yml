@@ -1,56 +1,51 @@
-name: Build and Test
+name: Backend CI
 
 on:
   push:
-    branches: [ main, develop, feature/requirements ]
+    branches: [ develop, main ]
+    paths:
+      - 'backend/**'
   pull_request:
-    branches: [ main ]
+    branches: [ develop, main ]
+    paths:
+      - 'backend/**'
 
 jobs:
-  test-backend:
+  test:
     runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-    
-    - name: Install backend dependencies
-      run: npm ci
-      working-directory: ./backend
-    
-    - name: Build backend
-      run: npm run build
-      working-directory: ./backend
-    
-    - name: Run backend tests
-      run: npm test
-      working-directory: ./backend
 
-  test-frontend:
-    runs-on: ubuntu-latest
-    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: fitnesseri_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-    
-    - name: Install frontend dependencies
-      run: npm ci
-      working-directory: ./frontend
-    
-    - name: Build frontend
-      run: npm run build
-      working-directory: ./frontend
-    
-    - name: Run frontend tests
-      run: npm test
-      working-directory: ./frontend
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Run linter
+        working-directory: ./backend
+        run: npm run lint
+
+      - name: Run tests
+        working-directory: ./backend
+        run: npm test
+        env:
+          DATABASE_URL: postgresql://postgres:testpass@localhost:5432/fitnesseri_test

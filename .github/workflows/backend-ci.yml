@@ -5,6 +5,7 @@ on:
     branches: 
       - main
       - develop
+      - 'feature/**'
     paths:
       - 'backend/**'
       - '.github/workflows/backend-ci.yml'

@@ -9,7 +9,9 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "migrate": "node src/database/migrate.js",
-    "seed": "node src/database/seed.js"
+    "seed": "node src/database/seed.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -25,11 +27,12 @@
     "sequelize": "^6.37.7"
   },
   "devDependencies": {
-    "eslint": "^9.39.2",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
     "jest": "^30.2.0",
     "nodemon": "^3.1.11",
     "prettier": "^3.7.4",
     "supertest": "^7.1.4"
   }
 }
-

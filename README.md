@@ -43,15 +43,22 @@ Za vsako novo funkcionalnost ustvarimo feature branch iz `develop` brancha. Za f
 
 ## Pull Request Workflow
 
-Za vsak PR uporabi prednastavljeni template, ki se nahaja v `.github/pull_request_template.md`.
+Za vsak pull request uporabi prednastavljeni template, ki se nahaja v
+`.github/pull_request_template.md`.
 
-1. Ustvari vejo iz `develop`.
-2. Izvedi spremembe.
-3. Odpri Pull Request v `develop` (ali v `main` samo za release / hotfix).
-4. Izpolni vse sekcije v templateu:
-   - **Opis**: Kaj PR spreminja
-   - **Zakaj**: Razlog za spremembo
-   - **Spremembe**: Tip PR (bugfix, feature, refaktor)
-   - **Testiranje**: Je funkcionalnost testirana in kako
-   - **Target branch**: Označi pravo vejo
-5. Po pregledu in odobritvi PR mergeaj v ciljno vejo.
+### Postopek
+
+1. Ustvari novo vejo iz `develop`.
+2. Izvedi potrebne spremembe.
+3. Odpri pull request v:
+   - `develop` za običajne spremembe
+   - `main` samo za release ali hotfix
+4. Izpolni vse sekcije v PR templateu:
+   - **Opis** – kratek povzetek spremembe
+   - **Zakaj** – razlog za spremembo
+   - **Spremembe** – označi tip pull requesta (bug fix, nova funkcionalnost, refaktor)
+   - **Checklist** – označi, če je koda formatirana, testirana in dokumentacija posodobljena
+   - **Testiranje** – če je pomembno, opiši testiranje spremembe
+   - **Target branch** – označi ciljno vejo
+5. Po pregledu in odobritvi pull requesta mergeaj v ciljno vejo.
+

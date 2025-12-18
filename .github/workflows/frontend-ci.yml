@@ -42,7 +42,7 @@ jobs:
       
       - name: 🧪 Run tests
         working-directory: ./frontend
-        run: npm test -- --coverage --passWithNoTests
+        run: npm ci && npm run test
         env:
           CI: true
       

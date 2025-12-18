@@ -1,19 +1,21 @@
 ## Opis
-Kaj si spremenil?
+Kratek opis, kaj si spremenil.
 
 ## Zakaj
-Zakaj je ta sprememba potrebna?
+Razlaga, zakaj je bila ta sprememba potrebna.
 
 ## Spremembe
-Označi z x:
 - [ ] Bug fix
 - [ ] Nova funkcionalnost
 - [ ] Refaktor
 
+## Checklist
+- [ ] Koda je formatirana
+- [ ] Koda je testirana
+- [ ] Dokumetacija je posodobljena
+
 ## Testiranje
-Označi, če si testiral funkcionalnost:
-- [ ] Funkcionalnost testirana
-- Opcijsko: Dodaj navodila za testiranje.
+Opcijsko: Dodaj navodila za testiranje.
 
 ## Target branch
 - [ ] develop

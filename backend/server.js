@@ -16,7 +16,7 @@ const corsOptions = {
   origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:5173'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
 app.use(cors(corsOptions));
 
@@ -40,7 +40,7 @@ app.get('/health', (req, res) => {
     environment: NODE_ENV,
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    memoryUsage: process.memoryUsage()
+    memoryUsage: process.memoryUsage(),
   });
 });
 
@@ -59,8 +59,8 @@ app.get('/api/v1', (req, res) => {
       bookings: '/api/v1/bookings',
       forum: '/api/v1/forum',
       progress: '/api/v1/progress',
-      ai: '/api/v1/ai'
-    }
+      ai: '/api/v1/ai',
+    },
   });
 });
 
@@ -71,8 +71,8 @@ app.get('/api/v1/test', (req, res) => {
     message: 'Test endpoint working!',
     data: {
       timestamp: new Date().toISOString(),
-      environment: NODE_ENV
-    }
+      environment: NODE_ENV,
+    },
   });
 });
 
@@ -93,8 +93,8 @@ app.use((req, res) => {
       code: 'NOT_FOUND',
       message: `Cannot ${req.method} ${req.path}`,
       path: req.path,
-      method: req.method
-    }
+      method: req.method,
+    },
   });
 });
 
@@ -110,8 +110,8 @@ app.use((err, req, res, next) => {
     error: {
       code: err.code || 'INTERNAL_ERROR',
       message: message,
-      ...(NODE_ENV === 'development' && { stack: err.stack })
-    }
+      ...(NODE_ENV === 'development' && { stack: err.stack }),
+    },
   });
 });
 

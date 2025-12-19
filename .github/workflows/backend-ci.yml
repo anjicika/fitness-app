@@ -2,25 +2,25 @@ name: Backend CI
 
 on:
   push:
-    branches: 
+    branches:
       - main
       - develop
-      - 'feature/**'
+      - "feature/**"
     paths:
-      - 'backend/**'
-      - '.github/workflows/backend-ci.yml'
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
   pull_request:
-    branches: 
+    branches:
       - main
       - develop
     paths:
-      - 'backend/**'
+      - "backend/**"
 
 jobs:
   build-and-test:
     name: Build and Test Backend
     runs-on: ubuntu-latest
-    
+
     # Service containers for tests
     services:
       postgres:
@@ -36,7 +36,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      
+
       redis:
         image: redis:7-alpine
         ports:
@@ -46,26 +46,26 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    
+
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
           cache-dependency-path: backend/package-lock.json
-      
+
       - name: 📦 Install dependencies
         working-directory: ./backend
         run: npm ci
-      
+
       - name: 🔍 Run linter
         working-directory: ./backend
         run: npm run lint
-      
+
       - name: 🧪 Run tests
         working-directory: ./backend
         run: npm test
@@ -74,7 +74,7 @@ jobs:
           DATABASE_URL: postgresql://test_user:test_pass@localhost:5432/fitnesseri_test
           REDIS_URL: redis://localhost:6379
           JWT_SECRET: test-secret-key
-      
+
       - name: 📊 Upload coverage to Codecov
         if: success()
         uses: codecov/codecov-action@v3
@@ -83,18 +83,18 @@ jobs:
           flags: backend
           name: backend-coverage
           fail_ci_if_error: false
-      
+
       - name: 📈 Coverage report
         if: success()
         working-directory: ./backend
         run: |
           echo "📊 Test Coverage Summary:"
           npx nyc report --reporter=text-summary || echo "Coverage report not available"
-      
+
       - name: ✅ Build successful
         if: success()
         run: echo "✅ Backend build and tests passed!"
-      
+
       - name: ❌ Build failed
         if: failure()
         run: echo "❌ Backend build or tests failed. Check logs above."

@@ -20,10 +20,10 @@
   },
   "plugins": ["react", "react-hooks"],
   "rules": {
-    "react/react-in-jsx-scope": "off",  // Not needed in React 17+
+    "react/react-in-jsx-scope": "off", // Not needed in React 17+
     "no-unused-vars": "warn",
     "no-console": "warn",
-    "react/prop-types": "off"  // Optional: disable if not using prop-types
+    "react/prop-types": "off" // Optional: disable if not using prop-types
   },
   "settings": {
     "react": {

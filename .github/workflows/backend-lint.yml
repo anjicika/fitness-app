@@ -2,58 +2,58 @@ name: Backend Linting
 
 on:
   push:
-    branches: 
+    branches:
       - main
       - develop
-      - 'feature/**'
+      - "feature/**"
     paths:
-      - 'backend/**'
-      - '.github/workflows/backend-lint.yml'
+      - "backend/**"
+      - ".github/workflows/backend-lint.yml"
   pull_request:
-    branches: 
+    branches:
       - main
       - develop
     paths:
-      - 'backend/**'
+      - "backend/**"
 
 jobs:
   lint:
     name: Run ESLint & Prettier
     runs-on: ubuntu-latest
-    
+
     steps:
       # 1. Checkout code
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
-      
+
       # 2. Setup Node.js
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
           cache-dependency-path: backend/package-lock.json
-      
+
       # 3. Install dependencies
       - name: 📦 Install dependencies
         working-directory: ./backend
         run: npm ci
-      
+
       # 4. Run ESLint
       - name: 🔍 Run ESLint
         working-directory: ./backend
         run: npm run lint
-      
+
       # 5. Check Prettier formatting
       - name: 💅 Check Prettier formatting
         working-directory: ./backend
         run: npx prettier --check "**/*.{js,json,md}"
-      
+
       # 6. Report results
       - name: ✅ Linting passed
         if: success()
         run: echo "✅ All linting checks passed!"
-      
+
       - name: ❌ Linting failed
         if: failure()
         run: |

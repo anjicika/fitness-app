@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # BACKEND SERVICE
@@ -13,17 +13,17 @@ services:
       # Server
       - NODE_ENV=development
       - PORT=3000
-      
+
       - DATABASE_URL=postgresql://user:pass@db:5432/fitnesseri
-      
+
       # JWT
       - JWT_SECRET=dev-secret-key-change-in-production
       - JWT_EXPIRES_IN=7d
-      
+
       - REDIS_URL=redis://redis:6379
-      
+
       - CORS_ORIGIN=http://localhost:5173
-      
+
       # Optional (za later)
       # - OPENAI_API_KEY=${OPENAI_API_KEY}
       # - CLAUDE_API_KEY=${CLAUDE_API_KEY}
@@ -39,7 +39,13 @@ services:
       - fitnesseri-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health')"]
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://localhost:3000/health')",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3

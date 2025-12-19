@@ -2,56 +2,56 @@ name: Frontend CI
 
 on:
   push:
-    branches: 
+    branches:
       - main
       - develop
-      - 'feature/**'
+      - "feature/**"
     paths:
-      - 'frontend/**'
-      - '.github/workflows/frontend-ci.yml'
+      - "frontend/**"
+      - ".github/workflows/frontend-ci.yml"
   pull_request:
-    branches: 
+    branches:
       - main
       - develop
     paths:
-      - 'frontend/**'
+      - "frontend/**"
 
 jobs:
   build-and-test:
     name: Build and Test Frontend
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
           cache-dependency-path: frontend/package-lock.json
-      
+
       - name: 📦 Install dependencies
         working-directory: ./frontend
         run: npm ci
-      
+
       - name: 🔍 Run linter
         working-directory: ./frontend
         run: npm run lint
-      
+
       - name: 🧪 Run tests
         working-directory: ./frontend
         run: npm ci && npm run test
         env:
           CI: true
-      
+
       - name: 🏗️ Build application
         working-directory: ./frontend
         run: npm run build
         env:
           VITE_API_URL: https://api.fitnesseri.com
-      
+
       - name: 📊 Upload coverage
         if: success()
         uses: codecov/codecov-action@v3
@@ -60,7 +60,7 @@ jobs:
           flags: frontend
           name: frontend-coverage
           fail_ci_if_error: false
-      
+
       - name: 📦 Upload build artifacts
         if: success()
         uses: actions/upload-artifact@v4
@@ -68,13 +68,13 @@ jobs:
           name: frontend-build
           path: frontend/dist
           retention-days: 7
-      
+
       - name: ✅ Build successful
         if: success()
         run: |
           echo "✅ Frontend build successful!"
           ls -lah frontend/dist
-      
+
       - name: ❌ Build failed
         if: failure()
         run: echo "❌ Frontend build failed. Check logs above."

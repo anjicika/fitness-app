@@ -1,23 +1,62 @@
-version: '3.8'
+version: "3.8"
 
 services:
+  # BACKEND SERVICE
   backend:
-    build: ./backend
+    container_name: fitnesseri-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://user:pass@db:5432/fitnesseri
+      # Server
       - NODE_ENV=development
+      - PORT=3000
+
+      - DATABASE_URL=postgresql://user:pass@db:5432/fitnesseri
+
+      # JWT
+      - JWT_SECRET=dev-secret-key-change-in-production
+      - JWT_EXPIRES_IN=7d
+
+      - REDIS_URL=redis://redis:6379
+
+      - CORS_ORIGIN=http://localhost:5173
+
+      # Optional (za later)
+      # - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # - CLAUDE_API_KEY=${CLAUDE_API_KEY}
     depends_on:
       - db
       - redis
     volumes:
+      # Volume mounting za hot reload
       - ./backend:/app
+      # Protect node_modules
       - /app/node_modules
-    command: npm run dev
+    networks:
+      - fitnesseri-network
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://localhost:3000/health')",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
+  # FRONTEND SERVICE
   frontend:
-    build: ./frontend
+    container_name: fitnesseri-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
       - "5173:5173"
     environment:
@@ -25,10 +64,14 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    command: npm run dev
+    networks:
+      - fitnesseri-network
+    restart: unless-stopped
 
+  # POSTGRESQL DATABASE
   db:
-    image: postgres:15
+    container_name: fitnesseri-db
+    image: postgres:15-alpine
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=pass
@@ -36,12 +79,41 @@ services:
     ports:
       - "5432:5432"
     volumes:
+      # Persistent data storage
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - fitnesseri-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d fitnesseri"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  # REDIS CACHE
   redis:
+    container_name: fitnesseri-redis
     image: redis:7-alpine
     ports:
       - "6379:6379"
+    volumes:
+      # Optional: Redis persistence
+      - redis_data:/data
+    networks:
+      - fitnesseri-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
 
 volumes:
   postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  fitnesseri-network:
+    driver: bridge

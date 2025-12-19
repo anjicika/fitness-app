@@ -43,19 +43,23 @@ Sistem mora omogočiti uporabniku dodajanje treningov z imeni vadb, serijami, po
 ## Nefunkcionalne zahteve (Non-Functional Requirements)
 
 ### Zmogljivost (Performance)
+
 - 90 % zahtev za prijavno stran se mora končati v manj kot 2 sekundah.
 - Odziv API-ja na standardne zahteve mora biti pod 500 ms.
 - Sistem mora podpreti sočasno 100 aktivnih uporabnikov, pri čemer ohranja prejšnjo zmogljivost.
 
 ### Varnost (Security)
+
 - Vsa gesla morajo biti zgoščena (bcrypt) v podatkovni bazi.
 - Komunikacija med odjemalcem in strežnikom mora biti šifrirana (HTTPS).
 - Dostop do občutljivih uporabniških podatkov (teža, slike) mora biti omejen samo na lastnika računa.
 
 ### Uporabnost (Usability)
+
 - Vmesnik mora biti intuitiven in se mora da uporabljati z minimalnimi navodili.
 - Aplikacija mora biti popolnoma odzivna (responsive) in delovati na vseh velikostih zaslona (mobilni, tablica, namizni).
 
 ### Zanesljivost (Reliability)
+
 - Sistem mora imeti razpoložljivost (uptime) najmanj 99 %.
 - V primeru napake mora uporabnik prejeti razumljivo sporočilo in ne surovi sled napake (stack trace).

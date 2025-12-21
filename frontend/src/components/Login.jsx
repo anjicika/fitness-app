@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { User, Mail, Lock } from 'lucide-react';
+import axios from 'axios';
 
 export default function Login() {
   // Inicializacija
@@ -22,19 +23,30 @@ export default function Login() {
     setError('');
   };
 
-  const handleSubmit = async (e) => {
-    // Asinhrono, ker je pripravljeno za klic API
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+  setError('');
 
-    // Simulacija API klica, ker ga še nimamo
-    setTimeout(() => {
-      console.log(isLogin ? 'Prijava' : 'Registracija', formData);
-      alert(`Uspešna ${isLogin ? 'prijava' : 'registracija'}!`);
-      setIsLoading(false);
-    }, 1000);
-  };
+  try {
+    // Uporabljamo URL, ki se ujema s backendom (api/v1/auth/register)
+    const response = await axios.post('http://localhost:3000/api/v1/auth/register', {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password
+    });
+
+    console.log('Uspeh!', response.data);
+    alert('Registracija uspešna: ' + response.data.message);
+    
+  } catch (err) {
+    console.error('Napaka pri komunikaciji:', err);
+    // Prikaži napako, če strežnik ni dosegljiv ali vrne napako
+    setError(err.response?.data?.message || 'Napaka pri povezavi s strežnikom');
+  } finally {
+    setIsLoading(false);
+  }
+};
 
 return (
     <div className="min-h-screen bg-gym-black flex items-center justify-center p-4">

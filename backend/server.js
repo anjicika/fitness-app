@@ -13,7 +13,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 app.use(helmet());
 
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:5173'],
+  origin: ['http://localhost:5173', 'http://localhost:5174'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -80,7 +80,7 @@ app.get('/api/v1/test', (req, res) => {
 // API ROUTES (will be added in future tasks)
 // ==========================================
 
-// app.use('/api/v1/auth', require('./src/routes/auth'));
+app.use('/api/v1/auth', require('./src/routes/auth'));
 // app.use('/api/v1/users', require('./src/routes/users'));
 // app.use('/api/v1/workouts', require('./src/routes/workouts'));
 // ... etc

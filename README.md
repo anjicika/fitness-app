@@ -121,3 +121,11 @@ Da zagotovimo kakovost kode in skladnost s smernicami, sledimo naslednjemu proce
 
 - Po odobritvi pregleda pull request mergeamo v `develop` (ali `main` za release in hotfix).
 - Po mergeu pull requesta zapremo in po potrebi izbrišemo feature branch.
+
+### Database & Migrations
+Za vzpostavitev baze uporabi naslednje korake:
+1. Ustvari `.env` datoteko v `backend/` mapi z `DATABASE_URL`.
+2. Zaženi `npm install` za namestitev Sequelize.
+3. Zaženi migracije z ukazom:
+   ```bash
+   npm run migrate

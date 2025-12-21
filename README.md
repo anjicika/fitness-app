@@ -121,3 +121,13 @@ Da zagotovimo kakovost kode in skladnost s smernicami, sledimo naslednjemu proce
 
 - Po odobritvi pregleda pull request mergeamo v `develop` (ali `main` za release in hotfix).
 - Po mergeu pull requesta zapremo in po potrebi izbrišemo feature branch.
+
+## Zagon aplikacije
+
+1. **Backend**:
+   - Pojdi v `/backend`
+   - Zaženi `npm run dev` (teče na portu 3000)
+
+2. **Frontend**:
+   - Pojdi v `/frontend`
+   - Zaženi `npm run dev` (teče na portu 5174 - *opomba: preveri port ob zagonu*)

@@ -1,3 +1,4 @@
+require('dotenv').config(); // .env datoteka
 const { Sequelize } = require('sequelize');
 
 const DATABASE_URL = process.env.DATABASE_URL;

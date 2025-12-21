@@ -36,99 +36,91 @@ export default function Login() {
     }, 1000);
   };
 
-  return (
-    <div className="min-h-screen bg-blue-500 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8">
+return (
+    <div className="min-h-screen bg-gym-black flex items-center justify-center p-4">
+      {/* Povečana širina na 'max-w-xl' za boljši izgled na namizju */}
+      <div className="bg-gym-gray rounded-3xl shadow-2xl w-full max-w-xl p-8 md:p-12 border border-gym-green/10">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">
+          <h1 className="text-3xl md:text-5xl font-bold text-gym-green">
             {isLogin ? 'Prijava' : 'Registracija'}
           </h1>
+          {/* Dodan kratek opis za zapolnitev sirine */}
+          <p className="text-gray-400 mt-2">Vnesite podatke za dostop do vašega osebnega fitnes profila.</p>
         </div>
 
         {/* Forma */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {!isLogin && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Ime</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Ime</label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                  className="w-full pl-10 pr-4 py-3 bg-gym-black border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-gym-green outline-none transition"
+                  placeholder="Janez Novak"
                 />
               </div>
             </div>
           )}
 
+          {/* Prikaz napake ce obstaja */}
+          {error && (
+            <div className="text-red-500 text-sm mt-2">{error}</div>
+          )}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Elektronski naslov
             </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                className="w-full pl-10 pr-4 py-3 bg-gym-black border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-gym-green outline-none transition"
+                placeholder="email@primer.si"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Geslo</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Geslo</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
               <input
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                className="w-full pl-10 pr-4 py-3 bg-gym-black border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-gym-green outline-none transition"
+                placeholder="••••••••"
               />
             </div>
           </div>
 
-          {!isLogin && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Potrdi geslo</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                />
-              </div>
-            </div>
-          )}
-
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-blue-500 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-gym-green hover:bg-opacity-90 text-black font-bold py-4 rounded-xl transition duration-200 disabled:opacity-50 mt-4 shadow-lg shadow-gym-green/10"
           >
             {isLoading ? 'Nalaganje ...' : isLogin ? 'Prijavi se' : 'Registriraj se'}
           </button>
         </form>
 
-        {/* Preklop med prijavo in registracijo */}
-        <div className="mt-6 text-center">
+        <div className="mt-8 text-center border-t border-gray-800 pt-6">
           <button
             onClick={() => {
               setIsLogin(!isLogin);
-              setError('');
               setFormData({ email: '', password: '', confirmPassword: '', name: '' });
             }}
-            className="text-blue-500 hover:text-blue-700 font-medium"
+            className="text-gym-green hover:text-white font-medium transition-colors"
           >
-            {isLogin ? 'Še nimaš računa? Registriraj se' : 'Že imaš račun? Prijavi se'}
+            {isLogin ? 'Še nimaš računa? Ustvari ga zdaj' : 'Že imaš račun? Prijavi se tukaj'}
           </button>
         </div>
       </div>

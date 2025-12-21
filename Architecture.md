@@ -94,23 +94,63 @@ development, regular reviews, and continuous integration of completed tasks.
 
 ## 3. API Architecture
 
-The system follows a RESTful API architecture with JSON-based communication over HTTP.
-The backend acts as a centralized API consumed by both the web and mobile applications.
+### Users
 
-Authentication is handled using JWT tokens. Protected endpoints require a valid token
-sent via the Authorization header.
+| Method | Endpoint           | Description              | Resource |
+| ------ | ------------------ | ------------------------ | -------- |
+| POST   | /api/auth/register | Register new user        | User     |
+| POST   | /api/auth/login    | Login user               | User     |
+| GET    | /api/users/profile | Get current user profile | User     |
+| PUT    | /api/users/profile | Update profile info/pfp  | User     |
+
+### Workouts
+
+| Method | Endpoint          | Description               | Resource |
+| ------ | ----------------- | ------------------------- | -------- |
+| POST   | /api/workouts     | Create new workout        | Workout  |
+| GET    | /api/workouts     | Get all workouts for user | Workout  |
+| GET    | /api/workouts/:id | Get specific workout      | Workout  |
+| PUT    | /api/workouts/:id | Update workout            | Workout  |
+| DELETE | /api/workouts/:id | Delete workout            | Workout  |
+
+### Exercises
+
+| Method | Endpoint                    | Description             | Resource |
+| ------ | --------------------------- | ----------------------- | -------- |
+| POST   | /api/workouts/:id/exercises | Add exercise to workout | Exercise |
+| PUT    | /api/exercises/:id          | Update exercise         | Exercise |
+| DELETE | /api/exercises/:id          | Delete exercise         | Exercise |
+
+### Progress
+
+| Method | Endpoint      | Description           | Resource |
+| ------ | ------------- | --------------------- | -------- |
+| POST   | /api/progress | Add progress record   | Progress |
+| GET    | /api/progress | List progress records | Progress |
+
+### Forum
+
+| Method | Endpoint             | Description           | Resource  |
+| ------ | -------------------- | --------------------- | --------- |
+| POST   | /api/forum/posts     | Create new forum post | ForumPost |
+| GET    | /api/forum/posts     | List forum posts      | ForumPost |
+| DELETE | /api/forum/posts/:id | Delete specific post  | ForumPost |
+
+### AI Responses
+
+| POST | /api/nutrition/recommendation | Send user input and receive AI-generated advice | AIResponse |
 
 ### Example API Endpoints
 
 - `POST /api/auth/register`
 - `POST /api/auth/login`
-- `GET /api/users/profile`
+- `GET  /api/users/profile`
 - `POST /api/workouts`
-- `GET /api/workouts`
+- `GET  /api/workouts`
 - `POST /api/progress`
-- `GET /api/progress`
-- `GET /api/nutrition/recommendation`
-- `GET /api/forum/posts`
+- `GET  /api/progress`
+- `GET  /api/nutrition/recommendation`
+- `GET  /api/forum/posts`
 
 ---
 

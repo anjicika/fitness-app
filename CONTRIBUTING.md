@@ -38,8 +38,11 @@
 
 - Use ESLint and Prettier
 - Follow existing code patterns
+- For formatting & Indentation use 4 spaces and 100/120-char limit
 - Write meaningful variable names
 - Add comments for complex logic
+- If necessary add error handling
+- Use DRY principle
 
 ## Testing
 

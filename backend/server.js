@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const db = require('./src/models');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -115,25 +116,26 @@ app.use((err, req, res, next) => {
   });
 });
 
-// START SERVER
-app.listen(PORT, '0.0.0.0', () => {
-  console.log('==========================================');
-  console.log('🚀 FITNESSERI BACKEND SERVER');
-  console.log('==========================================');
-  console.log(`📍 Environment: ${NODE_ENV}`);
-  console.log(`🌐 Server running on: http://localhost:${PORT}`);
-  console.log(`💚 Health check: http://localhost:${PORT}/health`);
-  console.log(`📚 API Base: http://localhost:${PORT}/api/v1`);
-  console.log('==========================================');
-});
+// Sinhronizacija baze pred zagonom strežnika
+db.sequelize.sync({ alter: true })
+  .then(() => {
+    console.log('✅ Baza podatkov je sinhronizirana.');
 
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down gracefully...');
-  process.exit(0);
-});
+    // START SERVER
+    const server = app.listen(PORT, '0.0.0.0', () => {
+      console.log('==========================================');
+      console.log('🚀 FITNESSERI BACKEND SERVER IS LIVE');
+      console.log('==========================================');
+      console.log(`🌐 Server running on: http://localhost:${PORT}`);
+      console.log('==========================================');
+    });
 
-process.on('SIGINT', () => {
-  console.log('SIGINT received, shutting down gracefully...');
-  process.exit(0);
-});
+    server.on('error', (e) => {
+      console.error('Napaka na strežniku:', e);
+    });
+  })
+  .catch((err) => {
+    console.error('❌ Napaka pri sinhronizaciji baze:', err);
+    process.exit(1); 
+  });
+  

@@ -85,6 +85,9 @@ app.get('/api/v1/test', (req, res) => {
 // app.use('/api/v1/workouts', require('./src/routes/workouts'));
 // ... etc
 
+app.use('/api/v1/auth', require('./src/routes/auth'));
+
+
 // 404 HANDLER
 app.use((req, res) => {
   res.status(404).json({

@@ -3,14 +3,14 @@
     "username": "user",
     "password": "pass",
     "database": "fitnesseri",
-    "host": "127.0.0.1",
+    "host": "db",
     "dialect": "postgres"
   },
   "test": {
     "username": "user",
     "password": "pass",
     "database": "fitnesseri_test",
-    "host": "127.0.0.1",
+    "host": "db",
     "dialect": "postgres"
   },
   "production": {

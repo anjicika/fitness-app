@@ -1,5 +1,5 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
+const { hashPassword, comparePassword } = require('../utils/hashing');
 const { v4: uuidv4 } = require('uuid'); // Za unikatne identifierje
 const { body, validationResult } = require('express-validator');
 const { User } = require('../models');
@@ -34,7 +34,7 @@ router.post('/register',
                 return res.status(400).json({ success: false, message: 'Email already in use' });
             }
 
-            const password_hash = await bcrypt.hash(password, 10);
+            const password_hash = await hashPassword(password);
             const verification_token = uuidv4();
 
             const user = await User.create({
@@ -108,8 +108,8 @@ router.post(
                 return res.status(400).json({ success: false, message: 'Invalid email or password' });
             }
 
-            const passwordMatch = await bcrypt.compare(password, user.password_hash);
-            if (!passwordMatch) {
+            const password_match = await comparePassword(password, user.password_hash);
+            if (!password_match) {
                 return res.status(400).json({ success: false, message: 'Invalid email or password' });
             }
 

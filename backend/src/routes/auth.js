@@ -128,4 +128,11 @@ router.post('/login',
 
 
 
+// POST /auth/logout
+router.post('/logout', (req, res) => {
+    // Nič se ne shranjuje na backendu, frontend bo pobrisal JWT
+    res.json({ success: true, message: 'Logout successful' });
+});
+
+
 module.exports = router;

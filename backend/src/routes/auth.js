@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid'); // Za unikatne identifierje
 const { body, validationResult } = require('express-validator');
 const { User } = require('../models');
-const jwt = require('jsonwebtoken'); // JWT
+const { generateToken } = require('../utils/jwt');
 
 const router = express.Router();
 
@@ -21,7 +21,6 @@ router.post('/register',
             .matches(/\d/).withMessage('Password must contain a number')
     ],
     async (req, res) => {
-        // Validacija vhodnih podatkov
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ success: false, errors: errors.array() });
@@ -30,19 +29,14 @@ router.post('/register',
         const { username, email, password } = req.body;
 
         try {
-            // Preverjanje, če uporabnik že obstaja
             const existingUser = await User.findOne({ where: { email } });
             if (existingUser) {
-                return res.status(400).json({ message: 'Email already in use' });
+                return res.status(400).json({ success: false, message: 'Email already in use' });
             }
 
-            // Hashiranje gesla
             const password_hash = await bcrypt.hash(password, 10);
-
-            // Generiranje verifikacijskega tokena
             const verification_token = uuidv4();
 
-            // Ustvarjanje novega uporabnika
             const user = await User.create({
                 username,
                 email,
@@ -50,12 +44,20 @@ router.post('/register',
                 verification_token,
             });
 
-            // Pošiljanje verifikacijskega linka
             console.log(
                 `Verify your email: http://localhost:3000/api/v1/auth/verify-email?token=${verification_token}`
             );
 
-            res.status(201).json({ success: true, message: 'Registration successful. Please check your email to verify your account.' });
+            res.status(201).json({
+                success: true,
+                message: 'Registration successful. Please check your email to verify your account.',
+                data: {
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    is_verified: user.is_verified,
+                },
+            });
 
         } catch (err) {
             console.error(err);
@@ -91,9 +93,8 @@ router.get('/verify-email', async (req, res) => {
 
 
 // POST /auth/login
-const { generateToken } = require('../utils/jwt');
-
-router.post('/login',
+router.post(
+    '/login',
     [
         body('email').isEmail().withMessage('Email must be valid'),
         body('password').notEmpty().withMessage('Password is required'),
@@ -104,19 +105,18 @@ router.post('/login',
         try {
             const user = await User.findOne({ where: { email } });
             if (!user) {
-                return res.status(400).json({ message: 'Invalid email or password' });
+                return res.status(400).json({ success: false, message: 'Invalid email or password' });
             }
 
             const passwordMatch = await bcrypt.compare(password, user.password_hash);
             if (!passwordMatch) {
-                return res.status(400).json({ message: 'Invalid email or password' });
+                return res.status(400).json({ success: false, message: 'Invalid email or password' });
             }
 
             if (!user.is_verified) {
-                return res.status(403).json({ message: 'Email not verified' });
+                return res.status(403).json({ success: false, message: 'Email not verified' });
             }
 
-            // Ustvarimo JWT token
             const token = generateToken({ id: user.id, email: user.email });
             res.json({ success: true, token });
 
@@ -124,7 +124,8 @@ router.post('/login',
             console.error(err);
             res.status(500).json({ success: false, message: 'Internal server error' });
         }
-    });
+    }
+);
 
 
 

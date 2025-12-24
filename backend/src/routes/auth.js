@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid'); // Za unikatne identifierje
 const { body, validationResult } = require('express-validator');
 const { User } = require('../models');
+const jwt = require('jsonwebtoken'); // JWT
 
 const router = express.Router();
 
@@ -54,7 +55,7 @@ router.post('/register',
                 `Verify your email: http://localhost:3000/api/v1/auth/verify-email?token=${verification_token}`
             );
 
-            res.status(201).json({ message: 'Registration successful. Please check your email to verify your account.' });
+            res.status(201).json({ success: true, message: 'Registration successful. Please check your email to verify your account.' });
 
         } catch (err) {
             console.error(err);
@@ -89,31 +90,41 @@ router.get('/verify-email', async (req, res) => {
 
 
 
-
 // POST /auth/login
-router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+const { generateToken } = require('../utils/jwt');
 
-  try {
-    const user = await User.findOne({ where: { email } });
+router.post('/login',
+    [
+        body('email').isEmail().withMessage('Email must be valid'),
+        body('password').notEmpty().withMessage('Password is required'),
+    ],
+    async (req, res) => {
+        const { email, password } = req.body;
 
-    if (!user) {
-      return res.status(400).json({ success: false, message: 'Invalid email or password' });
-    }
+        try {
+            const user = await User.findOne({ where: { email } });
+            if (!user) {
+                return res.status(400).json({ message: 'Invalid email or password' });
+            }
 
-    const isMatch = await comparePassword(password, user.password_hash);
-    if (!isMatch) {
-      return res.status(400).json({ success: false, message: 'Invalid email or password' });
-    }
+            const passwordMatch = await bcrypt.compare(password, user.password_hash);
+            if (!passwordMatch) {
+                return res.status(400).json({ message: 'Invalid email or password' });
+            }
 
-    // Zaenkrat brez JWT, samo test za delovanje
-    res.json({ success: true, message: `Welcome ${user.username}!` });
+            if (!user.is_verified) {
+                return res.status(403).json({ message: 'Email not verified' });
+            }
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Internal server error' });
-  }
-});
+            // Ustvarimo JWT token
+            const token = generateToken({ id: user.id, email: user.email });
+            res.json({ success: true, token });
+
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ success: false, message: 'Internal server error' });
+        }
+    });
 
 
 

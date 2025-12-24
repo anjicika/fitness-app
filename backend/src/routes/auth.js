@@ -87,4 +87,34 @@ router.get('/verify-email', async (req, res) => {
     }
 });
 
+
+
+
+// POST /auth/login
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(400).json({ success: false, message: 'Invalid email or password' });
+    }
+
+    const isMatch = await comparePassword(password, user.password_hash);
+    if (!isMatch) {
+      return res.status(400).json({ success: false, message: 'Invalid email or password' });
+    }
+
+    // Zaenkrat brez JWT, samo test za delovanje
+    res.json({ success: true, message: `Welcome ${user.username}!` });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
+
+
+
 module.exports = router;

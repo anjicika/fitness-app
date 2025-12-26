@@ -42,7 +42,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        container_name: postgres
 
       redis:
         image: redis:7-alpine

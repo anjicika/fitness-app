@@ -21,6 +21,12 @@ jobs:
     name: Build and Test Backend
     runs-on: ubuntu-latest
 
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://test_user:test_pass@postgres:5432/fitnesseri_test
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: test-secret-key
+
     # Service containers for tests
     services:
       postgres:

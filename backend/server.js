@@ -141,10 +141,15 @@ async function startServer() {
     }
   } catch (err) {
     console.error('❌ Unable to start server or connect to DB:', err);
-    process.exit(1); // Zapri, če ne more povezati
+    if (process.env.NODE_ENV !== 'test') {
+      process.exit(1);
+    }
   }
 }
-startServer();
+
+if (process.env.NODE_ENV !== 'test') {
+  startServer();
+}
 
 // Graceful shutdown
 process.on('SIGTERM', () => {

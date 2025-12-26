@@ -1,42 +1,34 @@
-'use strict';
-
-const fs = require('fs'); // Za branje map
-const path = require('path'); // Za poti med mapami
 const { Sequelize } = require('sequelize');
-const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
-const config = require(path.join(__dirname, '../config/config.json'))[env];
-const db = {};
+const config = require('../config/config.json')[env];
 
-const sequelize = new Sequelize(
-  config.database,
-  config.username,
-  config.password,
-  config
-);
+const sequelize = process.env.DATABASE_URL
+  ? new Sequelize(process.env.DATABASE_URL, {
+      dialect: config.dialect,
+      logging: false, // Ugasne logging v testih
+    })
+  : new Sequelize(config.database, config.username, config.password, {
+      host: config.host,
+      dialect: config.dialect,
+      logging: env === 'development' ? console.log : false,
+    });
 
-fs.readdirSync(__dirname)
-  .filter(file => {
-    return (
-      file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js'
-    );
-  })
-  .forEach(file => {
-    const model = require(path.join(__dirname, file))(
-      sequelize,
-      Sequelize.DataTypes
-    );
-    db[model.name] = model;
-  });
+// Models
+const User = require('./user')(sequelize);
+const Workout = require('./workout')(sequelize);
+const ForumPost = require('./forumpost')(sequelize);
 
-// če model ima associate metodo
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
+// Associations
+User.hasMany(Workout);
+Workout.belongsTo(User);
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+User.hasMany(ForumPost);
+ForumPost.belongsTo(User);
 
-module.exports = db;
+module.exports = {
+  sequelize,
+  Sequelize,
+  User,
+  Workout,
+  ForumPost,
+};

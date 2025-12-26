@@ -87,7 +87,6 @@ app.get('/api/v1/test', (req, res) => {
 
 app.use('/api/v1/auth', require('./src/routes/auth'));
 
-
 // 404 HANDLER
 app.use((req, res) => {
   res.status(404).json({
@@ -119,19 +118,16 @@ app.use((err, req, res, next) => {
 });
 
 // START SERVER
-// START SERVER
-if (NODE_ENV !== 'test') {
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log('==========================================');
-    console.log('🚀 FITNESSERI BACKEND SERVER');
-    console.log('==========================================');
-    console.log(`📍 Environment: ${NODE_ENV}`);
-    console.log(`🌐 Server running on: http://localhost:${PORT}`);
-    console.log(`💚 Health check: http://localhost:${PORT}/health`);
-    console.log(`📚 API Base: http://localhost:${PORT}/api/v1`);
-    console.log('==========================================');
-  });
-}
+app.listen(PORT, '0.0.0.0', () => {
+  console.log('==========================================');
+  console.log('🚀 FITNESSERI BACKEND SERVER');
+  console.log('==========================================');
+  console.log(`📍 Environment: ${NODE_ENV}`);
+  console.log(`🌐 Server running on: http://localhost:${PORT}`);
+  console.log(`💚 Health check: http://localhost:${PORT}/health`);
+  console.log(`📚 API Base: http://localhost:${PORT}/api/v1`);
+  console.log('==========================================');
+});
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
@@ -143,6 +139,5 @@ process.on('SIGINT', () => {
   console.log('SIGINT received, shutting down gracefully...');
   process.exit(0);
 });
-
 
 module.exports = app;

@@ -2,23 +2,27 @@
 const { verifyToken } = require('./jwt');
 
 function authenticate(req, res, next) {
-    const authHeader = req.headers.authorization;
+  const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ success: false, message: 'No token provided' });
-    }
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res
+      .status(401)
+      .json({ success: false, message: 'No token provided' });
+  }
 
-    const token = authHeader.split(' ')[1]; // Vzamemo samo token del
+  const token = authHeader.split(' ')[1]; // Vzamemo samo token del
 
-    const payload = verifyToken(token);
+  const payload = verifyToken(token);
 
-    if (!payload) {
-        return res.status(401).json({ success: false, message: 'Invalid or expired token' });
-    }
+  if (!payload) {
+    return res
+      .status(401)
+      .json({ success: false, message: 'Invalid or expired token' });
+  }
 
-    req.user = payload;
+  req.user = payload;
 
-    next();
+  next();
 }
 
 module.exports = authenticate;

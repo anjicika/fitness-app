@@ -8,7 +8,7 @@ const SALT_ROUNDS = 10;
  * @returns {Promise<string>} - Hashirano geslo
  */
 async function hashPassword(password) {
-    return bcrypt.hash(password, SALT_ROUNDS);
+  return bcrypt.hash(password, SALT_ROUNDS);
 }
 
 /**
@@ -18,7 +18,7 @@ async function hashPassword(password) {
  * @returns {Promise<boolean>} - Vrne true, če se ujema
  */
 async function comparePassword(password, hash) {
-    return bcrypt.compare(password, hash);
+  return bcrypt.compare(password, hash);
 }
 
 module.exports = { hashPassword, comparePassword };

@@ -82,7 +82,9 @@ app.get('/api/v1/test', (req, res) => {
 
 // app.use('/api/v1/auth', require('./src/routes/auth'));
 // app.use('/api/v1/users', require('./src/routes/users'));
-// app.use('/api/v1/workouts', require('./src/routes/workouts'));
+app.use('/api/v1/workouts', require('./src/routes/workouts'));
+app.use('/api/v1/exercises', require('./src/routes/exercises'));
+app.use('/api/v1/progress', require('./src/routes/progress'));
 // ... etc
 
 // 404 HANDLER

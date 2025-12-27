@@ -5,6 +5,8 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const compression = require('compression');
 
+const { sequelize } = require('./src/models');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -85,6 +87,8 @@ app.get('/api/v1/test', (req, res) => {
 // app.use('/api/v1/workouts', require('./src/routes/workouts'));
 // ... etc
 
+app.use('/api/v1/auth', require('./src/routes/auth'));
+
 // 404 HANDLER
 app.use((req, res) => {
   res.status(404).json({
@@ -115,17 +119,37 @@ app.use((err, req, res, next) => {
   });
 });
 
-// START SERVER
-app.listen(PORT, '0.0.0.0', () => {
-  console.log('==========================================');
-  console.log('🚀 FITNESSERI BACKEND SERVER');
-  console.log('==========================================');
-  console.log(`📍 Environment: ${NODE_ENV}`);
-  console.log(`🌐 Server running on: http://localhost:${PORT}`);
-  console.log(`💚 Health check: http://localhost:${PORT}/health`);
-  console.log(`📚 API Base: http://localhost:${PORT}/api/v1`);
-  console.log('==========================================');
-});
+// START SERVER (razen če smo v testnem okolju)
+async function startServer() {
+  try {
+    // Preveri povezavo z bazo
+    await sequelize.authenticate();
+    console.log('✅ Database connection established');
+
+    // Zaženemo server samo, če nismo v testnem okolju
+    if (NODE_ENV !== 'test') {
+      app.listen(PORT, '0.0.0.0', () => {
+        console.log('==========================================');
+        console.log('🚀 FITNESSERI BACKEND SERVER');
+        console.log('==========================================');
+        console.log(`📍 Environment: ${NODE_ENV}`);
+        console.log(`🌐 Server running on: http://localhost:${PORT}`);
+        console.log(`💚 Health check: http://localhost:${PORT}/health`);
+        console.log(`📚 API Base: http://localhost:${PORT}/api/v1`);
+        console.log('==========================================');
+      });
+    }
+  } catch (err) {
+    console.error('❌ Unable to start server or connect to DB:', err);
+    if (process.env.NODE_ENV !== 'test') {
+      process.exit(1);
+    }
+  }
+}
+
+if (process.env.NODE_ENV !== 'test') {
+  startServer();
+}
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
@@ -137,3 +161,5 @@ process.on('SIGINT', () => {
   console.log('SIGINT received, shutting down gracefully...');
   process.exit(0);
 });
+
+module.exports = app; // Export for tests

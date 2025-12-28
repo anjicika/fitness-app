@@ -4,13 +4,13 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
-    "test": "jest --coverage --detectOpenHandles",
     "test:watch": "jest --watch",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "migrate": "node src/database/migrate.js",
     "seed": "node src/database/seed.js",
     "format": "prettier --write .",
+    "test": "NODE_ENV=test jest --coverage --detectOpenHandles",
     "format:check": "prettier --check ."
   },
   "dependencies": {

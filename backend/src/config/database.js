@@ -3,10 +3,35 @@ const { Sequelize } = require('sequelize');
 let sequelize;
 
 if (process.env.NODE_ENV === 'test') {
-  // TEST ENV – brez Dockerja, brez Postgresa
-  sequelize = new Sequelize('sqlite::memory:', {
-    logging: false,
-  });
+  // TEST ENV - Use SQLite for GitHub Actions and local, PostgreSQL only for Docker
+  if (process.env.DOCKER_TEST === 'true') {
+    // Docker testing with PostgreSQL
+    if (!process.env.DATABASE_URL) {
+      throw new Error('DATABASE_URL environment variable is not set for Docker testing');
+    }
+    sequelize = new Sequelize(process.env.DATABASE_URL, {
+      dialect: 'postgres',
+      logging: false,
+      pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000,
+      },
+      define: {
+        timestamps: true,
+        underscored: true,
+        freezeTableName: true,
+      },
+    });
+  } else {
+    // GitHub Actions and local testing with SQLite
+    sequelize = new Sequelize({
+      dialect: 'sqlite',
+      storage: ':memory:',
+      logging: false,
+    });
+  }
 } else {
   const DATABASE_URL = process.env.DATABASE_URL;
 

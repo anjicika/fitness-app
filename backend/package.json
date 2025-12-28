@@ -4,13 +4,13 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
-    "test": "jest --coverage --detectOpenHandles",
     "test:watch": "jest --watch",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "migrate": "node src/database/migrate.js",
     "seed": "node src/database/seed.js",
     "format": "prettier --write .",
+    "test": "cross-env NODE_ENV=test jest --coverage --detectOpenHandles",
     "format:check": "prettier --check ."
   },
   "dependencies": {
@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "cross-env": "^10.1.0",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
@@ -38,6 +39,7 @@
     "nodemon": "^3.1.11",
     "prettier": "^3.7.4",
     "sequelize-cli": "^6.6.3",
+    "sqlite3": "^5.1.7",
     "supertest": "^7.1.4"
   },
   "description": "",

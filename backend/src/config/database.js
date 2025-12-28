@@ -7,7 +7,9 @@ if (process.env.NODE_ENV === 'test') {
   if (process.env.DOCKER_TEST === 'true') {
     // Docker testing with PostgreSQL
     if (!process.env.DATABASE_URL) {
-      throw new Error('DATABASE_URL environment variable is not set for Docker testing');
+      throw new Error(
+        'DATABASE_URL environment variable is not set for Docker testing'
+      );
     }
     sequelize = new Sequelize(process.env.DATABASE_URL, {
       dialect: 'postgres',
@@ -73,4 +75,3 @@ const testConnection = async () => {
 };
 
 module.exports = { sequelize, Sequelize, testConnection };
-

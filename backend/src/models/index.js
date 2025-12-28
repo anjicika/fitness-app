@@ -1,17 +1,4 @@
-const { Sequelize } = require('sequelize');
-const env = process.env.NODE_ENV || 'development';
-const config = require('../config/config.json')[env];
-
-const sequelize = process.env.DATABASE_URL
-  ? new Sequelize(process.env.DATABASE_URL, {
-      dialect: config.dialect,
-      logging: false, // Ugasne logging v testih
-    })
-  : new Sequelize(config.database, config.username, config.password, {
-      host: config.host,
-      dialect: config.dialect,
-      logging: env === 'development' ? console.log : false,
-    });
+const { sequelize, Sequelize } = require('../config/database');
 
 // Models
 const User = require('./user');

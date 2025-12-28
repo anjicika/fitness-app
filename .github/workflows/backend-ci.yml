@@ -21,11 +21,7 @@ jobs:
     name: Build and Test Backend
     runs-on: ubuntu-latest
 
-    env:
-      NODE_ENV: test
-      JWT_SECRET: test-secret-key
-
-    # Service containers for tests
+    # Service containers
     services:
       redis:
         image: redis:7-alpine
@@ -58,11 +54,8 @@ jobs:
 
       - name: 🧪 Run tests
         working-directory: ./backend
-        run: npm test
-        env:
-          NODE_ENV: test
-          JWT_SECRET: test-secret-key
-
+        # cross-env poskrbi, da NODE_ENV=test pride do Node.js procesa
+        run: npx cross-env NODE_ENV=test JWT_SECRET=test-secret-key npm test
 
       - name: 📊 Upload coverage to Codecov
         if: success()

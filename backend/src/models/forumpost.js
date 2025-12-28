@@ -44,8 +44,15 @@ const ForumPost = sequelize.define(
       },
     },
     tags: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
-      defaultValue: [],
+      type: DataTypes.TEXT,
+      defaultValue: '[]',
+      get() {
+        const value = this.getDataValue('tags');
+        return value ? JSON.parse(value) : [];
+      },
+      set(value) {
+        this.setDataValue('tags', JSON.stringify(value || []));
+      },
     },
     views: {
       type: DataTypes.INTEGER,

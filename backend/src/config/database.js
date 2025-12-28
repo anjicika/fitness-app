@@ -26,15 +26,21 @@ if (process.env.NODE_ENV === 'test') {
     });
   } else {
     // GitHub Actions and local testing with SQLite
+    // Explicitly ignore DATABASE_URL from .env file
+    delete process.env.DATABASE_URL;
     sequelize = new Sequelize({
       dialect: 'sqlite',
       storage: ':memory:',
       logging: false,
+      define: {
+        timestamps: true,
+        underscored: true,
+      },
     });
   }
 } else {
+  // DEV / PROD environment
   const DATABASE_URL = process.env.DATABASE_URL;
-
   if (!DATABASE_URL) {
     throw new Error('DATABASE_URL environment variable is not set');
   }
@@ -66,4 +72,5 @@ const testConnection = async () => {
   }
 };
 
-module.exports = { sequelize, testConnection };
+module.exports = { sequelize, Sequelize, testConnection };
+

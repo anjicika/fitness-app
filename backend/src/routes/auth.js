@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require('uuid'); // Za unikatne identifierje
 const { body, validationResult } = require('express-validator');
 const { User } = require('../models');
 const { generateToken } = require('../utils/jwt');
+const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -146,6 +147,46 @@ router.post(
 router.post('/logout', (req, res) => {
   // Nič se ne shranjuje na backendu, frontend bo pobrisal JWT
   res.json({ success: true, message: 'Logout successful' });
+});
+
+// GET /auth/me (Get current user info)
+router.get('/me', authenticate, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id, {
+      attributes: [
+        'id',
+        'username',
+        'email',
+        'role',
+        'is_verified',
+        'created_at',
+      ],
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: {
+          code: 'USER_NOT_FOUND',
+          message: 'User not found',
+        },
+      });
+    }
+
+    res.json({
+      success: true,
+      data: user,
+    });
+  } catch (err) {
+    console.error('Get current user error:', err);
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'GET_USER_ERROR',
+        message: 'Internal server error',
+      },
+    });
+  }
 });
 
 module.exports = router;

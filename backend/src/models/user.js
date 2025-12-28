@@ -1,47 +1,65 @@
-'use strict';
-const { Model, DataTypes } = require('sequelize');
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/database');
 
-module.exports = sequelize => {
-  class User extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
-    }
-  }
-
-  User.init(
-    {
-      username: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-        validate: { isEmail: true },
-      },
-      password_hash: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      is_verified: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
-      verification_token: {
-        type: DataTypes.STRING,
+const User = sequelize.define(
+  'User',
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    username: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      unique: true,
+    },
+    email: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
       },
     },
-    {
-      sequelize,
-      modelName: 'User',
-    }
-  );
+    password_hash: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
+    role: {
+      type: DataTypes.ENUM('user', 'admin', 'coach'),
+      defaultValue: 'user',
+    },
+    is_verified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    verification_token: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    reset_password_token: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    reset_password_expires: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+  },
+  {
+    tableName: 'users',
+    timestamps: true,
+    underscored: true,
+  }
+);
 
-  return User;
-};
+module.exports = User;

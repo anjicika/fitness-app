@@ -4,6 +4,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const compression = require('compression');
+const authRoutes = require('./src/routes/auth');
+const forumRoutes = require('./src/routes/forum');
 
 const { sequelize } = require('./src/models');
 
@@ -78,16 +80,15 @@ app.get('/api/v1/test', (req, res) => {
   });
 });
 
-// ==========================================
 // API ROUTES (will be added in future tasks)
-// ==========================================
 
 // app.use('/api/v1/auth', require('./src/routes/auth'));
 // app.use('/api/v1/users', require('./src/routes/users'));
 // app.use('/api/v1/workouts', require('./src/routes/workouts'));
 // ... etc
 
-app.use('/api/v1/auth', require('./src/routes/auth'));
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/forum', forumRoutes);
 
 // 404 HANDLER
 app.use((req, res) => {

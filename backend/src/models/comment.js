@@ -1,13 +1,22 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 
-const ForumPost = sequelize.define(
-  'ForumPost',
+const Comment = sequelize.define(
+  'Comment',
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
+    },
+    postId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: 'post_id',
+      references: {
+        model: 'forum_posts',
+        key: 'id',
+      },
     },
     userId: {
       type: DataTypes.INTEGER,
@@ -18,52 +27,26 @@ const ForumPost = sequelize.define(
         key: 'id',
       },
     },
-    title: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-        len: [3, 255],
-      },
-    },
     content: {
       type: DataTypes.TEXT,
       allowNull: false,
       validate: {
         notEmpty: true,
-        len: [10, 10000],
+        len: [1, 5000],
       },
     },
-    categoryId: {
+    parentCommentId: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      field: 'category_id',
+      field: 'parent_comment_id',
       references: {
-        model: 'forum_categories',
+        model: 'comments',
         key: 'id',
       },
-    },
-    tags: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
-      defaultValue: [],
-    },
-    views: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
     },
     likes: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
-    },
-    isPinned: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-      field: 'is_pinned',
-    },
-    isLocked: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-      field: 'is_locked',
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -77,10 +60,10 @@ const ForumPost = sequelize.define(
     },
   },
   {
-    tableName: 'forum_posts',
+    tableName: 'comments',
     timestamps: true,
     underscored: true,
   }
 );
 
-module.exports = ForumPost;
+module.exports = Comment;

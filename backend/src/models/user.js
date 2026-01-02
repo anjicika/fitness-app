@@ -1,5 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
+const WeightEntry = require('./weightentry');
+const BodyMeasurement = require('./bodymeasurement');
 
 const User = sequelize.define(
   'User',
@@ -61,5 +63,8 @@ const User = sequelize.define(
     underscored: true,
   }
 );
+
+User.hasMany(WeightEntry, { foreignKey: 'user_id' });
+User.hasMany(BodyMeasurement, { foreignKey: 'user_id' });
 
 module.exports = User;

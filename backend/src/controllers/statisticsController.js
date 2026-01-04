@@ -5,7 +5,7 @@ const { Op } = require('sequelize');
 
 async function getStatistics(req, res) {
   const userId = req.user.id;
-  const { metric, type, period = 30 } = req.query;
+  const { metric, type, period = 30, goal } = req.query;
 
   const periodDays = Number(period) || 30;
   const fromDate = new Date();
@@ -24,16 +24,22 @@ async function getStatistics(req, res) {
     const values = entries.map(e => Number(e.weight_kg));
     const stats = calculateStatistics(values, 0.2); // Threshold za weight
 
-    // Za procentualno spremembo
+    // Percentualna sprememba
     const percentChange = stats.startValue
       ? ((stats.endValue - stats.startValue) / stats.startValue) * 100
       : 0;
 
-    // Za goal based progress
+    // Goal based progress
     let goalProgress = null;
-    if (goal && stats.startValue !== null && stats.endValue !== null) {
+    if (
+      goal &&
+      stats.startValue !== null &&
+      stats.endValue !== null &&
+      Number(goal) !== stats.startValue
+    ) {
       const goalValue = Number(goal);
-      goalProgress = ((stats.endValue - stats.startValue) / (goalValue - stats.startValue)) * 100;
+      goalProgress =
+        ((stats.endValue - stats.startValue) / (goalValue - stats.startValue)) * 100;
       goalProgress = Math.min(Math.max(goalProgress, 0), 100);
     }
 
@@ -49,12 +55,12 @@ async function getStatistics(req, res) {
   // BODY MEASUREMENTS
   if (metric === 'measurement') {
     if (!type) {
-      return res.status(400).json({ error: "Measurement type required" });
+      return res.status(400).json({ error: 'Measurement type required' });
     }
 
     const allowedTypes = ['chest', 'waist', 'hips'];
     if (!allowedTypes.includes(type)) {
-      return res.status(400).json({ error: "Invalid measurement type" });
+      return res.status(400).json({ error: 'Invalid measurement type' });
     }
 
     const entries = await BodyMeasurement.findAll({
@@ -72,16 +78,22 @@ async function getStatistics(req, res) {
 
     const stats = calculateStatistics(values, 0.5); // Threshold za measurement
 
-    // Za procentualno spremembo
+    // Percentualna sprememba
     const percentChange = stats.startValue
       ? ((stats.endValue - stats.startValue) / stats.startValue) * 100
       : 0;
 
-    // Za goal based progress
+    // Goal based progress
     let goalProgress = null;
-    if (goal && stats.startValue !== null && stats.endValue !== null) {
+    if (
+      goal &&
+      stats.startValue !== null &&
+      stats.endValue !== null &&
+      Number(goal) !== stats.startValue
+    ) {
       const goalValue = Number(goal);
-      goalProgress = ((stats.endValue - stats.startValue) / (goalValue - stats.startValue)) * 100;
+      goalProgress =
+        ((stats.endValue - stats.startValue) / (goalValue - stats.startValue)) * 100;
       goalProgress = Math.min(Math.max(goalProgress, 0), 100);
     }
 
@@ -95,7 +107,7 @@ async function getStatistics(req, res) {
     });
   }
 
-  return res.status(400).json({ error: "Invalid metric" });
+  return res.status(400).json({ error: 'Invalid metric' });
 }
 
 module.exports = { getStatistics };

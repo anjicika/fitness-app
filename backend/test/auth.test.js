@@ -1,3 +1,11 @@
+jest.mock('../src/models/user', () => {
+  const { DataTypes, Model } = require('sequelize');
+  const { sequelize } = require('../src/models');
+  class User extends Model {}
+  User.init({}, { sequelize, modelName: 'User' });
+  return User;
+});
+
 const request = require('supertest');
 const app = require('../server');
 const { User, sequelize } = require('../src/models');

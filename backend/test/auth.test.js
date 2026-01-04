@@ -11,7 +11,12 @@ app.post('/api/v1/auth/register', (req, res) => {
   if (!email.includes('@') || password.length < 6) {
     return res.status(400).json({ success: false });
   }
-  res.status(201).json({ success: true, data: { email, username: req.body.username, is_verified: false } });
+  res
+    .status(201)
+    .json({
+      success: true,
+      data: { email, username: req.body.username, is_verified: false },
+    });
 });
 
 app.post('/api/v1/auth/login', (req, res) => {
@@ -35,7 +40,7 @@ describe('Mocked Auth Endpoints', () => {
     const res = await request(app).post('/api/v1/auth/register').send({
       username: 'testuser',
       email: 'test@example.com',
-      password: 'Password123'
+      password: 'Password123',
     });
 
     expect(res.statusCode).toBe(201);
@@ -47,7 +52,7 @@ describe('Mocked Auth Endpoints', () => {
     const res = await request(app).post('/api/v1/auth/register').send({
       username: 'testuser',
       email: 'bad-email',
-      password: 'Password123'
+      password: 'Password123',
     });
 
     expect(res.statusCode).toBe(400);
@@ -57,7 +62,7 @@ describe('Mocked Auth Endpoints', () => {
   it('Should login with verified user', async () => {
     const res = await request(app).post('/api/v1/auth/login').send({
       email: 'verified@example.com',
-      password: 'Password123'
+      password: 'Password123',
     });
 
     expect(res.statusCode).toBe(200);
@@ -67,20 +72,24 @@ describe('Mocked Auth Endpoints', () => {
   it('Should fail login with wrong password', async () => {
     const res = await request(app).post('/api/v1/auth/login').send({
       email: 'verified@example.com',
-      password: 'WrongPass'
+      password: 'WrongPass',
     });
 
     expect(res.statusCode).toBe(400);
   });
 
   it('Should verify email with valid token', async () => {
-    const res = await request(app).get('/api/v1/auth/verify-email?token=validtoken');
+    const res = await request(app).get(
+      '/api/v1/auth/verify-email?token=validtoken'
+    );
     expect(res.statusCode).toBe(200);
     expect(res.body.success).toBe(true);
   });
 
   it('Should fail email verification with invalid token', async () => {
-    const res = await request(app).get('/api/v1/auth/verify-email?token=badtoken');
+    const res = await request(app).get(
+      '/api/v1/auth/verify-email?token=badtoken'
+    );
     expect(res.statusCode).toBe(400);
     expect(res.body.success).toBe(false);
   });

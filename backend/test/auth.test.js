@@ -1,29 +1,54 @@
 const request = require('supertest');
 const app = require('../server');
 
-// Popolnoma mock user model
-jest.mock('../src/models/user', () => {
-  return {
-    create: jest.fn(async (data) => ({ id: 1, ...data, is_verified: false })),
-    findOne: jest.fn(async (query) => {
-      if (query.where.email === 'existing@example.com') {
-        return { id: 1, email: 'existing@example.com', username: 'existing', is_verified: false };
-      }
-      return null;
-    }),
-    findByPk: jest.fn(async (id) => ({ id, is_verified: true, verification_token: null })),
-    destroy: jest.fn(),
-  };
-});
+// Mock User model
+const mockUsers = [];
 
-const User = require('../src/models/user');
+class User {
+  constructor(data) {
+    this.id = mockUsers.length + 1;
+    this.username = data.username;
+    this.email = data.email;
+    this.password_hash = data.password_hash;
+    this.is_verified = data.is_verified || false;
+    this.verification_token = data.verification_token || null;
+  }
+
+  static async create(data) {
+    const user = new User(data);
+    mockUsers.push(user);
+    return user;
+  }
+
+  static async findOne({ where }) {
+    return mockUsers.find(u => u.email === where.email) || null;
+  }
+
+  static async findByPk(id) {
+    return mockUsers.find(u => u.id === id) || null;
+  }
+
+  async save() {
+    // mock save does nothing
+    return this;
+  }
+
+  static async destroy() {
+    mockUsers.length = 0;
+  }
+}
+
+// Mock the actual import in your code
+jest.mock('../src/models', () => ({
+  User,
+}));
 
 describe('Authentication Endpoints', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+  beforeEach(async () => {
+    await User.destroy();
   });
 
-  it('Should register a new user with valid data', async () => {
+  it('Should register a new user', async () => {
     const res = await request(app).post('/api/v1/auth/register').send({
       username: 'testuser',
       email: 'test@example.com',
@@ -36,6 +61,12 @@ describe('Authentication Endpoints', () => {
   });
 
   it('Should not register with existing email', async () => {
+    await User.create({
+      username: 'existing',
+      email: 'existing@example.com',
+      password_hash: 'hashed',
+    });
+
     const res = await request(app).post('/api/v1/auth/register').send({
       username: 'newuser',
       email: 'existing@example.com',

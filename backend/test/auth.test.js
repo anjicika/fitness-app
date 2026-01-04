@@ -1,21 +1,23 @@
+const { Sequelize, DataTypes, Model } = require('sequelize');
+
+const testSequelize = new Sequelize('sqlite::memory:', { logging: false });
+
 jest.mock('../src/models/user', () => {
-  const { DataTypes, Model } = require('sequelize');
-  const { sequelize } = require('../src/models');
   class User extends Model {}
-  User.init({}, { sequelize, modelName: 'User' });
+  User.init({}, { sequelize: testSequelize, modelName: 'User' });
   return User;
 });
 
 const request = require('supertest');
 const app = require('../server');
-const { User, sequelize } = require('../src/models');
+const { User } = require('../src/models');
 
 beforeAll(async () => {
-  await sequelize.sync({ force: true }); // Sinhroniziramo testno bazo
+  await testSequelize.sync({ force: true });
 });
 
 afterAll(async () => {
-  await sequelize.close(); // Zapremo povezavo po testih
+  await testSequelize.close();
 });
 
 describe('Authentication Endpoints', () => {

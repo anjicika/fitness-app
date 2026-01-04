@@ -16,9 +16,9 @@ async function getStatistics(req, res) {
     const entries = await WeightEntry.findAll({
       where: {
         user_id: userId,
-        measured_at: { [Op.gte]: fromDate }
+        measured_at: { [Op.gte]: fromDate },
       },
-      order: [['measured_at', 'ASC']]
+      order: [['measured_at', 'ASC']],
     });
 
     const values = entries.map(e => Number(e.weight_kg));
@@ -39,7 +39,8 @@ async function getStatistics(req, res) {
     ) {
       const goalValue = Number(goal);
       goalProgress =
-        ((stats.endValue - stats.startValue) / (goalValue - stats.startValue)) * 100;
+        ((stats.endValue - stats.startValue) / (goalValue - stats.startValue)) *
+        100;
       goalProgress = Math.min(Math.max(goalProgress, 0), 100);
     }
 
@@ -48,7 +49,8 @@ async function getStatistics(req, res) {
       period: periodDays,
       ...stats,
       percentChange: Number(percentChange.toFixed(2)),
-      goalProgress: goalProgress !== null ? Number(goalProgress.toFixed(2)) : null
+      goalProgress:
+        goalProgress !== null ? Number(goalProgress.toFixed(2)) : null,
     });
   }
 
@@ -66,9 +68,9 @@ async function getStatistics(req, res) {
     const entries = await BodyMeasurement.findAll({
       where: {
         user_id: userId,
-        measured_at: { [Op.gte]: fromDate }
+        measured_at: { [Op.gte]: fromDate },
       },
-      order: [['measured_at', 'ASC']]
+      order: [['measured_at', 'ASC']],
     });
 
     const values = entries
@@ -93,7 +95,8 @@ async function getStatistics(req, res) {
     ) {
       const goalValue = Number(goal);
       goalProgress =
-        ((stats.endValue - stats.startValue) / (goalValue - stats.startValue)) * 100;
+        ((stats.endValue - stats.startValue) / (goalValue - stats.startValue)) *
+        100;
       goalProgress = Math.min(Math.max(goalProgress, 0), 100);
     }
 
@@ -103,7 +106,8 @@ async function getStatistics(req, res) {
       period: periodDays,
       ...stats,
       percentChange: Number(percentChange.toFixed(2)),
-      goalProgress: goalProgress !== null ? Number(goalProgress.toFixed(2)) : null
+      goalProgress:
+        goalProgress !== null ? Number(goalProgress.toFixed(2)) : null,
     });
   }
 

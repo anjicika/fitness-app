@@ -1,6 +1,6 @@
 function calculateStatistics(values) {
   if (!values || values.length === 0) {
-    return { trend: "no-data" }
+    return { trend: 'no-data' };
   }
 
   if (values.length === 1) {
@@ -9,21 +9,21 @@ function calculateStatistics(values) {
       endValue: values[0],
       change: 0,
       average: values[0],
-      trend: "insufficient-data"
-    }
+      trend: 'insufficient-data',
+    };
   }
 
-  const startValue = values[0]
-  const endValue = values[values.length - 1]
+  const startValue = values[0];
+  const endValue = values[values.length - 1];
 
-  const change = endValue - startValue
-  const average = values.reduce((a, b) => a + b, 0) / values.length
+  const change = endValue - startValue;
+  const average = values.reduce((a, b) => a + b, 0) / values.length;
 
-  let trend = "stable"
-  const THRESHOLD = 0.5
+  let trend = 'stable';
+  const THRESHOLD = 0.5;
 
-  if (change > THRESHOLD) trend = "increasing"
-  if (change < -THRESHOLD) trend = "decreasing"
+  if (change > THRESHOLD) trend = 'increasing';
+  if (change < -THRESHOLD) trend = 'decreasing';
 
   return {
     startValue,
@@ -31,8 +31,8 @@ function calculateStatistics(values) {
     change,
     average,
     trend,
-    dataPoints: values.length
-  }
+    dataPoints: values.length,
+  };
 }
 
-module.exports = { calculateStatistics }
+module.exports = { calculateStatistics };

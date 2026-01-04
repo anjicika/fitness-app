@@ -1,7 +1,6 @@
 const { calculateStatistics } = require('../src/utils/calculatestatistics');
 
 describe('calculateStatistics', () => {
-
   test('returns no-data when values array is empty', () => {
     const result = calculateStatistics([]);
     expect(result).toEqual({ trend: 'no-data' });
@@ -15,7 +14,7 @@ describe('calculateStatistics', () => {
       endValue: 80,
       change: 0,
       average: 80,
-      trend: 'insufficient-data'
+      trend: 'insufficient-data',
     });
   });
 
@@ -42,5 +41,4 @@ describe('calculateStatistics', () => {
 
     expect(result.trend).toBe('stable');
   });
-
 });

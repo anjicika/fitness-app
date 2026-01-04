@@ -8,27 +8,27 @@ const BodyMeasurement = sequelize.define(
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true
+      autoIncrement: true,
     },
     user_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     chest_cm: {
       type: DataTypes.DECIMAL(5, 2),
-      allowNull: true
+      allowNull: true,
     },
     waist_cm: {
       type: DataTypes.DECIMAL(5, 2),
-      allowNull: true
+      allowNull: true,
     },
     hips_cm: {
       type: DataTypes.DECIMAL(5, 2),
-      allowNull: true
+      allowNull: true,
     },
     measured_at: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: false,
     },
     created_at: {
       type: DataTypes.DATE,

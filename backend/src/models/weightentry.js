@@ -8,29 +8,30 @@ const WeightEntry = sequelize.define(
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true
+      autoIncrement: true,
     },
     user_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     weight_kg: {
       type: DataTypes.DECIMAL(5, 2),
-      allowNull: false
+      allowNull: false,
     },
     measured_at: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: false,
     },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: DataTypes.NOW
+      defaultValue: DataTypes.NOW,
     },
     updated_at: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: DataTypes.NOW },
+      defaultValue: DataTypes.NOW,
+    },
   },
   {
     tableName: 'Weight_entries',

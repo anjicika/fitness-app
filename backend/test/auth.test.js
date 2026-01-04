@@ -11,12 +11,10 @@ app.post('/api/v1/auth/register', (req, res) => {
   if (!email.includes('@') || password.length < 6) {
     return res.status(400).json({ success: false });
   }
-  res
-    .status(201)
-    .json({
-      success: true,
-      data: { email, username: req.body.username, is_verified: false },
-    });
+  res.status(201).json({
+    success: true,
+    data: { email, username: req.body.username, is_verified: false },
+  });
 });
 
 app.post('/api/v1/auth/login', (req, res) => {

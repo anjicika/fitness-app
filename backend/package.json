@@ -1,0 +1,64 @@
+{
+  "name": "fitnesseri-backend",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "test:watch": "jest --watch",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "migrate": "node src/database/migrate.js",
+    "seed": "node src/database/seed.js",
+    "format": "prettier --write .",
+    "test": "mocha test/**/*.test.js --require dotenv/config --require test/setup.js",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.2.1",
+    "express-validator": "^7.3.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.10.1",
+    "nodemailer": "^7.0.12",
+    "pg": "^8.16.3",
+    "redis": "^5.10.0",
+    "sequelize": "^6.37.7",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "chai": "^6.2.2",
+    "cross-env": "^10.1.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "jest": "^30.2.0",
+    "mocha": "^11.7.5",
+    "nodemon": "^3.1.11",
+    "prettier": "^3.7.4",
+    "sequelize-cli": "^6.6.3",
+    "sqlite3": "^5.1.7",
+    "supertest": "^7.1.4"
+  },
+  "description": "",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [
+    "fitness",
+    "api",
+    "express"
+  ],
+  "author": "FitnesERI Team",
+  "license": "MIT",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

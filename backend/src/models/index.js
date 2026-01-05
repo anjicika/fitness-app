@@ -7,6 +7,8 @@ const ForumPost = require('./forumpost');
 const Comment = require('./comment');
 const ForumCategory = require('./forumcategory');
 const PostLike = require('./postlike');
+const WeightEntry = require('./weightentry');
+const BodyMeasurement = require('./bodymeasurement');
 
 // Associations
 User.hasMany(Workout);
@@ -32,6 +34,12 @@ PostLike.belongsTo(ForumPost, { foreignKey: 'postId', as: 'post' });
 User.hasMany(ForumPost);
 ForumPost.belongsTo(User);
 
+User.hasMany(WeightEntry);
+WeightEntry.belongsTo(User);
+
+User.hasMany(BodyMeasurement);
+BodyMeasurement.belongsTo(User);
+
 module.exports = {
   sequelize,
   Sequelize,
@@ -41,4 +49,6 @@ module.exports = {
   Comment,
   ForumCategory,
   PostLike,
+  WeightEntry,
+  BodyMeasurement,
 };

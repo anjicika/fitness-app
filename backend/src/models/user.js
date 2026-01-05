@@ -1,7 +1,5 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const WeightEntry = require('./weightentry');
-const BodyMeasurement = require('./bodymeasurement');
 
 const User = sequelize.define(
   'User',
@@ -27,27 +25,30 @@ const User = sequelize.define(
     password_hash: {
       type: DataTypes.STRING(255),
       allowNull: false,
+      field: 'password_hash',
     },
-    role: {
-      type: DataTypes.ENUM('user', 'admin', 'coach'),
-      defaultValue: 'user',
-    },
+    //role: {
+    //type: DataTypes.ENUM('user', 'admin', 'coach'),
+    //defaultValue: 'user',
+    //},
     is_verified: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
+      field: 'is_verified',
     },
     verification_token: {
       type: DataTypes.STRING(255),
       allowNull: true,
+      field: 'verification_token',
     },
-    reset_password_token: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-    },
-    reset_password_expires: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
+    //reset_password_token: {
+    //type: DataTypes.STRING(255),
+    //allowNull: true,
+    //},
+    //reset_password_expires: {
+    //type: DataTypes.DATE,
+    //allowNull: true,
+    //},
     created_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
@@ -58,13 +59,10 @@ const User = sequelize.define(
     },
   },
   {
-    tableName: 'users',
+    tableName: 'Users',
     timestamps: true,
     underscored: true,
   }
 );
-
-User.hasMany(WeightEntry, { foreignKey: 'user_id' });
-User.hasMany(BodyMeasurement, { foreignKey: 'user_id' });
 
 module.exports = User;

@@ -4,8 +4,12 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const compression = require('compression');
+const cookieParser = require('cookie-parser');
+
 const authRoutes = require('./src/routes/auth');
 const forumRoutes = require('./src/routes/forum');
+const metricsRoutes = require('./src/routes/metrics');
+const statisticsRoutes = require('./src/routes/statistics');
 
 const { sequelize } = require('./src/models');
 
@@ -17,9 +21,9 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 app.use(helmet());
 
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:5173'],
+  origin: ['http://localhost:5173'],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 app.use(cors(corsOptions));
@@ -27,6 +31,9 @@ app.use(cors(corsOptions));
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Cookie parser
+app.use(cookieParser());
 
 // Compression
 app.use(compression());
@@ -89,6 +96,8 @@ app.get('/api/v1/test', (req, res) => {
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/forum', forumRoutes);
+app.use('/api/v1/metrics', metricsRoutes);
+app.use('/api/v1/statistics', statisticsRoutes);
 
 // 404 HANDLER
 app.use((req, res) => {

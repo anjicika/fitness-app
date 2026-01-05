@@ -34,12 +34,10 @@ const WeightEntry = sequelize.define(
     },
   },
   {
-    tableName: 'Weight_entries',
+    tableName: 'WeightEntries',
     timestamps: true,
     underscored: true,
   }
 );
-
-WeightEntry.belongsTo(User, { foreignKey: 'user_id' });
 
 module.exports = WeightEntry;

@@ -3,10 +3,12 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
+    /*
     await queryInterface.addColumn('Users', 'password_hash', {
       type: Sequelize.STRING,
       allowNull: false,
     });
+    */
 
     await queryInterface.addColumn('Users', 'is_verified', {
       type: Sequelize.BOOLEAN,

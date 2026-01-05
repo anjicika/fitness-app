@@ -42,12 +42,10 @@ const BodyMeasurement = sequelize.define(
     },
   },
   {
-    tableName: 'Body_measurements',
+    tableName: 'BodyMeasurements',
     timestamps: true,
     underscored: true,
   }
 );
-
-BodyMeasurement.belongsTo(User, { foreignKey: 'user_id' });
 
 module.exports = BodyMeasurement;

@@ -1,10 +1,12 @@
 const express = require('express');
 const { hashPassword, comparePassword } = require('../utils/hashing');
-const { v4: uuidv4 } = require('uuid'); // Za unikatne identifierje
+const { v4: uuidv4 } = require('uuid');
 const { body, validationResult } = require('express-validator');
 const { User } = require('../models');
 const { generateToken } = require('../utils/jwt');
 const { authenticate } = require('../middleware/auth');
+
+const NODE_ENV = process.env.NODE_ENV || 'development';
 
 const router = express.Router();
 
@@ -48,6 +50,7 @@ router.post(
         email,
         password_hash,
         verification_token,
+        is_verified: false,
       });
 
       console.log(
@@ -56,15 +59,10 @@ router.post(
 
       res.status(201).json({
         success: true,
-        message:
-          'Registration successful. Please check your email to verify your account.',
-        data: {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          is_verified: user.is_verified,
-        },
+        message: 'Registration successful. Please check your email to verify your account.',
       });
+
+
     } catch (err) {
       console.error(err);
       res
@@ -111,43 +109,42 @@ router.post(
     try {
       const user = await User.findOne({ where: { email } });
       if (!user) {
-        return res
-          .status(400)
-          .json({ success: false, message: 'Invalid email or password' });
-      }
-
-      const password_match = await comparePassword(
-        password,
-        user.password_hash
-      );
-      if (!password_match) {
-        return res
-          .status(400)
-          .json({ success: false, message: 'Invalid email or password' });
+        return res.status(400).json({ success: false, message: 'Invalid email or password' });
       }
 
       if (!user.is_verified) {
-        return res
-          .status(403)
-          .json({ success: false, message: 'Email not verified' });
+        return res.status(400).json({ success: false, message: 'Account not verified yet' });
       }
 
+      const isPasswordValid = await comparePassword(password, user.password_hash);
+      if (!isPasswordValid) {
+        return res.status(400).json({ success: false, message: 'Invalid email or password' });
+      }
+
+      // Generiraj JWT in ga pošlji v JSON
       const token = generateToken({ id: user.id, email: user.email });
-      res.json({ success: true, token });
+
+      res.json({
+        success: true,
+        message: 'Login successful',
+        token, // <-- token v JSON
+      });
+
     } catch (err) {
       console.error(err);
-      res
-        .status(500)
-        .json({ success: false, message: 'Internal server error' });
+      res.status(500).json({ success: false, message: 'Internal server error' });
     }
   }
 );
 
+
 // POST /auth/logout
 router.post('/logout', (req, res) => {
-  // Nič se ne shranjuje na backendu, frontend bo pobrisal JWT
-  res.json({ success: true, message: 'Logout successful' });
+  // Če token ni v cookie, samo na klientu odstranimo token
+  res.json({ success: true, message: 'Logged out successfully' });
 });
+
+
 
 // GET /auth/me (Get current user info)
 router.get('/me', authenticate, async (req, res) => {
@@ -157,7 +154,6 @@ router.get('/me', authenticate, async (req, res) => {
         'id',
         'username',
         'email',
-        'role',
         'is_verified',
         'created_at',
       ],

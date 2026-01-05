@@ -59,10 +59,9 @@ router.post(
 
       res.status(201).json({
         success: true,
-        message: 'Registration successful. Please check your email to verify your account.',
+        message:
+          'Registration successful. Please check your email to verify your account.',
       });
-
-
     } catch (err) {
       console.error(err);
       res
@@ -109,16 +108,25 @@ router.post(
     try {
       const user = await User.findOne({ where: { email } });
       if (!user) {
-        return res.status(400).json({ success: false, message: 'Invalid email or password' });
+        return res
+          .status(400)
+          .json({ success: false, message: 'Invalid email or password' });
       }
 
       if (!user.is_verified) {
-        return res.status(400).json({ success: false, message: 'Account not verified yet' });
+        return res
+          .status(400)
+          .json({ success: false, message: 'Account not verified yet' });
       }
 
-      const isPasswordValid = await comparePassword(password, user.password_hash);
+      const isPasswordValid = await comparePassword(
+        password,
+        user.password_hash
+      );
       if (!isPasswordValid) {
-        return res.status(400).json({ success: false, message: 'Invalid email or password' });
+        return res
+          .status(400)
+          .json({ success: false, message: 'Invalid email or password' });
       }
 
       // Generiraj JWT in ga pošlji v JSON
@@ -129,14 +137,14 @@ router.post(
         message: 'Login successful',
         token, // <-- token v JSON
       });
-
     } catch (err) {
       console.error(err);
-      res.status(500).json({ success: false, message: 'Internal server error' });
+      res
+        .status(500)
+        .json({ success: false, message: 'Internal server error' });
     }
   }
 );
-
 
 // POST /auth/logout
 router.post('/logout', (req, res) => {
@@ -144,19 +152,11 @@ router.post('/logout', (req, res) => {
   res.json({ success: true, message: 'Logged out successfully' });
 });
 
-
-
 // GET /auth/me (Get current user info)
 router.get('/me', authenticate, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {
-      attributes: [
-        'id',
-        'username',
-        'email',
-        'is_verified',
-        'created_at',
-      ],
+      attributes: ['id', 'username', 'email', 'is_verified', 'created_at'],
     });
 
     if (!user) {

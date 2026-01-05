@@ -9,7 +9,7 @@ module.exports = {
       allowNull: false,
     });
     */
-   
+
     await queryInterface.addColumn('Users', 'is_verified', {
       type: Sequelize.BOOLEAN,
       defaultValue: false,

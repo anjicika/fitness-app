@@ -11,7 +11,6 @@ const forumRoutes = require('./src/routes/forum');
 const metricsRoutes = require('./src/routes/metrics');
 const statisticsRoutes = require('./src/routes/statistics');
 
-
 const { sequelize } = require('./src/models');
 
 const app = express();
@@ -99,7 +98,6 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/forum', forumRoutes);
 app.use('/api/v1/metrics', metricsRoutes);
 app.use('/api/v1/statistics', statisticsRoutes);
-
 
 // 404 HANDLER
 app.use((req, res) => {

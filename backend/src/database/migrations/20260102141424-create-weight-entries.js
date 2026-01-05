@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Weight_entries', {
+    await queryInterface.createTable('WeightEntries', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -39,10 +39,10 @@ module.exports = {
       },
     });
 
-    await queryInterface.addIndex('Weight_entries', ['user_id', 'measured_at']);
+    await queryInterface.addIndex('WeightEntries', ['user_id', 'measured_at']);
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Weight_entries');
+    await queryInterface.dropTable('WeightEntries');
   },
 };

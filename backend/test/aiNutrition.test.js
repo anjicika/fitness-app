@@ -1,4 +1,4 @@
-/* global describe, it, before */
+/* eslint-env mocha */
 require('dotenv').config();
 
 let expect;

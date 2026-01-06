@@ -9,15 +9,16 @@ const aiRateLimiter = rateLimit({
   max: 10, // Max 10 requests per window per IP
   message: {
     success: false,
-    error: 'Too many AI requests from this IP, please try again after 15 minutes.',
-    retryAfter: '15 minutes'
+    error:
+      'Too many AI requests from this IP, please try again after 15 minutes.',
+    retryAfter: '15 minutes',
   },
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => {
+  skip: req => {
     // Skip rate limiting for admin users (if you have admin role)
     return req.user?.role === 'admin';
-  }
+  },
 });
 
 /**
@@ -29,13 +30,13 @@ const generalRateLimiter = rateLimit({
   max: 100,
   message: {
     success: false,
-    error: 'Too many requests, please slow down.'
+    error: 'Too many requests, please slow down.',
   },
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-module.exports = { 
-  aiRateLimiter, 
-  generalRateLimiter 
+module.exports = {
+  aiRateLimiter,
+  generalRateLimiter,
 };

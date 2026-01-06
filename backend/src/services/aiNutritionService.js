@@ -1,4 +1,4 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 if (!process.env.GEMINI_API_KEY) {
   throw new Error('GEMINI_API_KEY is not set in environment variables!');
@@ -9,10 +9,10 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 class AINutritionService {
   async getNutritionAdvice(userProfile) {
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-      generationConfig: { 
-        temperature: 0.7, 
-        maxOutputTokens: 500 
+      model: 'gemini-2.5-flash',
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 500,
       },
     });
 
@@ -28,7 +28,7 @@ Focus on calories, macros, timing, foods. Max 200 words. Plain text only.`;
       return result.response.text().trim();
     } catch (error) {
       console.error('Gemini API Error for nutrition advice:', error.message);
-      
+
       // Fallback nutrition advice
       return this.generateFallbackNutritionAdvice(userProfile);
     }
@@ -36,9 +36,9 @@ Focus on calories, macros, timing, foods. Max 200 words. Plain text only.`;
 
   async generateMealPlan(userProfile, days = 3) {
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
+      model: 'gemini-2.5-flash',
       generationConfig: {
-        response_mime_type: "application/json",
+        response_mime_type: 'application/json',
         temperature: 0.7,
         maxOutputTokens: 8000,
       },
@@ -96,10 +96,10 @@ Use double quotes. Keep descriptions short. Ensure JSON is complete and valid.`;
     try {
       const result = await model.generateContent(prompt);
       let text = result.response.text().trim();
-      
+
       const jsonStr = this.cleanJSONResponse(text);
       this.validateJSONCompletion(jsonStr);
-      
+
       return JSON.parse(jsonStr);
     } catch (error) {
       console.error('Meal plan error:', error.message);
@@ -109,9 +109,9 @@ Use double quotes. Keep descriptions short. Ensure JSON is complete and valid.`;
 
   async analyzeMeal(mealDescription) {
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
+      model: 'gemini-2.5-flash',
       generationConfig: {
-        response_mime_type: "application/json",
+        response_mime_type: 'application/json',
         temperature: 0.4,
         maxOutputTokens: 2000,
       },
@@ -144,10 +144,10 @@ Use double quotes only. Keep numbers as numbers, not strings. Ensure JSON is com
     try {
       const result = await model.generateContent(prompt);
       let text = result.response.text().trim();
-      
+
       const jsonStr = this.cleanJSONResponse(text);
       this.validateJSONCompletion(jsonStr);
-      
+
       return JSON.parse(jsonStr);
     } catch (error) {
       console.error('Meal analysis error:', error.message);
@@ -157,17 +157,17 @@ Use double quotes only. Keep numbers as numbers, not strings. Ensure JSON is com
 
   validateJSONCompletion(jsonStr) {
     const trimmed = jsonStr.trim();
-    
+
     let braceCount = 0;
     let bracketCount = 0;
-    
+
     for (let char of trimmed) {
       if (char === '{') braceCount++;
       if (char === '}') braceCount--;
       if (char === '[') bracketCount++;
       if (char === ']') bracketCount--;
     }
-    
+
     if (braceCount !== 0) {
       throw new Error(`Unbalanced braces: ${braceCount}`);
     }
@@ -182,32 +182,32 @@ Use double quotes only. Keep numbers as numbers, not strings. Ensure JSON is com
     }
 
     let cleaned = text;
-    
+
     cleaned = cleaned.replace(/```json\s*/gi, '');
     cleaned = cleaned.replace(/```\s*/gi, '');
-    
+
     if (cleaned.toLowerCase().startsWith('json')) {
       cleaned = cleaned.substring(4).trim();
     }
-    
+
     const firstBrace = cleaned.indexOf('{');
     if (firstBrace === -1) {
       throw new Error('No JSON object found');
     }
-    
+
     let lastBrace = cleaned.lastIndexOf('}');
-    
+
     if (lastBrace === -1) {
       const lastValidChars = ['}', ']', '"'];
       let lastValidIndex = -1;
-      
+
       for (let i = cleaned.length - 1; i >= 0; i--) {
         if (lastValidChars.includes(cleaned[i])) {
           lastValidIndex = i;
           break;
         }
       }
-      
+
       if (lastValidIndex > firstBrace) {
         cleaned = cleaned.substring(0, lastValidIndex + 1) + '}';
         lastBrace = cleaned.length - 1;
@@ -216,15 +216,15 @@ Use double quotes only. Keep numbers as numbers, not strings. Ensure JSON is com
         lastBrace = cleaned.length - 1;
       }
     }
-    
+
     if (lastBrace <= firstBrace) {
       throw new Error('Invalid JSON boundaries');
     }
-    
+
     let jsonContent = cleaned.substring(firstBrace, lastBrace + 1);
-    
+
     jsonContent = this.fixTruncatedStrings(jsonContent);
-    
+
     let fixed = jsonContent
       .replace(/'/g, '"')
       .replace(/(\w+):/g, '"$1":')
@@ -237,37 +237,37 @@ Use double quotes only. Keep numbers as numbers, not strings. Ensure JSON is com
       .replace(/\t/g, ' ')
       .replace(/\s+/g, ' ')
       .trim();
-    
+
     fixed = this.fixStringValues(fixed);
-    
+
     return fixed;
   }
 
   fixTruncatedStrings(jsonContent) {
     const commonKeys = {
-      'car': 'carbs',
-      'prote': 'protein',
-      'descrip': 'description',
-      'calori': 'calories',
-      'healt': 'healthScore',
-      'suggestio': 'suggestions',
-      'totalCalori': 'totalCalories'
+      car: 'carbs',
+      prote: 'protein',
+      descrip: 'description',
+      calori: 'calories',
+      healt: 'healthScore',
+      suggestio: 'suggestions',
+      totalCalori: 'totalCalories',
     };
-    
+
     let fixed = jsonContent;
-    
+
     for (const [bad, good] of Object.entries(commonKeys)) {
       const regex = new RegExp(`"${bad}"\\s*:`, 'g');
       fixed = fixed.replace(regex, `"${good}":`);
     }
-    
+
     fixed = fixed.replace(/"([^"]*?)(?=\s*"|,|\]|\})/g, (match, content) => {
       if (match.endsWith('"')) {
         return match;
       }
       return `"${content}..."`;
     });
-    
+
     return fixed;
   }
 
@@ -275,74 +275,84 @@ Use double quotes only. Keep numbers as numbers, not strings. Ensure JSON is com
     let result = '';
     let inString = false;
     let escapeNext = false;
-    
+
     for (let i = 0; i < jsonStr.length; i++) {
       const char = jsonStr[i];
-      
+
       if (escapeNext) {
         result += char;
         escapeNext = false;
         continue;
       }
-      
+
       if (char === '\\') {
         result += char;
         escapeNext = true;
         continue;
       }
-      
+
       if (char === '"') {
         inString = !inString;
         result += char;
         continue;
       }
-      
+
       if (!inString && char === ':' && i + 1 < jsonStr.length) {
         let nextIndex = i + 1;
         while (nextIndex < jsonStr.length && jsonStr[nextIndex] === ' ') {
           nextIndex++;
         }
-        
+
         if (nextIndex < jsonStr.length) {
           const nextChar = jsonStr[nextIndex];
-          if (nextChar !== '"' && nextChar !== '[' && nextChar !== '{' && 
-              nextChar !== 't' && nextChar !== 'f' && nextChar !== 'n' &&
-              !(/[\d-]/.test(nextChar))) {
+          if (
+            nextChar !== '"' &&
+            nextChar !== '[' &&
+            nextChar !== '{' &&
+            nextChar !== 't' &&
+            nextChar !== 'f' &&
+            nextChar !== 'n' &&
+            !/[\d-]/.test(nextChar)
+          ) {
             result += ': "';
             let endIndex = nextIndex;
-            while (endIndex < jsonStr.length && jsonStr[endIndex] !== ',' && 
-                   jsonStr[endIndex] !== '}' && jsonStr[endIndex] !== ']') {
+            while (
+              endIndex < jsonStr.length &&
+              jsonStr[endIndex] !== ',' &&
+              jsonStr[endIndex] !== '}' &&
+              jsonStr[endIndex] !== ']'
+            ) {
               endIndex++;
             }
-            
+
             result += jsonStr.substring(nextIndex, endIndex).trim();
             result += '"';
-            
+
             if (endIndex < jsonStr.length) {
               result += jsonStr[endIndex];
             }
-            
+
             i = endIndex;
             continue;
           }
         }
       }
-      
+
       result += char;
     }
-    
+
     return result;
   }
 
   generateFallbackNutritionAdvice(userProfile) {
     const dailyCalories = this.calculateCalories(userProfile);
     const macros = this.getMacroSplit(userProfile.fitnessGoal);
-    
+
     let advice = `Nutrition advice for your ${userProfile.fitnessGoal.replace('_', ' ')} goal:\n\n`;
-    
+
     advice += `Daily calorie target: ${dailyCalories} calories\n`;
     advice += `Macro split: Protein ${macros.protein}%, Carbs ${macros.carbs}%, Fats ${macros.fats}%\n\n`;
-    
+
     if (userProfile.fitnessGoal === 'weight_loss') {
       advice += `1. Eat at a calorie deficit of 300-500 calories below maintenance\n`;
       advice += `2. Focus on high-protein foods to preserve muscle mass\n`;
@@ -362,53 +372,59 @@ Use double quotes only. Keep numbers as numbers, not strings. Ensure JSON is com
       advice += `4. Stay hydrated throughout the day\n`;
       advice += `5. Practice mindful eating and listen to your body's hunger cues\n`;
     }
-    
+
     return advice;
   }
 
   generateFallbackMealPlan(userProfile, days) {
     const dailyCalories = this.calculateCalories(userProfile);
     const macros = this.getMacroSplit(userProfile.fitnessGoal);
-    
+
     const mealPlan = {
       totalDays: days,
       dailyCalorieTarget: dailyCalories,
       macroSplit: macros,
-      days: []
+      days: [],
     };
-    
+
     for (let i = 1; i <= days; i++) {
       mealPlan.days.push({
         day: i,
         meals: [
           {
-            meal: "Breakfast",
-            description: "Scrambled eggs with whole wheat toast and vegetables",
+            meal: 'Breakfast',
+            description: 'Scrambled eggs with whole wheat toast and vegetables',
             calories: Math.round(dailyCalories * 0.25),
-            protein: Math.round((dailyCalories * 0.25 * macros.protein / 100) / 4),
-            carbs: Math.round((dailyCalories * 0.25 * macros.carbs / 100) / 4),
-            fats: Math.round((dailyCalories * 0.25 * macros.fats / 100) / 9)
+            protein: Math.round(
+              (dailyCalories * 0.25 * macros.protein) / 100 / 4
+            ),
+            carbs: Math.round((dailyCalories * 0.25 * macros.carbs) / 100 / 4),
+            fats: Math.round((dailyCalories * 0.25 * macros.fats) / 100 / 9),
           },
           {
-            meal: "Lunch",
-            description: "Grilled chicken with quinoa and mixed salad",
+            meal: 'Lunch',
+            description: 'Grilled chicken with quinoa and mixed salad',
             calories: Math.round(dailyCalories * 0.35),
-            protein: Math.round((dailyCalories * 0.35 * macros.protein / 100) / 4),
-            carbs: Math.round((dailyCalories * 0.35 * macros.carbs / 100) / 4),
-            fats: Math.round((dailyCalories * 0.35 * macros.fats / 100) / 9)
+            protein: Math.round(
+              (dailyCalories * 0.35 * macros.protein) / 100 / 4
+            ),
+            carbs: Math.round((dailyCalories * 0.35 * macros.carbs) / 100 / 4),
+            fats: Math.round((dailyCalories * 0.35 * macros.fats) / 100 / 9),
           },
           {
-            meal: "Dinner",
-            description: "Baked salmon with sweet potato and steamed broccoli",
-            calories: Math.round(dailyCalories * 0.30),
-            protein: Math.round((dailyCalories * 0.30 * macros.protein / 100) / 4),
-            carbs: Math.round((dailyCalories * 0.30 * macros.carbs / 100) / 4),
-            fats: Math.round((dailyCalories * 0.30 * macros.fats / 100) / 9)
-          }
-        ]
+            meal: 'Dinner',
+            description: 'Baked salmon with sweet potato and steamed broccoli',
+            calories: Math.round(dailyCalories * 0.3),
+            protein: Math.round(
+              (dailyCalories * 0.3 * macros.protein) / 100 / 4
+            ),
+            carbs: Math.round((dailyCalories * 0.3 * macros.carbs) / 100 / 4),
+            fats: Math.round((dailyCalories * 0.3 * macros.fats) / 100 / 9),
+          },
+        ],
       });
     }
-    
+
     return mealPlan;
   }
 
@@ -422,38 +438,47 @@ Use double quotes only. Keep numbers as numbers, not strings. Ensure JSON is com
       fiber: 8,
       foods: [
         {
-          name: "Estimated components",
-          portion: "Typical serving",
-          calories: 600
-        }
+          name: 'Estimated components',
+          portion: 'Typical serving',
+          calories: 600,
+        },
       ],
       healthScore: 7,
-      suggestions: "This appears to be a balanced meal. Consider adding more vegetables for fiber."
+      suggestions:
+        'This appears to be a balanced meal. Consider adding more vegetables for fiber.',
     };
   }
 
   calculateCalories(userProfile) {
     let bmr;
     if (userProfile.gender === 'male') {
-      bmr = 10 * userProfile.weight + 6.25 * userProfile.height - 5 * userProfile.age + 5;
+      bmr =
+        10 * userProfile.weight +
+        6.25 * userProfile.height -
+        5 * userProfile.age +
+        5;
     } else {
-      bmr = 10 * userProfile.weight + 6.25 * userProfile.height - 5 * userProfile.age - 161;
+      bmr =
+        10 * userProfile.weight +
+        6.25 * userProfile.height -
+        5 * userProfile.age -
+        161;
     }
-    
-    const multipliers = { 
-      sedentary: 1.2, 
-      light: 1.375, 
-      moderate: 1.55, 
-      active: 1.725, 
-      veryActive: 1.9 
+
+    const multipliers = {
+      sedentary: 1.2,
+      light: 1.375,
+      moderate: 1.55,
+      active: 1.725,
+      veryActive: 1.9,
     };
-    
+
     const tdee = bmr * (multipliers[userProfile.activityLevel] || 1.2);
     let target = tdee;
-    
+
     if (userProfile.fitnessGoal === 'weight_loss') target -= 500;
     else if (userProfile.fitnessGoal === 'muscle_gain') target += 300;
-    
+
     return Math.round(target);
   }
 
@@ -468,9 +493,9 @@ Use double quotes only. Keep numbers as numbers, not strings. Ensure JSON is com
 
   calculateMacroGrams(totalCalories, macroSplit) {
     return {
-      protein: Math.round((totalCalories * macroSplit.protein / 100) / 4),
-      carbs: Math.round((totalCalories * macroSplit.carbs / 100) / 4),
-      fats: Math.round((totalCalories * macroSplit.fats / 100) / 9),
+      protein: Math.round((totalCalories * macroSplit.protein) / 100 / 4),
+      carbs: Math.round((totalCalories * macroSplit.carbs) / 100 / 4),
+      fats: Math.round((totalCalories * macroSplit.fats) / 100 / 9),
     };
   }
 }

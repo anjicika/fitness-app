@@ -1,4 +1,6 @@
 /* eslint-env mocha */
+/* eslint-disable no-undef */
+/* eslint-disable no-redeclare */
 const { calculateStatistics } = require('../src/utils/calculatestatistics');
 let expect;
 

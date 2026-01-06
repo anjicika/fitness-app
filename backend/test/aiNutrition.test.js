@@ -1,3 +1,4 @@
+/* global describe, it, before */
 require('dotenv').config();
 
 let expect;

@@ -12,6 +12,7 @@ const metricsRoutes = require('./src/routes/metrics');
 const statisticsRoutes = require('./src/routes/statistics');
 const nutritionRoutes = require('./src/routes/nutrition');
 const aiTrainerRoutes = require('./src/routes/aiTrainer');
+const bookingRoutes = require('./src/routes/booking');
 
 const { sequelize } = require('./src/models');
 
@@ -103,6 +104,7 @@ app.use('/api/v1/metrics', metricsRoutes);
 app.use('/api/v1/statistics', statisticsRoutes);
 app.use('/api/v1/nutrition', nutritionRoutes);
 app.use('/api/v1/ai-trainer', aiTrainerRoutes);
+app.use('/api/v1/bookings', bookingRoutes);
 
 // 404 HANDLER
 app.use((req, res) => {

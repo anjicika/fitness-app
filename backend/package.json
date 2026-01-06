@@ -10,7 +10,7 @@
     "migrate": "node src/database/migrate.js",
     "seed": "node src/database/seed.js",
     "format": "prettier --write .",
-    "test": "mocha test/**/*.test.js --require dotenv/config --require test/setup.js",
+    "test": "mocha test/**/*.test.js --require dotenv/config",
     "format:check": "prettier --check ."
   },
   "dependencies": {

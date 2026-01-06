@@ -10,6 +10,7 @@ const authRoutes = require('./src/routes/auth');
 const forumRoutes = require('./src/routes/forum');
 const metricsRoutes = require('./src/routes/metrics');
 const statisticsRoutes = require('./src/routes/statistics');
+const nutritionRoutes = require('./src/routes/nutrition'); // ✅ DODANO
 
 const { sequelize } = require('./src/models');
 
@@ -21,7 +22,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 app.use(helmet());
 
 const corsOptions = {
-  origin: ['http://localhost:5173'],
+  origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:5173'], // ✅ IZBOLJŠANO
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -87,17 +88,12 @@ app.get('/api/v1/test', (req, res) => {
   });
 });
 
-// API ROUTES (will be added in future tasks)
-
-// app.use('/api/v1/auth', require('./src/routes/auth'));
-// app.use('/api/v1/users', require('./src/routes/users'));
-// app.use('/api/v1/workouts', require('./src/routes/workouts'));
-// ... etc
-
+// API ROUTES
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/forum', forumRoutes);
 app.use('/api/v1/metrics', metricsRoutes);
 app.use('/api/v1/statistics', statisticsRoutes);
+app.use('/api/v1/nutrition', nutritionRoutes); // ✅ DODANO
 
 // 404 HANDLER
 app.use((req, res) => {

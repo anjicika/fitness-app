@@ -1,5 +1,5 @@
 /* eslint-env mocha */
-/* global describe, it, before, after, beforeEach, afterEach */
+/* eslint-disable no-redeclare */
 require('dotenv').config();
 
 let expect;

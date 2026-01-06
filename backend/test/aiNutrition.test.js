@@ -1,4 +1,5 @@
 /* eslint-env mocha */
+/* eslint-disable no-undef */
 /* eslint-disable no-redeclare */
 require('dotenv').config();
 

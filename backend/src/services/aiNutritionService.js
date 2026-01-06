@@ -7,11 +7,16 @@ if (process.env.GEMINI_API_KEY) {
   try {
     genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   } catch (error) {
-    console.warn('Invalid GEMINI_API_KEY – AI features disabled:', error.message);
+    console.warn(
+      'Invalid GEMINI_API_KEY – AI features disabled:',
+      error.message
+    );
     genAI = null;
   }
 } else {
-  console.warn('GEMINI_API_KEY is not set – AI nutrition features will use fallback');
+  console.warn(
+    'GEMINI_API_KEY is not set – AI nutrition features will use fallback'
+  );
 }
 
 class AINutritionService {

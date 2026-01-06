@@ -24,22 +24,38 @@ describe('AI Nutrition Service Tests', () => {
     });
 
     it('should calculate lower calories for weight loss', () => {
-      const maintenanceProfile = { ...mockUserProfile, fitnessGoal: 'maintenance' };
-      const weightLossProfile = { ...mockUserProfile, fitnessGoal: 'weight_loss' };
+      const maintenanceProfile = {
+        ...mockUserProfile,
+        fitnessGoal: 'maintenance',
+      };
+      const weightLossProfile = {
+        ...mockUserProfile,
+        fitnessGoal: 'weight_loss',
+      };
 
-      const maintenanceCal = aiNutritionService.calculateCalories(maintenanceProfile);
-      const weightLossCal = aiNutritionService.calculateCalories(weightLossProfile);
+      const maintenanceCal =
+        aiNutritionService.calculateCalories(maintenanceProfile);
+      const weightLossCal =
+        aiNutritionService.calculateCalories(weightLossProfile);
 
       expect(weightLossCal).toBeLessThan(maintenanceCal);
       expect(maintenanceCal - weightLossCal).toBe(500);
     });
 
     it('should calculate higher calories for muscle gain', () => {
-      const maintenanceProfile = { ...mockUserProfile, fitnessGoal: 'maintenance' };
-      const muscleGainProfile = { ...mockUserProfile, fitnessGoal: 'muscle_gain' };
+      const maintenanceProfile = {
+        ...mockUserProfile,
+        fitnessGoal: 'maintenance',
+      };
+      const muscleGainProfile = {
+        ...mockUserProfile,
+        fitnessGoal: 'muscle_gain',
+      };
 
-      const maintenanceCal = aiNutritionService.calculateCalories(maintenanceProfile);
-      const muscleGainCal = aiNutritionService.calculateCalories(muscleGainProfile);
+      const maintenanceCal =
+        aiNutritionService.calculateCalories(maintenanceProfile);
+      const muscleGainCal =
+        aiNutritionService.calculateCalories(muscleGainProfile);
 
       expect(muscleGainCal).toBeGreaterThan(maintenanceCal);
       expect(muscleGainCal - maintenanceCal).toBe(300);
@@ -91,13 +107,17 @@ describe('AI Nutrition Service Tests', () => {
   describe('getNutritionAdvice() - AI Integration', () => {
     it('should generate nutrition advice from AI', async () => {
       try {
-        const advice = await aiNutritionService.getNutritionAdvice(mockUserProfile);
+        const advice =
+          await aiNutritionService.getNutritionAdvice(mockUserProfile);
         expect(typeof advice).toBe('string');
         expect(advice.length).toBeGreaterThan(50);
         console.log('\n✅ AI Advice Sample:');
         console.log(advice.substring(0, 200) + '...\n');
       } catch (error) {
-        if (error.message.includes('Gemini API key') || error.message.includes('not configured')) {
+        if (
+          error.message.includes('Gemini API key') ||
+          error.message.includes('not configured')
+        ) {
           console.log('⏭️  Skipping test - Gemini API key not configured');
           return;
         }
@@ -109,7 +129,10 @@ describe('AI Nutrition Service Tests', () => {
   describe('generateMealPlan() - AI Integration', () => {
     it('should generate 3-day meal plan', async () => {
       try {
-        const mealPlan = await aiNutritionService.generateMealPlan(mockUserProfile, 3);
+        const mealPlan = await aiNutritionService.generateMealPlan(
+          mockUserProfile,
+          3
+        );
         expect(mealPlan).toBeInstanceOf(Object);
         expect(mealPlan.days).toBeInstanceOf(Array);
         expect(mealPlan.days).toHaveLength(3);
@@ -121,7 +144,10 @@ describe('AI Nutrition Service Tests', () => {
         console.log(JSON.stringify(firstDay.meals[0], null, 2));
         console.log('...\n');
       } catch (error) {
-        if (error.message.includes('Gemini API key') || error.message.includes('not configured')) {
+        if (
+          error.message.includes('Gemini API key') ||
+          error.message.includes('not configured')
+        ) {
           console.log('⏭️  Skipping test - Gemini API key not configured');
           return;
         }
@@ -133,7 +159,8 @@ describe('AI Nutrition Service Tests', () => {
   describe('analyzeMeal() - AI Integration', () => {
     it('should analyze a meal description', async () => {
       try {
-        const mealDescription = 'Grilled chicken breast 200g, brown rice 150g, steamed broccoli 100g';
+        const mealDescription =
+          'Grilled chicken breast 200g, brown rice 150g, steamed broccoli 100g';
         const analysis = await aiNutritionService.analyzeMeal(mealDescription);
         expect(analysis).toBeInstanceOf(Object);
         expect(analysis).toHaveProperty('totalCalories');
@@ -145,7 +172,10 @@ describe('AI Nutrition Service Tests', () => {
         console.log(JSON.stringify(analysis, null, 2));
         console.log('\n');
       } catch (error) {
-        if (error.message.includes('Gemini API key') || error.message.includes('not configured')) {
+        if (
+          error.message.includes('Gemini API key') ||
+          error.message.includes('not configured')
+        ) {
           console.log('⏭️  Skipping test - Gemini API key not configured');
           return;
         }

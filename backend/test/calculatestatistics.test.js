@@ -1,6 +1,11 @@
 /* eslint-env mocha */
 const { calculateStatistics } = require('../src/utils/calculatestatistics');
-const { expect } = require('chai');
+let expect;
+
+before(async () => {
+  const chai = await import('chai');
+  expect = chai.expect;
+});
 
 describe('calculateStatistics', () => {
   it('returns no-data when values array is empty', () => {

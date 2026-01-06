@@ -1,10 +1,15 @@
 require('dotenv').config();
 
-const expect = require('chai').expect;
+let expect;
+
+before(async () => {
+  const chai = await import('chai');
+  expect = chai.expect;
+});
+
 const aiNutritionService = require('../src/services/aiNutritionService');
 
 describe('AI Nutrition Service Tests', function () {
-  // AI calls can be slow
   this.timeout(20000);
 
   const mockUserProfile = {

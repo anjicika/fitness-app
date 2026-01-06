@@ -2,8 +2,8 @@ require('dotenv').config();
 
 const aiNutritionService = require('../src/services/aiNutritionService');
 
-describe('AI Nutrition Service Tests', function () {
-  this.timeout(20000);
+describe('AI Nutrition Service Tests', () => {
+  jest.setTimeout(20000);
 
   const mockUserProfile = {
     age: 25,
@@ -15,15 +15,15 @@ describe('AI Nutrition Service Tests', function () {
     dietaryRestrictions: null,
   };
 
-  describe('calculateCalories()', function () {
-    it('should calculate calories for male user', function () {
+  describe('calculateCalories()', () => {
+    it('should calculate calories for male user', () => {
       const calories = aiNutritionService.calculateCalories(mockUserProfile);
       expect(typeof calories).toBe('number');
       expect(calories).toBeGreaterThan(1500);
       expect(calories).toBeLessThan(4000);
     });
 
-    it('should calculate lower calories for weight loss', function () {
+    it('should calculate lower calories for weight loss', () => {
       const maintenanceProfile = { ...mockUserProfile, fitnessGoal: 'maintenance' };
       const weightLossProfile = { ...mockUserProfile, fitnessGoal: 'weight_loss' };
 
@@ -34,7 +34,7 @@ describe('AI Nutrition Service Tests', function () {
       expect(maintenanceCal - weightLossCal).toBe(500);
     });
 
-    it('should calculate higher calories for muscle gain', function () {
+    it('should calculate higher calories for muscle gain', () => {
       const maintenanceProfile = { ...mockUserProfile, fitnessGoal: 'maintenance' };
       const muscleGainProfile = { ...mockUserProfile, fitnessGoal: 'muscle_gain' };
 
@@ -46,8 +46,8 @@ describe('AI Nutrition Service Tests', function () {
     });
   });
 
-  describe('getMacroSplit()', function () {
-    it('should return macro split for weight loss', function () {
+  describe('getMacroSplit()', () => {
+    it('should return macro split for weight loss', () => {
       const split = aiNutritionService.getMacroSplit('weight_loss');
       expect(split).toHaveProperty('protein');
       expect(split).toHaveProperty('carbs');
@@ -55,21 +55,21 @@ describe('AI Nutrition Service Tests', function () {
       expect(split.protein + split.carbs + split.fats).toBe(100);
     });
 
-    it('should return higher protein for weight loss', function () {
+    it('should return higher protein for weight loss', () => {
       const weightLoss = aiNutritionService.getMacroSplit('weight_loss');
       const muscleGain = aiNutritionService.getMacroSplit('muscle_gain');
       expect(weightLoss.protein).toBeGreaterThan(muscleGain.protein);
     });
 
-    it('should return default split for unknown goal', function () {
+    it('should return default split for unknown goal', () => {
       const split = aiNutritionService.getMacroSplit('unknown_goal');
       const maintenance = aiNutritionService.getMacroSplit('maintenance');
       expect(split).toEqual(maintenance);
     });
   });
 
-  describe('calculateMacroGrams()', function () {
-    it('should calculate macro grams correctly', function () {
+  describe('calculateMacroGrams()', () => {
+    it('should calculate macro grams correctly', () => {
       const calories = 2000;
       const split = { protein: 30, carbs: 40, fats: 30 };
       const grams = aiNutritionService.calculateMacroGrams(calories, split);
@@ -78,7 +78,7 @@ describe('AI Nutrition Service Tests', function () {
       expect(grams.fats).toBe(67);
     });
 
-    it('should handle different calorie amounts', function () {
+    it('should handle different calorie amounts', () => {
       const split = { protein: 30, carbs: 40, fats: 30 };
       const grams1500 = aiNutritionService.calculateMacroGrams(1500, split);
       const grams3000 = aiNutritionService.calculateMacroGrams(3000, split);
@@ -88,9 +88,8 @@ describe('AI Nutrition Service Tests', function () {
     });
   });
 
-  describe('getNutritionAdvice() - AI Integration', function () {
-    it('should generate nutrition advice from AI', async function () {
-      this.timeout(30000);
+  describe('getNutritionAdvice() - AI Integration', () => {
+    it('should generate nutrition advice from AI', async () => {
       try {
         const advice = await aiNutritionService.getNutritionAdvice(mockUserProfile);
         expect(typeof advice).toBe('string');
@@ -99,16 +98,16 @@ describe('AI Nutrition Service Tests', function () {
         console.log(advice.substring(0, 200) + '...\n');
       } catch (error) {
         if (error.message.includes('Gemini API key') || error.message.includes('not configured')) {
-          this.skip();
+          console.log('⏭️  Skipping test - Gemini API key not configured');
+          return;
         }
         throw error;
       }
-    });
+    }, 30000);
   });
 
-  describe('generateMealPlan() - AI Integration', function () {
-    it('should generate 3-day meal plan', async function () {
-      this.timeout(40000);
+  describe('generateMealPlan() - AI Integration', () => {
+    it('should generate 3-day meal plan', async () => {
       try {
         const mealPlan = await aiNutritionService.generateMealPlan(mockUserProfile, 3);
         expect(mealPlan).toBeInstanceOf(Object);
@@ -123,16 +122,16 @@ describe('AI Nutrition Service Tests', function () {
         console.log('...\n');
       } catch (error) {
         if (error.message.includes('Gemini API key') || error.message.includes('not configured')) {
-          this.skip();
+          console.log('⏭️  Skipping test - Gemini API key not configured');
+          return;
         }
         throw error;
       }
-    });
+    }, 40000);
   });
 
-  describe('analyzeMeal() - AI Integration', function () {
-    it('should analyze a meal description', async function () {
-      this.timeout(30000);
+  describe('analyzeMeal() - AI Integration', () => {
+    it('should analyze a meal description', async () => {
       try {
         const mealDescription = 'Grilled chicken breast 200g, brown rice 150g, steamed broccoli 100g';
         const analysis = await aiNutritionService.analyzeMeal(mealDescription);
@@ -147,10 +146,11 @@ describe('AI Nutrition Service Tests', function () {
         console.log('\n');
       } catch (error) {
         if (error.message.includes('Gemini API key') || error.message.includes('not configured')) {
-          this.skip();
+          console.log('⏭️  Skipping test - Gemini API key not configured');
+          return;
         }
         throw error;
       }
-    });
+    }, 30000);
   });
 });

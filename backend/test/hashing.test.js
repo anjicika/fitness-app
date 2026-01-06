@@ -1,3 +1,4 @@
+/* eslint-env mocha */
 const { hashPassword, comparePassword } = require('../src/utils/hashing');
 
 describe('Password hashing', () => {

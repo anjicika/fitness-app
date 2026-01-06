@@ -1,3 +1,4 @@
+/* eslint-env mocha */
 const { calculateStatistics } = require('../src/utils/calculatestatistics');
 const { expect } = require('chai');
 

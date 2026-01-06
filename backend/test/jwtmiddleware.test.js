@@ -1,3 +1,4 @@
+/* eslint-env mocha */
 const request = require('supertest');
 const express = require('express');
 const authenticate = require('../src/utils/jwtmiddleware');

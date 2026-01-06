@@ -1,4 +1,5 @@
 // test/auth.test.js
+/* eslint-env mocha */
 const request = require('supertest');
 const express = require('express');
 

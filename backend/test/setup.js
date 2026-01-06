@@ -1,7 +1,10 @@
-// test/setup.js
-require('dotenv').config(); // naloži .env za teste
+require('dotenv').config();
 
-// Če uporabljate chai (kar verjetno, ker je v devDependencies)
-const chai = require('chai');
-global.expect = chai.expect;
-global.should = chai.should;
+async function loadChai() {
+  const chai = await import('chai');
+  global.expect = chai.expect;
+  global.assert = chai.assert;
+  global.should = chai.should; 
+}
+
+loadChai().catch(err => console.error('Failed to load chai:', err));

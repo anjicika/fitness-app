@@ -10,7 +10,7 @@
     "migrate": "node src/database/migrate.js",
     "seed": "node src/database/seed.js",
     "format": "prettier --write .",
-    "test": "mocha test/**/*.test.js --require dotenv/config",
+    "test": "cross-env NODE_ENV=test JWT_SECRET=test-secret-key jest --testPathPattern=test/.*\\.test\\.js",
     "format:check": "prettier --check ."
   },
   "dependencies": {

@@ -13,12 +13,12 @@ describe('Booking API Tests (No Auth)', () => {
   beforeAll(async () => {
     try {
       console.log('🚀 Setting up test database...');
-      
+
       // Clean the database
       await sequelize.sync({ force: true });
-      
+
       console.log('👤 Creating test user...');
-      
+
       // Create test user
       testUser = await User.create({
         username: 'testuser',
@@ -26,24 +26,23 @@ describe('Booking API Tests (No Auth)', () => {
         password_hash: 'hashed_password_123', // Simplified for testing
         is_verified: true,
       });
-      
+
       console.log(`✅ Test user created (ID: ${testUser.id})`);
-      
+
       console.log('🏋️  Creating test space...');
       testSpace = await Space.create({
         name: 'Test Yoga Studio',
         type: 'class_studio',
         capacity: 10,
-        hourly_rate: 20.00,
+        hourly_rate: 20.0,
         is_active: true,
         amenities: JSON.stringify(['mirrors', 'ac']),
         equipment: JSON.stringify(['yoga_mats', 'blocks']),
-        description: 'Test space for booking tests'
+        description: 'Test space for booking tests',
       });
-      
+
       console.log(`✅ Test space created (ID: ${testSpace.id})`);
       console.log('🎉 Test setup complete!\n');
-      
     } catch (error) {
       console.error('❌ Setup error:', error.message);
       throw error;
@@ -71,7 +70,7 @@ describe('Booking API Tests (No Auth)', () => {
         end_time: '15:30:00',
         status: 'confirmed',
         duration_hours: 1.5,
-        total_price: 30.00
+        total_price: 30.0,
       };
 
       const response = await request(app)
@@ -84,7 +83,7 @@ describe('Booking API Tests (No Auth)', () => {
       expect(response.body.data.space_id).toBe(testSpace.id);
       expect(response.body.data.user_id).toBe(testUser.id);
       expect(response.body.data.status).toBe('pending');
-      
+
       // Save the booking for later tests
       testBooking = response.body.data;
     });
@@ -96,7 +95,9 @@ describe('Booking API Tests (No Auth)', () => {
         .expect(400); // HTTP 400 Bad Request
 
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toContain('Please provide user_id, space_id, booking_date, start_time, and end_time');
+      expect(response.body.message).toContain(
+        'Please provide user_id, space_id, booking_date, start_time, and end_time'
+      );
     });
 
     it('should fail with overlapping booking time', async () => {
@@ -109,7 +110,7 @@ describe('Booking API Tests (No Auth)', () => {
         end_time: '15:30:00',
         status: 'confirmed',
         duration_hours: 1.5,
-        total_price: 30.00
+        total_price: 30.0,
       });
 
       // Try to create overlapping booking
@@ -119,7 +120,7 @@ describe('Booking API Tests (No Auth)', () => {
         booking_date: '2026-12-30',
         start_time: '15:00:00', // Overlaps!
         end_time: '16:30:00',
-        notes: 'Overlapping booking'
+        notes: 'Overlapping booking',
       };
 
       const response = await request(app)
@@ -138,7 +139,7 @@ describe('Booking API Tests (No Auth)', () => {
         booking_date: '2026-12-30',
         start_time: '2:00 PM', // Invalid format
         end_time: '15:30:00',
-        notes: 'Test booking'
+        notes: 'Test booking',
       };
 
       const response = await request(app)
@@ -162,7 +163,7 @@ describe('Booking API Tests (No Auth)', () => {
         end_time: '11:00:00',
         status: 'confirmed',
         duration_hours: 1.0,
-        total_price: 20.00
+        total_price: 20.0,
       });
     });
 
@@ -196,13 +197,13 @@ describe('Booking API Tests (No Auth)', () => {
         end_time: '11:00:00',
         status: 'confirmed',
         duration_hours: 1.0,
-        total_price: 20.00
+        total_price: 20.0,
       });
     });
 
     it('should update booking status', async () => {
       const updateData = {
-        status: 'checked_in'
+        status: 'checked_in',
       };
 
       const response = await request(app)
@@ -226,7 +227,7 @@ describe('Booking API Tests (No Auth)', () => {
         end_time: '11:00:00',
         status: 'confirmed',
         duration_hours: 1.0,
-        total_price: 20.00
+        total_price: 20.0,
       });
     });
 
@@ -253,7 +254,7 @@ describe('Booking API Tests (No Auth)', () => {
         end_time: '15:30:00',
         status: 'confirmed',
         duration_hours: 1.5,
-        total_price: 30.00
+        total_price: 30.0,
       });
     });
 
@@ -264,7 +265,7 @@ describe('Booking API Tests (No Auth)', () => {
           space_id: testSpace.id,
           booking_date: '2024-12-30',
           start_time: '16:00:00', // Different time
-          end_time: '17:00:00'
+          end_time: '17:00:00',
         })
         .expect(200);
 
@@ -279,7 +280,7 @@ describe('Booking API Tests (No Auth)', () => {
           space_id: testSpace.id,
           booking_date: '2024-12-30',
           start_time: '14:30:00', // Overlaps
-          end_time: '15:00:00'
+          end_time: '15:00:00',
         })
         .expect(200);
 
@@ -307,7 +308,7 @@ describe('Booking API Tests (No Auth)', () => {
         end_time: '11:00:00',
         status: 'confirmed',
         duration_hours: 1.0,
-        total_price: 20.00
+        total_price: 20.0,
       });
 
       // Future booking (tomorrow)
@@ -319,7 +320,7 @@ describe('Booking API Tests (No Auth)', () => {
         end_time: '15:00:00',
         status: 'confirmed',
         duration_hours: 1.0,
-        total_price: 20.00
+        total_price: 20.0,
       });
     });
 

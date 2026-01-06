@@ -10,27 +10,41 @@ const { Op } = require('sequelize');
 const createBooking = async (req, res) => {
   try {
     // TEMPORARY: Accept user_id from request body instead of req.user
-    const { user_id, space_id, booking_date, start_time, end_time, notes } = req.body;
+    const { user_id, space_id, booking_date, start_time, end_time, notes } =
+      req.body;
 
-    console.log('📥 Received booking request1:', { user_id, space_id, booking_date, start_time, end_time, notes });
-    console.log('📊 Types:', { 
-      user_id_type: typeof user_id, 
-      space_id_type: typeof space_id, 
+    console.log('📥 Received booking request1:', {
+      user_id,
+      space_id,
+      booking_date,
+      start_time,
+      end_time,
+      notes,
+    });
+    console.log('📊 Types:', {
+      user_id_type: typeof user_id,
+      space_id_type: typeof space_id,
       booking_date_type: typeof booking_date,
       start_time_type: typeof start_time,
-      end_time_type: typeof end_time
+      end_time_type: typeof end_time,
     });
-    
+
     // Input validation - use loose equality check for null/undefined
-    if (user_id == null || space_id == null || booking_date == null || 
-        start_time == null || end_time == null) {
+    if (
+      user_id == null ||
+      space_id == null ||
+      booking_date == null ||
+      start_time == null ||
+      end_time == null
+    ) {
       console.log('❌ Validation failed. Missing fields');
       return res.status(400).json({
         success: false,
-        message: 'Please provide user_id, space_id, booking_date, start_time, and end_time'
+        message:
+          'Please provide user_id, space_id, booking_date, start_time, and end_time',
       });
     }
-    
+
     console.log('✅ All required fields present');
 
     // Validate user exists
@@ -38,19 +52,19 @@ const createBooking = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'User not found'
+        message: 'User not found',
       });
     }
 
     // Check if space exists and is active
     const space = await Space.findOne({
-      where: { id: space_id, is_active: true }
+      where: { id: space_id, is_active: true },
     });
 
     if (!space) {
       return res.status(404).json({
         success: false,
-        message: 'Space not found or not available'
+        message: 'Space not found or not available',
       });
     }
 
@@ -59,7 +73,7 @@ const createBooking = async (req, res) => {
     if (isNaN(bookingDate.getTime())) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid booking date format. Use YYYY-MM-DD'
+        message: 'Invalid booking date format. Use YYYY-MM-DD',
       });
     }
 
@@ -69,7 +83,7 @@ const createBooking = async (req, res) => {
     if (bookingDate < today) {
       return res.status(400).json({
         success: false,
-        message: 'Cannot book for past dates'
+        message: 'Cannot book for past dates',
       });
     }
 
@@ -78,38 +92,41 @@ const createBooking = async (req, res) => {
     if (!timeRegex.test(start_time) || !timeRegex.test(end_time)) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid time format. Use HH:MM:SS (24-hour format)'
+        message: 'Invalid time format. Use HH:MM:SS (24-hour format)',
       });
     }
 
     // Parse times
     const start = new Date(`1970-01-01T${start_time}`);
     const end = new Date(`1970-01-01T${end_time}`);
-    
+
     if (start >= end) {
       return res.status(400).json({
         success: false,
-        message: 'End time must be after start time'
+        message: 'End time must be after start time',
       });
     }
 
     // Check if booking is within business hours (8 AM - 10 PM)
-    if (start.getHours() < 8 || end.getHours() > 22 || 
-        (end.getHours() === 22 && end.getMinutes() > 0)) {
+    if (
+      start.getHours() < 8 ||
+      end.getHours() > 22 ||
+      (end.getHours() === 22 && end.getMinutes() > 0)
+    ) {
       return res.status(400).json({
         success: false,
-        message: 'Bookings allowed only between 8:00 AM and 10:00 PM'
+        message: 'Bookings allowed only between 8:00 AM and 10:00 PM',
       });
     }
 
     // Calculate duration in hours
     const duration_hours = (end - start) / (1000 * 60 * 60);
-    
+
     // Check minimum booking duration (30 minutes)
     if (duration_hours < 0.5) {
       return res.status(400).json({
         success: false,
-        message: 'Minimum booking duration is 30 minutes'
+        message: 'Minimum booking duration is 30 minutes',
       });
     }
 
@@ -117,7 +134,7 @@ const createBooking = async (req, res) => {
     if (duration_hours > 4) {
       return res.status(400).json({
         success: false,
-        message: 'Maximum booking duration is 4 hours'
+        message: 'Maximum booking duration is 4 hours',
       });
     }
 
@@ -127,15 +144,15 @@ const createBooking = async (req, res) => {
         space_id,
         booking_date,
         status: {
-          [Op.in]: ['pending', 'confirmed', 'checked_in']
+          [Op.in]: ['pending', 'confirmed', 'checked_in'],
         },
         [Op.or]: [
           {
             start_time: { [Op.lt]: end_time },
-            end_time: { [Op.gt]: start_time }
-          }
-        ]
-      }
+            end_time: { [Op.gt]: start_time },
+          },
+        ],
+      },
     });
 
     if (overlappingBooking) {
@@ -145,8 +162,8 @@ const createBooking = async (req, res) => {
         conflicting_booking: {
           id: overlappingBooking.id,
           start_time: overlappingBooking.start_time,
-          end_time: overlappingBooking.end_time
-        }
+          end_time: overlappingBooking.end_time,
+        },
       });
     }
 
@@ -155,7 +172,7 @@ const createBooking = async (req, res) => {
 
     // Create booking (without transaction)
     const booking = await Booking.create({
-      user_id,  // Use user_id from request body
+      user_id, // Use user_id from request body
       space_id,
       booking_date,
       start_time,
@@ -164,7 +181,7 @@ const createBooking = async (req, res) => {
       total_price,
       notes: notes || null,
       status: 'pending',
-      payment_status: 'unpaid'
+      payment_status: 'unpaid',
     });
 
     // Get booking with space and user details
@@ -173,28 +190,27 @@ const createBooking = async (req, res) => {
         {
           model: Space,
           as: 'space',
-          attributes: ['id', 'name', 'type', 'hourly_rate']
+          attributes: ['id', 'name', 'type', 'hourly_rate'],
         },
         {
           model: User,
           as: 'user',
-          attributes: ['id', 'username', 'email']
-        }
-      ]
+          attributes: ['id', 'username', 'email'],
+        },
+      ],
     });
 
     res.status(201).json({
       success: true,
       message: 'Booking created successfully',
-      data: bookingWithDetails
+      data: bookingWithDetails,
     });
-
   } catch (error) {
     console.error('Create booking error:', error);
     res.status(500).json({
       success: false,
       message: 'Server error creating booking',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 };
@@ -215,24 +231,24 @@ const updateBooking = async (req, res) => {
     if (!booking) {
       return res.status(404).json({
         success: false,
-        message: 'Booking not found'
+        message: 'Booking not found',
       });
     }
 
     // Validate update based on current status
     const currentStatus = booking.status;
-    
+
     // Check if booking can be updated
     if (currentStatus === 'cancelled' || currentStatus === 'completed') {
       return res.status(400).json({
         success: false,
-        message: `Cannot update a ${currentStatus} booking`
+        message: `Cannot update a ${currentStatus} booking`,
       });
     }
 
     // Prepare updates
     const updates = {};
-    
+
     // Handle status changes
     if (status) {
       // Validate status transition
@@ -241,13 +257,13 @@ const updateBooking = async (req, res) => {
         confirmed: ['checked_in', 'cancelled'],
         checked_in: ['completed'],
         completed: [],
-        cancelled: []
+        cancelled: [],
       };
 
       if (!validTransitions[currentStatus].includes(status)) {
         return res.status(400).json({
           success: false,
-          message: `Cannot change status from ${currentStatus} to ${status}`
+          message: `Cannot change status from ${currentStatus} to ${status}`,
         });
       }
 
@@ -255,7 +271,8 @@ const updateBooking = async (req, res) => {
       if (status === 'cancelled') {
         updates.status = 'cancelled';
         updates.cancelled_at = new Date();
-        updates.cancellation_reason = req.body.cancellation_reason || 'User cancelled';
+        updates.cancellation_reason =
+          req.body.cancellation_reason || 'User cancelled';
       } else {
         updates.status = status;
       }
@@ -287,28 +304,27 @@ const updateBooking = async (req, res) => {
         {
           model: Space,
           as: 'space',
-          attributes: ['id', 'name', 'type']
+          attributes: ['id', 'name', 'type'],
         },
         {
           model: User,
           as: 'user',
-          attributes: ['id', 'username', 'email']
-        }
-      ]
+          attributes: ['id', 'username', 'email'],
+        },
+      ],
     });
 
     res.json({
       success: true,
       message: 'Booking updated successfully',
-      data: updatedBooking
+      data: updatedBooking,
     });
-
   } catch (error) {
     console.error('Update booking error:', error);
     res.status(500).json({
       success: false,
       message: 'Server error updating booking',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 };
@@ -329,7 +345,7 @@ const deleteBooking = async (req, res) => {
     if (!booking) {
       return res.status(404).json({
         success: false,
-        message: 'Booking not found'
+        message: 'Booking not found',
       });
     }
 
@@ -338,12 +354,14 @@ const deleteBooking = async (req, res) => {
     if (['completed', 'cancelled'].includes(currentStatus)) {
       return res.status(400).json({
         success: false,
-        message: `Cannot delete a ${currentStatus} booking`
+        message: `Cannot delete a ${currentStatus} booking`,
       });
     }
 
     // Calculate time until booking
-    const bookingDateTime = new Date(`${booking.booking_date}T${booking.start_time}`);
+    const bookingDateTime = new Date(
+      `${booking.booking_date}T${booking.start_time}`
+    );
     const hoursUntilBooking = (bookingDateTime - new Date()) / (1000 * 60 * 60);
 
     // Apply cancellation policy
@@ -361,7 +379,7 @@ const deleteBooking = async (req, res) => {
       status: 'cancelled',
       payment_status: refundStatus,
       cancelled_at: new Date(),
-      cancellation_reason: cancellation_reason || 'User cancelled booking'
+      cancellation_reason: cancellation_reason || 'User cancelled booking',
     });
 
     res.json({
@@ -371,16 +389,15 @@ const deleteBooking = async (req, res) => {
         id: booking.id,
         status: 'cancelled',
         payment_status: refundStatus,
-        cancellation_reason: cancellation_reason || 'User cancelled booking'
-      }
+        cancellation_reason: cancellation_reason || 'User cancelled booking',
+      },
     });
-
   } catch (error) {
     console.error('Delete booking error:', error);
     res.status(500).json({
       success: false,
       message: 'Server error cancelling booking',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 };
@@ -392,16 +409,16 @@ const deleteBooking = async (req, res) => {
  */
 const getBookings = async (req, res) => {
   try {
-    const { 
-      page = 1, 
-      limit = 10, 
-      status, 
-      space_id, 
-      user_id, 
-      start_date, 
+    const {
+      page = 1,
+      limit = 10,
+      status,
+      space_id,
+      user_id,
+      start_date,
       end_date,
       sort_by = 'created_at',
-      sort_order = 'DESC'
+      sort_order = 'DESC',
     } = req.query;
 
     // Build where clause
@@ -431,9 +448,18 @@ const getBookings = async (req, res) => {
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
     // Validate sort parameters
-    const validSortFields = ['created_at', 'booking_date', 'start_time', 'total_price'];
-    const sortField = validSortFields.includes(sort_by) ? sort_by : 'created_at';
-    const sortDir = ['ASC', 'DESC'].includes(sort_order.toUpperCase()) ? sort_order.toUpperCase() : 'DESC';
+    const validSortFields = [
+      'created_at',
+      'booking_date',
+      'start_time',
+      'total_price',
+    ];
+    const sortField = validSortFields.includes(sort_by)
+      ? sort_by
+      : 'created_at';
+    const sortDir = ['ASC', 'DESC'].includes(sort_order.toUpperCase())
+      ? sort_order.toUpperCase()
+      : 'DESC';
 
     // Get bookings with pagination
     const { count, rows } = await Booking.findAndCountAll({
@@ -442,21 +468,21 @@ const getBookings = async (req, res) => {
         {
           model: Space,
           as: 'space',
-          attributes: ['id', 'name', 'type', 'hourly_rate', 'image_url']
+          attributes: ['id', 'name', 'type', 'hourly_rate', 'image_url'],
         },
         {
           model: User,
           as: 'user',
-          attributes: ['id', 'username', 'email']
-        }
+          attributes: ['id', 'username', 'email'],
+        },
       ],
-      attributes: { 
-        exclude: ['deletedAt'] 
+      attributes: {
+        exclude: ['deletedAt'],
       },
       order: [[sortField, sortDir]],
       limit: parseInt(limit),
       offset: offset,
-      distinct: true
+      distinct: true,
     });
 
     // Calculate total pages
@@ -471,16 +497,15 @@ const getBookings = async (req, res) => {
         limit: parseInt(limit),
         totalPages,
         hasNextPage: page < totalPages,
-        hasPrevPage: page > 1
-      }
+        hasPrevPage: page > 1,
+      },
     });
-
   } catch (error) {
     console.error('Get bookings error:', error);
     res.status(500).json({
       success: false,
       message: 'Server error fetching bookings',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 };
@@ -499,34 +524,42 @@ const getBookingById = async (req, res) => {
         {
           model: Space,
           as: 'space',
-          attributes: ['id', 'name', 'type', 'capacity', 'hourly_rate', 'amenities', 'image_url', 'description']
+          attributes: [
+            'id',
+            'name',
+            'type',
+            'capacity',
+            'hourly_rate',
+            'amenities',
+            'image_url',
+            'description',
+          ],
         },
         {
           model: User,
           as: 'user',
-          attributes: ['id', 'username', 'email']
-        }
-      ]
+          attributes: ['id', 'username', 'email'],
+        },
+      ],
     });
 
     if (!booking) {
       return res.status(404).json({
         success: false,
-        message: 'Booking not found'
+        message: 'Booking not found',
       });
     }
 
     res.json({
       success: true,
-      data: booking
+      data: booking,
     });
-
   } catch (error) {
     console.error('Get booking by ID error:', error);
     res.status(500).json({
       success: false,
       message: 'Server error fetching booking',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 };
@@ -538,24 +571,26 @@ const getBookingById = async (req, res) => {
  */
 const checkAvailability = async (req, res) => {
   try {
-    const { space_id, booking_date, start_time, end_time, exclude_booking_id } = req.query;
+    const { space_id, booking_date, start_time, end_time, exclude_booking_id } =
+      req.query;
 
     if (!space_id || !booking_date || !start_time || !end_time) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide space_id, booking_date, start_time, and end_time'
+        message:
+          'Please provide space_id, booking_date, start_time, and end_time',
       });
     }
 
     // Check if space exists and is active
     const space = await Space.findOne({
-      where: { id: space_id, is_active: true }
+      where: { id: space_id, is_active: true },
     });
 
     if (!space) {
       return res.status(404).json({
         success: false,
-        message: 'Space not found or not available'
+        message: 'Space not found or not available',
       });
     }
 
@@ -564,14 +599,14 @@ const checkAvailability = async (req, res) => {
       space_id,
       booking_date,
       status: {
-        [Op.in]: ['pending', 'confirmed', 'checked_in']
+        [Op.in]: ['pending', 'confirmed', 'checked_in'],
       },
       [Op.or]: [
         {
           start_time: { [Op.lt]: end_time },
-          end_time: { [Op.gt]: start_time }
-        }
-      ]
+          end_time: { [Op.gt]: start_time },
+        },
+      ],
     };
 
     // Exclude a specific booking (useful for updates)
@@ -581,7 +616,7 @@ const checkAvailability = async (req, res) => {
 
     const conflictingBookings = await Booking.findAll({
       where,
-      attributes: ['id', 'start_time', 'end_time', 'status']
+      attributes: ['id', 'start_time', 'end_time', 'status'],
     });
 
     const isAvailable = conflictingBookings.length === 0;
@@ -593,26 +628,25 @@ const checkAvailability = async (req, res) => {
         space: {
           id: space.id,
           name: space.name,
-          hourly_rate: space.hourly_rate
+          hourly_rate: space.hourly_rate,
         },
         requested_slot: {
           date: booking_date,
           start_time,
-          end_time
+          end_time,
         },
         conflicting_bookings: conflictingBookings,
-        message: isAvailable 
-          ? 'Time slot is available' 
-          : 'Time slot is already booked'
-      }
+        message: isAvailable
+          ? 'Time slot is available'
+          : 'Time slot is already booked',
+      },
     });
-
   } catch (error) {
     console.error('Check availability error:', error);
     res.status(500).json({
       success: false,
       message: 'Server error checking availability',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 };
@@ -625,11 +659,11 @@ const checkAvailability = async (req, res) => {
 const getUpcomingBookings = async (req, res) => {
   try {
     const { user_id } = req.query;
-    
+
     if (!user_id) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide user_id as query parameter'
+        message: 'Please provide user_id as query parameter',
       });
     }
 
@@ -639,32 +673,31 @@ const getUpcomingBookings = async (req, res) => {
       where: {
         user_id: user_id,
         booking_date: { [Op.gte]: today },
-        status: { [Op.in]: ['pending', 'confirmed'] }
+        status: { [Op.in]: ['pending', 'confirmed'] },
       },
       include: [
         {
           model: Space,
           as: 'space',
-          attributes: ['id', 'name', 'type', 'image_url', 'hourly_rate']
-        }
+          attributes: ['id', 'name', 'type', 'image_url', 'hourly_rate'],
+        },
       ],
       order: [
         ['booking_date', 'ASC'],
-        ['start_time', 'ASC']
-      ]
+        ['start_time', 'ASC'],
+      ],
     });
 
     res.json({
       success: true,
-      data: upcomingBookings
+      data: upcomingBookings,
     });
-
   } catch (error) {
     console.error('Get upcoming bookings error:', error);
     res.status(500).json({
       success: false,
       message: 'Server error fetching upcoming bookings',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 };
@@ -676,5 +709,5 @@ module.exports = {
   getBookings,
   getBookingById,
   checkAvailability,
-  getUpcomingBookings
+  getUpcomingBookings,
 };

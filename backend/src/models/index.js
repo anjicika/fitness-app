@@ -45,22 +45,22 @@ BodyMeasurement.belongsTo(User, { foreignKey: 'user_id' });
 
 User.hasMany(Booking, {
   foreignKey: 'user_id',
-  as: 'bookings'
+  as: 'bookings',
 });
 
 Booking.belongsTo(User, {
   foreignKey: 'user_id',
-  as: 'user'
+  as: 'user',
 });
 
 Space.hasMany(Booking, {
   foreignKey: 'space_id',
-  as: 'bookings'
+  as: 'bookings',
 });
 
 Booking.belongsTo(Space, {
   foreignKey: 'space_id',
-  as: 'space'
+  as: 'space',
 });
 
 module.exports = {

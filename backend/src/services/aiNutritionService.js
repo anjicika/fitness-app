@@ -1,156 +1,128 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-if (!process.env.GEMINI_API_KEY) {
-  throw new Error('GEMINI_API_KEY is not set in environment variables!');
+// Lazy inicializacija – genAI ustvarimo samo, če key obstaja
+let genAI = null;
+
+if (process.env.GEMINI_API_KEY) {
+  try {
+    genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  } catch (error) {
+    console.warn('Invalid GEMINI_API_KEY – AI features disabled:', error.message);
+    genAI = null;
+  }
+} else {
+  console.warn('GEMINI_API_KEY is not set – AI nutrition features will use fallback');
 }
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
 class AINutritionService {
-  async getNutritionAdvice(userProfile) {
-    const model = genAI.getGenerativeModel({
+  // Pomocna metoda za generiranje modela (samo če genAI obstaja)
+  getModel(config = {}) {
+    if (!genAI) {
+      throw new Error('Gemini API key not configured – using fallback');
+    }
+    return genAI.getGenerativeModel({
       model: 'gemini-2.5-flash',
       generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 500,
+        temperature: config.temperature || 0.7,
+        maxOutputTokens: config.maxOutputTokens || 1000,
+        responseMimeType: config.responseMimeType || 'text/plain',
       },
     });
+  }
 
-    const prompt = `You are a professional nutritionist. Provide concise advice for this user:
+  async getNutritionAdvice(userProfile) {
+    try {
+      const model = this.getModel({ temperature: 0.7, maxOutputTokens: 500 });
+      const prompt = `You are a professional nutritionist. Provide concise advice for this user:
 Age: ${userProfile.age}, Weight: ${userProfile.weight}kg, Height: ${userProfile.height}cm, Gender: ${userProfile.gender}
 Goal: ${userProfile.fitnessGoal}, Activity: ${userProfile.activityLevel}
 Restrictions: ${userProfile.dietaryRestrictions || 'None'}
-
 Focus on calories, macros, timing, foods. Max 200 words. Plain text only.`;
 
-    try {
       const result = await model.generateContent(prompt);
       return result.response.text().trim();
     } catch (error) {
       console.error('Gemini API Error for nutrition advice:', error.message);
-
-      // Fallback nutrition advice
       return this.generateFallbackNutritionAdvice(userProfile);
     }
   }
 
   async generateMealPlan(userProfile, days = 3) {
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
-      generationConfig: {
-        response_mime_type: 'application/json',
+    try {
+      const model = this.getModel({
+        responseMimeType: 'application/json',
         temperature: 0.7,
         maxOutputTokens: 8000,
-      },
-    });
+      });
 
-    const dailyCalories = this.calculateCalories(userProfile);
-    const macros = this.getMacroSplit(userProfile.fitnessGoal);
+      const dailyCalories = this.calculateCalories(userProfile);
+      const macros = this.getMacroSplit(userProfile.fitnessGoal);
 
-    const prompt = `Generate a realistic ${days}-day meal plan.
+      const prompt = `Generate a realistic ${days}-day meal plan.
 Daily calories: ${dailyCalories}
 Macro split: ${macros.protein}% protein, ${macros.carbs}% carbs, ${macros.fats}% fats
 Goal: ${userProfile.fitnessGoal}
 Restrictions: ${userProfile.dietaryRestrictions || 'None'}
 
-Return ONLY valid JSON (no markdown, no text):
+Return ONLY valid JSON with this exact structure:
 {
   "totalDays": ${days},
   "dailyCalorieTarget": ${dailyCalories},
-  "macroSplit": {"protein": ${macros.protein}, "carbs": ${macros.carbs}, "fats": ${macros.fats}},
+  "macroSplit": { "protein": ${macros.protein}, "carbs": ${macros.carbs}, "fats": ${macros.fats} },
   "days": [
     {
       "day": 1,
       "meals": [
-        {
-          "meal": "Breakfast",
-          "description": "string (max 100 chars)",
-          "calories": number,
-          "protein": number,
-          "carbs": number,
-          "fats": number
-        },
-        {
-          "meal": "Lunch",
-          "description": "string (max 100 chars)",
-          "calories": number,
-          "protein": number,
-          "carbs": number,
-          "fats": number
-        },
-        {
-          "meal": "Dinner",
-          "description": "string (max 100 chars)",
-          "calories": number,
-          "protein": number,
-          "carbs": number,
-          "fats": number
-        }
+        { "meal": "Breakfast", "description": "short description", "calories": number, "protein": number, "carbs": number, "fats": number },
+        { "meal": "Lunch", "description": "short description", "calories": number, "protein": number, "carbs": number, "fats": number },
+        { "meal": "Dinner", "description": "short description", "calories": number, "protein": number, "carbs": number, "fats": number }
       ]
     }
   ]
 }
+Use double quotes. Ensure complete and valid JSON.`;
 
-Use double quotes. Keep descriptions short. Ensure JSON is complete and valid.`;
-
-    try {
       const result = await model.generateContent(prompt);
       let text = result.response.text().trim();
 
       const jsonStr = this.cleanJSONResponse(text);
-      this.validateJSONCompletion(jsonStr);
-
       return JSON.parse(jsonStr);
     } catch (error) {
-      console.error('Meal plan error:', error.message);
+      console.error('Meal plan generation failed:', error.message);
       return this.generateFallbackMealPlan(userProfile, days);
     }
   }
 
   async analyzeMeal(mealDescription) {
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
-      generationConfig: {
-        response_mime_type: 'application/json',
+    try {
+      const model = this.getModel({
+        responseMimeType: 'application/json',
         temperature: 0.4,
-        maxOutputTokens: 2000,
-      },
-    });
+        maxOutputTokens: 1000,
+      });
 
-    const prompt = `Analyze this meal: "${mealDescription}"
+      const prompt = `Analyze this meal: "${mealDescription}"
 Estimate nutrition with typical portions.
-
 Return ONLY valid JSON:
 {
-  "mealName": "string (max 50 chars)",
+  "mealName": "short name",
   "totalCalories": number,
   "protein": number,
   "carbs": number,
   "fats": number,
   "fiber": number,
-  "foods": [
-    {
-      "name": "string",
-      "portion": "string",
-      "calories": number
-    }
-  ],
-  "healthScore": number,
-  "suggestions": "string (max 150 chars)"
-}
+  "foods": [{ "name": "food", "portion": "size", "calories": number }],
+  "healthScore": number (1-10),
+  "suggestions": "short suggestion"
+}`;
 
-Use double quotes only. Keep numbers as numbers, not strings. Ensure JSON is complete.`;
-
-    try {
       const result = await model.generateContent(prompt);
       let text = result.response.text().trim();
 
       const jsonStr = this.cleanJSONResponse(text);
-      this.validateJSONCompletion(jsonStr);
-
       return JSON.parse(jsonStr);
     } catch (error) {
-      console.error('Meal analysis error:', error.message);
+      console.error('Meal analysis failed:', error.message);
       return this.generateFallbackMealAnalysis(mealDescription);
     }
   }

@@ -10,8 +10,14 @@
     "migrate": "node src/database/migrate.js",
     "seed": "node src/database/seed.js",
     "format": "prettier --write .",
-    "test": "cross-env NODE_ENV=test JWT_SECRET=test-secret-key jest --testPathPattern=test/.*\\.test\\.js",
+    "test": "cross-env NODE_ENV=test JWT_SECRET=test-secret-key jest",
     "format:check": "prettier --check ."
+  },
+  "jest": {
+  "testEnvironment": "node",
+  "coveragePathIgnorePatterns": ["/node_modules/"],
+  "testMatch": ["**/test/**/*.test.js"],
+  "setupFiles": ["<rootDir>/test/setup.js"]
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -55,6 +61,7 @@
     "api",
     "express"
   ],
+  
   "author": "FitnesERI Team",
   "license": "MIT",
   "type": "commonjs",

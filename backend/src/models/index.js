@@ -10,6 +10,9 @@ const PostLike = require('./postlike');
 const WeightEntry = require('./weightentry');
 const BodyMeasurement = require('./bodymeasurement');
 
+const Space = require('./space');
+const Booking = require('./booking');
+
 // Associations
 User.hasMany(Workout);
 Workout.belongsTo(User);
@@ -40,6 +43,26 @@ WeightEntry.belongsTo(User);
 User.hasMany(BodyMeasurement);
 BodyMeasurement.belongsTo(User);
 
+User.hasMany(Booking, {
+  foreignKey: 'user_id',
+  as: 'bookings'
+});
+
+Booking.belongsTo(User, {
+  foreignKey: 'user_id',
+  as: 'user'
+});
+
+Space.hasMany(Booking, {
+  foreignKey: 'space_id',
+  as: 'bookings'
+});
+
+Booking.belongsTo(Space, {
+  foreignKey: 'space_id',
+  as: 'space'
+});
+
 module.exports = {
   sequelize,
   Sequelize,
@@ -51,4 +74,7 @@ module.exports = {
   PostLike,
   WeightEntry,
   BodyMeasurement,
+
+  Space,
+  Booking,
 };

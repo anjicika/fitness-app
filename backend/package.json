@@ -15,9 +15,15 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "coveragePathIgnorePatterns": ["/node_modules/"],
-    "testMatch": ["**/test/**/*.test.js"],
-    "setupFiles": ["<rootDir>/test/setup.js"]
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "testMatch": [
+      "**/test/**/*.test.js"
+    ],
+    "setupFiles": [
+      "<rootDir>/test/setup.js"
+    ]
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

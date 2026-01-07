@@ -21,27 +21,21 @@ development, regular reviews, and continuous integration of completed tasks.
 ### Backend
 
 - **Runtime:** Node.js 18
-
   - Enables full-stack JavaScript development and asynchronous processing using async/await.
 
 - **Framework:** Express.js
-
   - Lightweight and flexible framework with extensive ecosystem and documentation.
 
 - **Database:** PostgreSQL 15
-
   - Relational database providing ACID compliance, robustness, and support for complex relationships.
 
 - **ORM:** Sequelize
-
   - Simplifies database interactions and supports migrations and schema evolution.
 
 - **Authentication:** JWT + bcrypt
-
   - Stateless authentication suitable for scalable architectures with secure password hashing.
 
 - **Cache:** Redis
-
   - Used for rate limiting, caching frequently accessed data, and temporary AI-related responses.
   - Primarily intended for caching and rate limiting in future iterations.
 
@@ -54,19 +48,15 @@ development, regular reviews, and continuous integration of completed tasks.
 ### Frontend
 
 - **Framework:** React 18
-
   - Component-based UI development with strong community support.
 
 - **Build Tool:** Vite
-
   - Fast development server with Hot Module Replacement (HMR).
 
 - **Styling:** Tailwind CSS
-
   - Utility-first CSS framework enabling rapid UI prototyping.
 
 - **HTTP Client:** Axios
-
   - Centralized request handling with interceptors and error management.
 
 - **Charts:** Recharts
@@ -84,7 +74,6 @@ development, regular reviews, and continuous integration of completed tasks.
 ### DevOps & CI/CD
 
 - **Containerization:** Docker Compose
-
   - Ensures reproducible and isolated development environments.
 
 - **CI/CD:** GitHub Actions
@@ -236,7 +225,6 @@ The system supports multiple subscription tiers that determine the level of acce
 to application features.
 
 - **Basic Tier**
-
   - Workout tracking
   - Progress monitoring
 

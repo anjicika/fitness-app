@@ -64,7 +64,5 @@ const User = sequelize.define(
   }
 );
 
-User.hasMany(WeightEntry, { foreignKey: 'user_id' });
-User.hasMany(BodyMeasurement, { foreignKey: 'user_id' });
 
 module.exports = User;

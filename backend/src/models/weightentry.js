@@ -40,6 +40,4 @@ const WeightEntry = sequelize.define(
   }
 );
 
-WeightEntry.belongsTo(User, { foreignKey: 'user_id' });
-
 module.exports = WeightEntry;

@@ -48,6 +48,4 @@ const BodyMeasurement = sequelize.define(
   }
 );
 
-BodyMeasurement.belongsTo(User, { foreignKey: 'user_id' });
-
 module.exports = BodyMeasurement;

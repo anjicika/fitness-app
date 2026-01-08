@@ -44,14 +44,24 @@ async function getStatistics(req, res) {
       goalProgress = Math.min(Math.max(goalProgress, 0), 100);
     }
 
+    // Po calculateStatistics in percentChange
+    const dataPointsArray = entries.map(e => ({
+      date: e.measured_at.toISOString().split('T')[0], // YYYY-MM-DD
+      value: Number(e.weight_kg),
+    }));
+
     return res.json({
-      metric,
-      period: periodDays,
-      ...stats,
-      percentChange: Number(percentChange.toFixed(2)),
-      goalProgress:
-        goalProgress !== null ? Number(goalProgress.toFixed(2)) : null,
+      success: true,
+      data: {
+        metric,
+        period: periodDays,
+        ...stats,
+        percentChange: Number(percentChange.toFixed(2)),
+        goalProgress: goalProgress !== null ? Number(goalProgress.toFixed(2)) : null,
+        dataPointsArray,
+      },
     });
+
   }
 
   // BODY MEASUREMENTS

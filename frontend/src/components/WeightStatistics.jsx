@@ -12,22 +12,23 @@ import {
 
 export default function WeightStatistics() {
   const [stats, setStats] = useState(null);
+  const [rawData, setRawData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [period, setPeriod] = useState(30); // default 30 dni
-  const [rawData, setRawData] = useState([]); // za graf
+  const [period, setPeriod] = useState(30);
 
   const fetchStats = async (p) => {
     try {
       setLoading(true);
       setError('');
 
-      const res = await getWeightStatistics(p); // ← pošljemo period kot parameter
-      if (res.success) {
+      const res = await getWeightStatistics(p);
+
+      if (res.success && res.data) {
         setStats(res.data);
-        setRawData(res.data.dataPointsArray || []); // array {date, value} iz backend
+        setRawData(res.data.dataPointsArray || []);
       } else {
-        setError(res.message || 'Error fetching statistics');
+        setError(res.error || 'Unexpected API response');
       }
     } catch (err) {
       console.error(err);
@@ -38,12 +39,10 @@ export default function WeightStatistics() {
   };
 
   useEffect(() => {
-    fetchStats(period); // vsakič, ko se period spremeni, fetch
+    fetchStats(period);
   }, [period]);
 
-  const handlePeriodChange = (days) => {
-    setPeriod(days);
-  };
+  const handlePeriodChange = (days) => setPeriod(days);
 
   if (loading) return <p className="text-center text-gray-500">Loading statistics...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
@@ -53,8 +52,6 @@ export default function WeightStatistics() {
     <div className="max-w-md mx-auto md:max-w-full p-4 bg-white shadow rounded-lg">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">Weight Statistics</h2>
-
-        {/* Filtriranje po obdobjih */}
         <div className="flex gap-2">
           {[7, 30, 90].map((d) => (
             <button
@@ -74,7 +71,6 @@ export default function WeightStatistics() {
         <p className="text-center text-gray-400">No data available.</p>
       ) : (
         <div className="flex flex-col gap-4">
-          {/* Statistika */}
           <div className="grid grid-cols-2 gap-2">
             <div><strong>Start:</strong> {stats.startValue} kg</div>
             <div><strong>End:</strong> {stats.endValue} kg</div>
@@ -87,7 +83,6 @@ export default function WeightStatistics() {
             )}
           </div>
 
-          {/* Graf */}
           {rawData.length > 0 && (
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={rawData}>

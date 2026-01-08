@@ -7,7 +7,7 @@ const compression = require('compression');
 const authRoutes = require('./src/routes/auth');
 const forumRoutes = require('./src/routes/forum');
 const metricsRoutes = require('./src/routes/metrics');
-
+const statisticsRoutes = require('./src/routes/statistics');
 
 const { sequelize } = require('./src/models');
 
@@ -92,6 +92,8 @@ app.get('/api/v1/test', (req, res) => {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/forum', forumRoutes);
 app.use('/api/v1/metrics', metricsRoutes);
+app.use('/api/v1/statistics', statisticsRoutes);
+
 
 
 // 404 HANDLER

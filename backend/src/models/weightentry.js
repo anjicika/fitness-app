@@ -34,7 +34,7 @@ const WeightEntry = sequelize.define(
     },
   },
   {
-    tableName: 'Weight_entries',
+    tableName: 'WeightEntries',
     timestamps: true,
     underscored: true,
   }

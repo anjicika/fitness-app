@@ -6,6 +6,8 @@ const morgan = require('morgan');
 const compression = require('compression');
 const authRoutes = require('./src/routes/auth');
 const forumRoutes = require('./src/routes/forum');
+const metricsRoutes = require('./src/routes/metrics');
+
 
 const { sequelize } = require('./src/models');
 
@@ -89,6 +91,8 @@ app.get('/api/v1/test', (req, res) => {
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/forum', forumRoutes);
+app.use('/api/v1/metrics', metricsRoutes);
+
 
 // 404 HANDLER
 app.use((req, res) => {

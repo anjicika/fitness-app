@@ -49,4 +49,6 @@ module.exports = {
   Comment,
   ForumCategory,
   PostLike,
+  WeightEntry,
+  BodyMeasurement,
 };

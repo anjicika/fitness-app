@@ -42,7 +42,7 @@ const BodyMeasurement = sequelize.define(
     },
   },
   {
-    tableName: 'Body_measurements',
+    tableName: 'BodyMeasurements',
     timestamps: true,
     underscored: true,
   }

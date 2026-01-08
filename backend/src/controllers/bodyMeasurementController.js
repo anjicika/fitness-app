@@ -1,4 +1,4 @@
-const { BodyMeasurement, User } = require('../models');
+const { BodyMeasurement } = require('../models');
 const { Op } = require('sequelize');
 
 // CREATE: Ustvari novo meritev

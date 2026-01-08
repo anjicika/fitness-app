@@ -1,4 +1,4 @@
-const { WeightEntry, User } = require('../models');
+const { WeightEntry } = require('../models');
 const { Op } = require('sequelize');
 
 // CREATE: Ustvari novo težo

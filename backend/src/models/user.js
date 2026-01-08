@@ -28,10 +28,12 @@ const User = sequelize.define(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
+    /*
     role: {
       type: DataTypes.ENUM('user', 'admin', 'coach'),
       defaultValue: 'user',
     },
+    */
     is_verified: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
@@ -40,6 +42,7 @@ const User = sequelize.define(
       type: DataTypes.STRING(255),
       allowNull: true,
     },
+    /*
     reset_password_token: {
       type: DataTypes.STRING(255),
       allowNull: true,
@@ -48,6 +51,7 @@ const User = sequelize.define(
       type: DataTypes.DATE,
       allowNull: true,
     },
+    */
     created_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
@@ -58,7 +62,7 @@ const User = sequelize.define(
     },
   },
   {
-    tableName: 'users',
+    tableName: 'Users',
     timestamps: true,
     underscored: true,
   }

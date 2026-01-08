@@ -15,12 +15,21 @@ exports.createBodyMeasurement = async (req, res) => {
       measured_at: measured_at || new Date(),
     });
 
-    res.status(201).json({ success: true, data: entry, message: 'Body measurement created successfully' });
+    res
+      .status(201)
+      .json({
+        success: true,
+        data: entry,
+        message: 'Body measurement created successfully',
+      });
   } catch (error) {
     console.error('Create body measurement error:', error);
     res.status(500).json({
       success: false,
-      error: { code: 'CREATE_BODY_MEASUREMENT_ERROR', message: 'Failed to create body measurement' },
+      error: {
+        code: 'CREATE_BODY_MEASUREMENT_ERROR',
+        message: 'Failed to create body measurement',
+      },
     });
   }
 };
@@ -59,7 +68,6 @@ exports.getUserMeasurements = async (req, res) => {
   }
 };
 
-
 // UPDATE: Posodobi meritev
 exports.updateBodyMeasurement = async (req, res) => {
   try {
@@ -72,7 +80,10 @@ exports.updateBodyMeasurement = async (req, res) => {
     if (!entry || entry.user_id !== userId) {
       return res.status(404).json({
         success: false,
-        error: { code: 'ENTRY_NOT_FOUND', message: 'Body measurement not found or not owned by user' },
+        error: {
+          code: 'ENTRY_NOT_FOUND',
+          message: 'Body measurement not found or not owned by user',
+        },
       });
     }
 
@@ -83,12 +94,19 @@ exports.updateBodyMeasurement = async (req, res) => {
       measured_at: measured_at || entry.measured_at,
     });
 
-    res.json({ success: true, data: entry, message: 'Body measurement updated successfully' });
+    res.json({
+      success: true,
+      data: entry,
+      message: 'Body measurement updated successfully',
+    });
   } catch (error) {
     console.error('Update body measurement error:', error);
     res.status(500).json({
       success: false,
-      error: { code: 'UPDATE_BODY_MEASUREMENT_ERROR', message: 'Failed to update body measurement' },
+      error: {
+        code: 'UPDATE_BODY_MEASUREMENT_ERROR',
+        message: 'Failed to update body measurement',
+      },
     });
   }
 };
@@ -104,18 +122,27 @@ exports.deleteBodyMeasurement = async (req, res) => {
     if (!entry || entry.user_id !== userId) {
       return res.status(404).json({
         success: false,
-        error: { code: 'ENTRY_NOT_FOUND', message: 'Body measurement not found or not owned by user' },
+        error: {
+          code: 'ENTRY_NOT_FOUND',
+          message: 'Body measurement not found or not owned by user',
+        },
       });
     }
 
     await entry.destroy();
 
-    res.json({ success: true, message: 'Body measurement deleted successfully' });
+    res.json({
+      success: true,
+      message: 'Body measurement deleted successfully',
+    });
   } catch (error) {
     console.error('Delete body measurement error:', error);
     res.status(500).json({
       success: false,
-      error: { code: 'DELETE_BODY_MEASUREMENT_ERROR', message: 'Failed to delete body measurement' },
+      error: {
+        code: 'DELETE_BODY_MEASUREMENT_ERROR',
+        message: 'Failed to delete body measurement',
+      },
     });
   }
 };
@@ -127,7 +154,15 @@ exports.getMeasurementStatistics = async (req, res) => {
     const userId = req.user.id;
 
     if (!['chest', 'waist', 'hips'].includes(type)) {
-      return res.status(400).json({ success: false, error: { code: 'INVALID_TYPE', message: 'Type must be chest, waist or hips' } });
+      return res
+        .status(400)
+        .json({
+          success: false,
+          error: {
+            code: 'INVALID_TYPE',
+            message: 'Type must be chest, waist or hips',
+          },
+        });
     }
 
     const endDate = new Date();
@@ -158,10 +193,18 @@ exports.getMeasurementStatistics = async (req, res) => {
       change,
       trend,
       dataPoints: entries.length,
-      entries
+      entries,
     });
   } catch (error) {
     console.error('Get measurement statistics error:', error);
-    res.status(500).json({ success: false, error: { code: 'STATISTICS_ERROR', message: 'Failed to fetch measurement statistics' } });
+    res
+      .status(500)
+      .json({
+        success: false,
+        error: {
+          code: 'STATISTICS_ERROR',
+          message: 'Failed to fetch measurement statistics',
+        },
+      });
   }
 };

@@ -94,8 +94,6 @@ app.use('/api/v1/forum', forumRoutes);
 app.use('/api/v1/metrics', metricsRoutes);
 app.use('/api/v1/statistics', statisticsRoutes);
 
-
-
 // 404 HANDLER
 app.use((req, res) => {
   res.status(404).json({

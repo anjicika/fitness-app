@@ -54,7 +54,8 @@ async function getStatistics(req, res) {
         period: periodDays,
         ...stats,
         percentChange: Number(percentChange.toFixed(2)),
-        goalProgress: goalProgress !== null ? Number(goalProgress.toFixed(2)) : null,
+        goalProgress:
+          goalProgress !== null ? Number(goalProgress.toFixed(2)) : null,
         dataPointsArray,
       },
     });
@@ -119,7 +120,8 @@ async function getStatistics(req, res) {
         period: periodDays,
         ...stats,
         percentChange: Number(percentChange.toFixed(2)),
-        goalProgress: goalProgress !== null ? Number(goalProgress.toFixed(2)) : null,
+        goalProgress:
+          goalProgress !== null ? Number(goalProgress.toFixed(2)) : null,
         dataPointsArray,
       },
     });

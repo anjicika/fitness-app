@@ -15,7 +15,6 @@ export default function Navbar() {
     }
   };
 
-  // Helper za aktivno stanje linka
   const isActive = (path) => location.pathname === path;
 
   const navLinks = [

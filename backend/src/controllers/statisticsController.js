@@ -22,14 +22,12 @@ async function getStatistics(req, res) {
     });
 
     const values = entries.map(e => Number(e.weight_kg));
-    const stats = calculateStatistics(values, 0.2); // Threshold za weight
+    const stats = calculateStatistics(values, 0.2);
 
-    // Percentualna sprememba
     const percentChange = stats.startValue
       ? ((stats.endValue - stats.startValue) / stats.startValue) * 100
       : 0;
 
-    // Goal based progress
     let goalProgress = null;
     if (
       goal &&
@@ -44,9 +42,8 @@ async function getStatistics(req, res) {
       goalProgress = Math.min(Math.max(goalProgress, 0), 100);
     }
 
-    // Po calculateStatistics in percentChange
     const dataPointsArray = entries.map(e => ({
-      date: e.measured_at.toISOString().split('T')[0], // YYYY-MM-DD
+      date: e.measured_at.toISOString().split('T')[0],
       value: Number(e.weight_kg),
     }));
 
@@ -61,7 +58,6 @@ async function getStatistics(req, res) {
         dataPointsArray,
       },
     });
-
   }
 
   // BODY MEASUREMENTS
@@ -88,14 +84,12 @@ async function getStatistics(req, res) {
       .filter(v => v !== null)
       .map(Number);
 
-    const stats = calculateStatistics(values, 0.5); // Threshold za measurement
+    const stats = calculateStatistics(values, 0.5);
 
-    // Percentualna sprememba
     const percentChange = stats.startValue
       ? ((stats.endValue - stats.startValue) / stats.startValue) * 100
       : 0;
 
-    // Goal based progress
     let goalProgress = null;
     if (
       goal &&
@@ -110,14 +104,24 @@ async function getStatistics(req, res) {
       goalProgress = Math.min(Math.max(goalProgress, 0), 100);
     }
 
+    const dataPointsArray = entries
+      .filter(e => e[`${type}_cm`] !== null)
+      .map(e => ({
+        date: e.measured_at.toISOString().split('T')[0],
+        value: Number(e[`${type}_cm`]),
+      }));
+
     return res.json({
-      metric,
-      type,
-      period: periodDays,
-      ...stats,
-      percentChange: Number(percentChange.toFixed(2)),
-      goalProgress:
-        goalProgress !== null ? Number(goalProgress.toFixed(2)) : null,
+      success: true,
+      data: {
+        metric,
+        type,
+        period: periodDays,
+        ...stats,
+        percentChange: Number(percentChange.toFixed(2)),
+        goalProgress: goalProgress !== null ? Number(goalProgress.toFixed(2)) : null,
+        dataPointsArray,
+      },
     });
   }
 

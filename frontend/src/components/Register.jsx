@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { User, Mail, Lock } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
-
 export default function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -13,8 +12,7 @@ export default function Register() {
   });
   const [error, setError] = useState('');
 
-  const handleChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,11 +51,14 @@ export default function Register() {
           <input name="username" placeholder="Uporabniško ime" onChange={handleChange} />
           <input name="email" placeholder="Email" onChange={handleChange} />
           <input type="password" name="password" placeholder="Geslo" onChange={handleChange} />
-          <input type="password" name="confirmPassword" placeholder="Potrdi geslo" onChange={handleChange} />
+          <input
+            type="password"
+            name="confirmPassword"
+            placeholder="Potrdi geslo"
+            onChange={handleChange}
+          />
 
-          <button className="w-full bg-blue-500 text-white py-3 rounded-lg">
-            Registriraj se
-          </button>
+          <button className="w-full bg-blue-500 text-white py-3 rounded-lg">Registriraj se</button>
         </form>
 
         <div className="mt-6 text-center">

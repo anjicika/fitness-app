@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getMeasurementStatistics } from '../api/statistics'; // POPRAVLJEN IMPORT
+import { getMeasurementStatistics } from '../api/statistics';
 import {
   LineChart,
   Line,
@@ -22,7 +22,6 @@ export default function BodyMeasurementsStatistics({ type = 'waist' }) {
       setLoading(true);
       setError('');
 
-      // POPRAVI: Uporabi getMeasurementStatistics
       const res = await getMeasurementStatistics(p, type);
 
       if (res.success && res.data) {
@@ -52,7 +51,9 @@ export default function BodyMeasurementsStatistics({ type = 'waist' }) {
   return (
     <div className="max-w-md mx-auto md:max-w-full p-4 bg-white shadow rounded-lg">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">{type.charAt(0).toUpperCase() + type.slice(1)} Statistics</h2>
+        <h2 className="text-xl font-bold">
+          {type.charAt(0).toUpperCase() + type.slice(1)} Statistics
+        </h2>
         <div className="flex flex-wrap justify-end gap-2">
           {[7, 30, 90].map((d) => (
             <button
@@ -73,14 +74,29 @@ export default function BodyMeasurementsStatistics({ type = 'waist' }) {
       ) : (
         <div className="flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-2">
-            <div><strong>Start:</strong> {stats.startValue} cm</div>
-            <div><strong>End:</strong> {stats.endValue} cm</div>
-            <div><strong>Change:</strong> {stats.change > 0 ? '+' : ''}{stats.change.toFixed(1)} cm</div>
-            <div><strong>Average:</strong> {stats.average.toFixed(1)} cm</div>
-            <div><strong>Trend:</strong> {stats.trend}</div>
-            <div><strong>Data Points:</strong> {stats.dataPoints}</div>
+            <div>
+              <strong>Start:</strong> {stats.startValue} cm
+            </div>
+            <div>
+              <strong>End:</strong> {stats.endValue} cm
+            </div>
+            <div>
+              <strong>Change:</strong> {stats.change > 0 ? '+' : ''}
+              {stats.change.toFixed(1)} cm
+            </div>
+            <div>
+              <strong>Average:</strong> {stats.average.toFixed(1)} cm
+            </div>
+            <div>
+              <strong>Trend:</strong> {stats.trend}
+            </div>
+            <div>
+              <strong>Data Points:</strong> {stats.dataPoints}
+            </div>
             {stats.percentChange !== undefined && (
-              <div><strong>% Change:</strong> {stats.percentChange}%</div>
+              <div>
+                <strong>% Change:</strong> {stats.percentChange}%
+              </div>
             )}
           </div>
 

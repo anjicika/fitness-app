@@ -72,14 +72,29 @@ export default function WeightStatistics() {
       ) : (
         <div className="flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-2">
-            <div><strong>Start:</strong> {stats.startValue} kg</div>
-            <div><strong>End:</strong> {stats.endValue} kg</div>
-            <div><strong>Change:</strong> {stats.change > 0 ? '+' : ''}{stats.change.toFixed(1)} kg</div>
-            <div><strong>Average:</strong> {stats.average.toFixed(1)} kg</div>
-            <div><strong>Trend:</strong> {stats.trend}</div>
-            <div><strong>Data Points:</strong> {stats.dataPoints}</div>
+            <div>
+              <strong>Start:</strong> {stats.startValue} kg
+            </div>
+            <div>
+              <strong>End:</strong> {stats.endValue} kg
+            </div>
+            <div>
+              <strong>Change:</strong> {stats.change > 0 ? '+' : ''}
+              {stats.change.toFixed(1)} kg
+            </div>
+            <div>
+              <strong>Average:</strong> {stats.average.toFixed(1)} kg
+            </div>
+            <div>
+              <strong>Trend:</strong> {stats.trend}
+            </div>
+            <div>
+              <strong>Data Points:</strong> {stats.dataPoints}
+            </div>
             {stats.percentChange !== undefined && (
-              <div><strong>% Change:</strong> {stats.percentChange}%</div>
+              <div>
+                <strong>% Change:</strong> {stats.percentChange}%
+              </div>
             )}
           </div>
 

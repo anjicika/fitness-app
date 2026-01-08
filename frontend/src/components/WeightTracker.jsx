@@ -14,7 +14,7 @@ export default function WeightTracker() {
 
   // Za zgodovino in filtre
   const [showFullHistory, setShowFullHistory] = useState(false);
-  const [historyFilter, setHistoryFilter] = useState('all'); // all | 7 | 30 | 90
+  const [historyFilter, setHistoryFilter] = useState('all');
 
   // --- Fetch weights ---
   const fetchWeights = async () => {
@@ -22,11 +22,7 @@ export default function WeightTracker() {
       setLoading(true);
       const res = await getWeights();
       if (res.success) {
-        setWeights(
-          res.data.sort(
-            (a, b) => new Date(b.measured_at) - new Date(a.measured_at)
-          )
-        );
+        setWeights(res.data.sort((a, b) => new Date(b.measured_at) - new Date(a.measured_at)));
       } else {
         setError(res.message || 'Error fetching weights');
       }
@@ -44,7 +40,7 @@ export default function WeightTracker() {
 
   // --- Add weight ---
   const handleAddWeight = async () => {
-    setError(''); // clear previous error
+    setError('');
     const weightNum = parseFloat(newWeight);
     if (isNaN(weightNum) || weightNum <= 0) {
       setError('Please enter a valid weight (positive number)');
@@ -52,7 +48,7 @@ export default function WeightTracker() {
     }
 
     try {
-      const res = await addWeight(parseFloat(weightNum.toFixed(1))); // ena decimalka
+      const res = await addWeight(parseFloat(weightNum.toFixed(1))); // Ena decimalka
       if (res.success) {
         setWeights([res.data, ...weights]);
         setNewWeight('');
@@ -80,7 +76,7 @@ export default function WeightTracker() {
     }
   };
 
-  // --- Prepare displayed weights (last 5 or filtered full history) ---
+  // --- Prepare displayed weights ---
   const displayedWeights = showFullHistory
     ? weights.filter((w) => {
         if (historyFilter === 'all') return true;
@@ -151,12 +147,10 @@ export default function WeightTracker() {
                   <div className="flex gap-1">
                     <button
                       onClick={async () => {
-                        setError(''); // clear previous error
+                        setError('');
                         const weightNum = parseFloat(editingWeight);
                         if (isNaN(weightNum) || weightNum <= 0) {
-                          setError(
-                            'Please enter a valid weight (positive number)'
-                          );
+                          setError('Please enter a valid weight (positive number)');
                           return;
                         }
 
@@ -167,11 +161,7 @@ export default function WeightTracker() {
                         );
 
                         if (res.success) {
-                          setWeights(
-                            weights.map((item) =>
-                              item.id === w.id ? res.data : item
-                            )
-                          );
+                          setWeights(weights.map((item) => (item.id === w.id ? res.data : item)));
                           setEditingId(null);
                         } else {
                           setError(res.message || 'Error updating weight');
@@ -192,19 +182,14 @@ export default function WeightTracker() {
               ) : (
                 <>
                   <span className="flex-1">
-                    {w.weight_kg} kg –{' '}
-                    {new Date(w.measured_at).toLocaleDateString()}
+                    {w.weight_kg} kg – {new Date(w.measured_at).toLocaleDateString()}
                   </span>
                   <div className="flex gap-2">
                     <button
                       onClick={() => {
                         setEditingId(w.id);
                         setEditingWeight(w.weight_kg);
-                        setEditingDate(
-                          new Date(w.measured_at)
-                            .toISOString()
-                            .split('T')[0]
-                        );
+                        setEditingDate(new Date(w.measured_at).toISOString().split('T')[0]);
                       }}
                       className="text-blue-500 hover:text-blue-700"
                     >
@@ -224,7 +209,7 @@ export default function WeightTracker() {
         </ul>
       )}
 
-      {/* Full history button + filters */}
+      {/* Full history button and filters */}
       <div className="mt-4 flex justify-center gap-2 flex-wrap">
         <button
           onClick={() => setShowFullHistory(!showFullHistory)}
@@ -238,9 +223,7 @@ export default function WeightTracker() {
             <button
               onClick={() => setHistoryFilter('7')}
               className={`px-3 py-1 rounded ${
-                historyFilter === '7'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200'
+                historyFilter === '7' ? 'bg-blue-500 text-white' : 'bg-gray-200'
               }`}
             >
               Last 7 days
@@ -248,9 +231,7 @@ export default function WeightTracker() {
             <button
               onClick={() => setHistoryFilter('30')}
               className={`px-3 py-1 rounded ${
-                historyFilter === '30'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200'
+                historyFilter === '30' ? 'bg-blue-500 text-white' : 'bg-gray-200'
               }`}
             >
               Last 30 days
@@ -258,9 +239,7 @@ export default function WeightTracker() {
             <button
               onClick={() => setHistoryFilter('90')}
               className={`px-3 py-1 rounded ${
-                historyFilter === '90'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200'
+                historyFilter === '90' ? 'bg-blue-500 text-white' : 'bg-gray-200'
               }`}
             >
               Last 90 days
@@ -268,9 +247,7 @@ export default function WeightTracker() {
             <button
               onClick={() => setHistoryFilter('all')}
               className={`px-3 py-1 rounded ${
-                historyFilter === 'all'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200'
+                historyFilter === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200'
               }`}
             >
               All

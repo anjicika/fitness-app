@@ -22,9 +22,9 @@ export default function BodyMeasurementTracker() {
     measured_at: '',
   });
 
-  // --- History & filters ---
+  // --- History and filters ---
   const [showFullHistory, setShowFullHistory] = useState(false);
-  const [historyFilter, setHistoryFilter] = useState('all'); // all | 7 | 30 | 90
+  const [historyFilter, setHistoryFilter] = useState('all');
 
   // --- Fetch measurements ---
   const fetchMeasurements = async () => {
@@ -32,9 +32,7 @@ export default function BodyMeasurementTracker() {
       setLoading(true);
       const res = await getBodyMeasurements();
       if (res.success) {
-        setMeasurements(
-          res.data.sort((a, b) => new Date(b.measured_at) - new Date(a.measured_at))
-        );
+        setMeasurements(res.data.sort((a, b) => new Date(b.measured_at) - new Date(a.measured_at)));
         setError('');
       } else {
         setError(res.message || 'Error fetching measurements');
@@ -119,9 +117,7 @@ export default function BodyMeasurementTracker() {
       });
 
       if (res.success) {
-        setMeasurements(
-          measurements.map((m) => (m.id === editingId ? res.data : m))
-        );
+        setMeasurements(measurements.map((m) => (m.id === editingId ? res.data : m)));
         setEditingId(null);
         setEditingForm({ chest_cm: '', waist_cm: '', hips_cm: '', measured_at: '' });
         setError('');
@@ -251,7 +247,8 @@ export default function BodyMeasurementTracker() {
               ) : (
                 <div className="flex justify-between w-full items-center">
                   <span>
-                    {new Date(m.measured_at).toLocaleDateString()} – Chest: {m.chest_cm} cm, Waist: {m.waist_cm} cm, Hips: {m.hips_cm} cm
+                    {new Date(m.measured_at).toLocaleDateString()} – Chest: {m.chest_cm} cm, Waist:{' '}
+                    {m.waist_cm} cm, Hips: {m.hips_cm} cm
                   </span>
                   <div className="flex gap-2">
                     <button
@@ -282,7 +279,7 @@ export default function BodyMeasurementTracker() {
         </ul>
       )}
 
-      {/* Full history button + filters */}
+      {/* Full history button and filters */}
       <div className="mt-4 flex justify-center gap-2 flex-wrap">
         <button
           onClick={() => setShowFullHistory(!showFullHistory)}
@@ -296,9 +293,7 @@ export default function BodyMeasurementTracker() {
             <button
               onClick={() => setHistoryFilter('7')}
               className={`px-3 py-1 rounded ${
-                historyFilter === '7'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200'
+                historyFilter === '7' ? 'bg-blue-500 text-white' : 'bg-gray-200'
               }`}
             >
               Last 7 days
@@ -306,9 +301,7 @@ export default function BodyMeasurementTracker() {
             <button
               onClick={() => setHistoryFilter('30')}
               className={`px-3 py-1 rounded ${
-                historyFilter === '30'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200'
+                historyFilter === '30' ? 'bg-blue-500 text-white' : 'bg-gray-200'
               }`}
             >
               Last 30 days
@@ -316,9 +309,7 @@ export default function BodyMeasurementTracker() {
             <button
               onClick={() => setHistoryFilter('90')}
               className={`px-3 py-1 rounded ${
-                historyFilter === '90'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200'
+                historyFilter === '90' ? 'bg-blue-500 text-white' : 'bg-gray-200'
               }`}
             >
               Last 90 days
@@ -326,9 +317,7 @@ export default function BodyMeasurementTracker() {
             <button
               onClick={() => setHistoryFilter('all')}
               className={`px-3 py-1 rounded ${
-                historyFilter === 'all'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200'
+                historyFilter === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200'
               }`}
             >
               All

@@ -45,7 +45,6 @@ export async function updateWeight(id, weight_kg, measured_at) {
   return res.json();
 }
 
-
 // ===== BODY MEASUREMENTS =====
 export async function getBodyMeasurements() {
   const res = await fetch(`${API_URL}/body-measurements`, {

@@ -39,7 +39,9 @@ async function getStatistics(req, res) {
       ) {
         const goalValue = Number(goal);
         goalProgress =
-          ((stats.endValue - stats.startValue) / (goalValue - stats.startValue)) * 100;
+          ((stats.endValue - stats.startValue) /
+            (goalValue - stats.startValue)) *
+          100;
         goalProgress = Math.min(Math.max(goalProgress, 0), 100);
       }
 
@@ -55,7 +57,8 @@ async function getStatistics(req, res) {
           period: periodDays,
           ...stats,
           percentChange: Number(percentChange.toFixed(2)),
-          goalProgress: goalProgress !== null ? Number(goalProgress.toFixed(2)) : null,
+          goalProgress:
+            goalProgress !== null ? Number(goalProgress.toFixed(2)) : null,
           dataPointsArray,
         },
       });
@@ -71,17 +74,17 @@ async function getStatistics(req, res) {
   // BODY MEASUREMENTS STATISTICS
   if (metric === 'measurement') {
     if (!type) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        error: 'Measurement type required' 
+        error: 'Measurement type required',
       });
     }
 
     const allowedTypes = ['chest', 'waist', 'hips'];
     if (!allowedTypes.includes(type)) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        error: 'Invalid measurement type' 
+        error: 'Invalid measurement type',
       });
     }
 
@@ -114,7 +117,9 @@ async function getStatistics(req, res) {
       ) {
         const goalValue = Number(goal);
         goalProgress =
-          ((stats.endValue - stats.startValue) / (goalValue - stats.startValue)) * 100;
+          ((stats.endValue - stats.startValue) /
+            (goalValue - stats.startValue)) *
+          100;
         goalProgress = Math.min(Math.max(goalProgress, 0), 100);
       }
 
@@ -133,7 +138,8 @@ async function getStatistics(req, res) {
           period: periodDays,
           ...stats,
           percentChange: Number(percentChange.toFixed(2)),
-          goalProgress: goalProgress !== null ? Number(goalProgress.toFixed(2)) : null,
+          goalProgress:
+            goalProgress !== null ? Number(goalProgress.toFixed(2)) : null,
           dataPointsArray,
         },
       });
@@ -147,9 +153,9 @@ async function getStatistics(req, res) {
   }
 
   // Invalid metric
-  return res.status(400).json({ 
+  return res.status(400).json({
     success: false,
-    error: 'Invalid metric. Use "weight" or "measurement"' 
+    error: 'Invalid metric. Use "weight" or "measurement"',
   });
 }
 

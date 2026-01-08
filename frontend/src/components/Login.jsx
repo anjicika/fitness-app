@@ -32,7 +32,7 @@ export default function Login() {
         navigate('/home');
       }
     } catch {
-      setError('Napaka pri povezavi z backendom');
+      setError('Connection error. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -41,9 +41,13 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-blue-500 flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8">
-        <h1 className="text-3xl font-bold text-center mb-8">Prijava</h1>
+        <h1 className="text-3xl font-bold text-center mb-8">Login</h1>
 
-        {error && <p className="text-red-500 mb-4">{error}</p>}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-4">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -55,13 +59,14 @@ export default function Login() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full pl-10 py-3 border rounded-lg"
+                required
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Geslo</label>
+            <label className="block text-sm font-medium mb-2">Password</label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
@@ -69,7 +74,8 @@ export default function Login() {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full pl-10 py-3 border rounded-lg"
+                required
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
               />
             </div>
           </div>
@@ -77,15 +83,15 @@ export default function Login() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-blue-500 text-white py-3 rounded-lg"
+            className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            {isLoading ? 'Nalaganje ...' : 'Prijavi se'}
+            {isLoading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
 
         <div className="mt-6 text-center">
-          <Link to="/register" className="text-blue-500 hover:underline">
-            Še nimaš računa? Registriraj se
+          <Link to="/register" className="text-blue-500 hover:underline font-medium">
+            Don't have an account? Sign up
           </Link>
         </div>
       </div>

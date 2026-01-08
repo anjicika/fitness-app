@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getWeightStatistics } from '../api/statistics'; // ista funkcija, samo dodamo type
+import { getMeasurementStatistics } from '../api/statistics'; // POPRAVLJEN IMPORT
 import {
   LineChart,
   Line,
@@ -22,8 +22,8 @@ export default function BodyMeasurementsStatistics({ type = 'waist' }) {
       setLoading(true);
       setError('');
 
-      // type je obvezen za measurements
-      const res = await getWeightStatistics(p, type, 'measurement');
+      // POPRAVI: Uporabi getMeasurementStatistics
+      const res = await getMeasurementStatistics(p, type);
 
       if (res.success && res.data) {
         setStats(res.data);
@@ -54,18 +54,18 @@ export default function BodyMeasurementsStatistics({ type = 'waist' }) {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">{type.charAt(0).toUpperCase() + type.slice(1)} Statistics</h2>
         <div className="flex flex-wrap justify-end gap-2">
-            {[7, 30, 90].map((d) => (
-                <button
-                key={d}
-                onClick={() => handlePeriodChange(d)}
-                className={`px-2 py-1 rounded ${
-                    period === d ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
-                }`}
-                >
-                Last {d} days
-                </button>
-            ))}
-            </div>
+          {[7, 30, 90].map((d) => (
+            <button
+              key={d}
+              onClick={() => handlePeriodChange(d)}
+              className={`px-2 py-1 rounded ${
+                period === d ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
+              }`}
+            >
+              Last {d} days
+            </button>
+          ))}
+        </div>
       </div>
 
       {stats.trend === 'no-data' ? (

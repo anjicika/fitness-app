@@ -15,13 +15,11 @@ exports.createBodyMeasurement = async (req, res) => {
       measured_at: measured_at || new Date(),
     });
 
-    res
-      .status(201)
-      .json({
-        success: true,
-        data: entry,
-        message: 'Body measurement created successfully',
-      });
+    res.status(201).json({
+      success: true,
+      data: entry,
+      message: 'Body measurement created successfully',
+    });
   } catch (error) {
     console.error('Create body measurement error:', error);
     res.status(500).json({
@@ -154,15 +152,13 @@ exports.getMeasurementStatistics = async (req, res) => {
     const userId = req.user.id;
 
     if (!['chest', 'waist', 'hips'].includes(type)) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          error: {
-            code: 'INVALID_TYPE',
-            message: 'Type must be chest, waist or hips',
-          },
-        });
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'INVALID_TYPE',
+          message: 'Type must be chest, waist or hips',
+        },
+      });
     }
 
     const endDate = new Date();
@@ -197,14 +193,12 @@ exports.getMeasurementStatistics = async (req, res) => {
     });
   } catch (error) {
     console.error('Get measurement statistics error:', error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        error: {
-          code: 'STATISTICS_ERROR',
-          message: 'Failed to fetch measurement statistics',
-        },
-      });
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'STATISTICS_ERROR',
+        message: 'Failed to fetch measurement statistics',
+      },
+    });
   }
 };

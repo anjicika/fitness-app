@@ -73,3 +73,15 @@ export async function deleteBodyMeasurement(id) {
   });
   return res.json();
 }
+
+export async function updateBodyMeasurement(id, data) {
+  const res = await fetch(`${API_URL}/body-measurements/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify(data),
+  });
+  return res.json();
+}

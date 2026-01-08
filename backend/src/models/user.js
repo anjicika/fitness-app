@@ -1,7 +1,5 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const WeightEntry = require('./weightentry');
-const BodyMeasurement = require('./bodymeasurement');
 
 const User = sequelize.define(
   'User',
@@ -27,6 +25,7 @@ const User = sequelize.define(
     password_hash: {
       type: DataTypes.STRING(255),
       allowNull: false,
+      field: 'password_hash',
     },
     /*
     role: {
@@ -37,10 +36,12 @@ const User = sequelize.define(
     is_verified: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
+      field: 'is_verified',
     },
     verification_token: {
       type: DataTypes.STRING(255),
       allowNull: true,
+      field: 'verification_token',
     },
     /*
     reset_password_token: {

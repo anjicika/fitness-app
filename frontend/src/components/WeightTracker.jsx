@@ -94,7 +94,7 @@ export default function WeightTracker() {
   // --- Render ---
   return (
     <div className="max-w-md mx-auto p-4 bg-white shadow rounded-lg mt-8">
-      <h2 className="text-2xl font-bold mb-4 text-center">Weight Tracker</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">Weight</h2>
 
       {error && <p className="text-red-500 mb-2 text-center">{error}</p>}
 
@@ -102,7 +102,7 @@ export default function WeightTracker() {
       <div className="flex mb-4 gap-2">
         <input
           type="number"
-          placeholder="kg"
+          placeholder="Weight kg"
           value={newWeight}
           step="0.1"
           min="0"

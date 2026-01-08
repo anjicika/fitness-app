@@ -34,11 +34,11 @@ PostLike.belongsTo(ForumPost, { foreignKey: 'postId', as: 'post' });
 User.hasMany(ForumPost);
 ForumPost.belongsTo(User);
 
-User.hasMany(WeightEntry);
-WeightEntry.belongsTo(User);
+User.hasMany(WeightEntry, { foreignKey: 'user_id' });
+WeightEntry.belongsTo(User, { foreignKey: 'user_id' });
 
-User.hasMany(BodyMeasurement);
-BodyMeasurement.belongsTo(User);
+User.hasMany(BodyMeasurement, { foreignKey: 'user_id' });
+BodyMeasurement.belongsTo(User, { foreignKey: 'user_id' });
 
 module.exports = {
   sequelize,

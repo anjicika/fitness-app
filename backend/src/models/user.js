@@ -27,10 +27,12 @@ const User = sequelize.define(
       allowNull: false,
       field: 'password_hash',
     },
-    //role: {
-    //type: DataTypes.ENUM('user', 'admin', 'coach'),
-    //defaultValue: 'user',
-    //},
+    /*
+    role: {
+      type: DataTypes.ENUM('user', 'admin', 'coach'),
+      defaultValue: 'user',
+    },
+    */
     is_verified: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
@@ -41,14 +43,16 @@ const User = sequelize.define(
       allowNull: true,
       field: 'verification_token',
     },
-    //reset_password_token: {
-    //type: DataTypes.STRING(255),
-    //allowNull: true,
-    //},
-    //reset_password_expires: {
-    //type: DataTypes.DATE,
-    //allowNull: true,
-    //},
+    /*
+    reset_password_token: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    reset_password_expires: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    */
     created_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,

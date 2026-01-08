@@ -1,4 +1,4 @@
-const { BodyMeasurement, User } = require('../models');
+const { BodyMeasurement } = require('../models');
 const { Op } = require('sequelize');
 
 // CREATE: Ustvari novo meritev
@@ -32,14 +32,22 @@ exports.createBodyMeasurement = async (req, res) => {
   }
 };
 
-// READ: Pridobi vse meritve trenutnega uporabnika
+// READ: Pridobi vse meritve uporabnika
 exports.getUserMeasurements = async (req, res) => {
   try {
     const userId = req.user.id;
+    const period = parseInt(req.query.period) || 30; // Privzeto 30 dni
+
+    // Izračun začetnega datuma
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - period);
 
     const entries = await BodyMeasurement.findAll({
-      where: { user_id: userId },
-      order: [['measured_at', 'DESC']],
+      where: {
+        user_id: userId,
+        measured_at: { [Op.gte]: startDate },
+      },
+      order: [['measured_at', 'ASC']],
     });
 
     res.json({
@@ -132,6 +140,64 @@ exports.deleteBodyMeasurement = async (req, res) => {
       error: {
         code: 'DELETE_BODY_MEASUREMENT_ERROR',
         message: 'Failed to delete body measurement',
+      },
+    });
+  }
+};
+
+// STATISTICS: Za časovni graf
+exports.getMeasurementStatistics = async (req, res) => {
+  try {
+    const { period = 30, type } = req.query;
+    const userId = req.user.id;
+
+    if (!['chest', 'waist', 'hips'].includes(type)) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'INVALID_TYPE',
+          message: 'Type must be chest, waist or hips',
+        },
+      });
+    }
+
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - parseInt(period));
+
+    const entries = await BodyMeasurement.findAll({
+      where: { user_id: userId, measured_at: { [Op.gte]: startDate } },
+      order: [['measured_at', 'ASC']],
+    });
+
+    if (entries.length === 0) {
+      return res.json({ success: true, trend: 'no-data', entries: [] });
+    }
+
+    const values = entries.map(e => e[type + '_cm']);
+    const startValue = values[0];
+    const endValue = values[values.length - 1];
+    const average = values.reduce((a, b) => a + b, 0) / values.length;
+    const change = endValue - startValue;
+    const trend = change > 0 ? 'up' : change < 0 ? 'down' : 'neutral';
+
+    res.json({
+      success: true,
+      startValue,
+      endValue,
+      average,
+      change,
+      trend,
+      dataPoints: entries.length,
+      entries,
+    });
+  } catch (error) {
+    console.error('Get measurement statistics error:', error);
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'STATISTICS_ERROR',
+        message: 'Failed to fetch measurement statistics',
       },
     });
   }

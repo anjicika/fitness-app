@@ -1,7 +1,7 @@
 // src/routes/nutrition.js
 const express = require('express');
 const aiNutritionService = require('../services/aiNutritionService');
-const { authMiddleware } = require('../middleware/auth');
+const { authenticate } = require('../middleware/auth');
 const { aiRateLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
@@ -12,7 +12,7 @@ const router = express.Router();
  * @access  Private (requires authentication)
  * @limit   10 requests per 15 minutes
  */
-router.post('/advice', authMiddleware, aiRateLimiter, async (req, res) => {
+router.post('/advice', authenticate, aiRateLimiter, async (req, res) => {
   try {
     const userProfile = {
       age: req.user.age,
@@ -63,7 +63,7 @@ router.post('/advice', authMiddleware, aiRateLimiter, async (req, res) => {
  * @access  Private
  * @limit   10 requests per 15 minutes
  */
-router.post('/meal-plan', authMiddleware, aiRateLimiter, async (req, res) => {
+router.post('/meal-plan', authenticate, aiRateLimiter, async (req, res) => {
   try {
     const { days = 7, dietaryRestrictions } = req.body;
 
@@ -117,7 +117,7 @@ router.post('/meal-plan', authMiddleware, aiRateLimiter, async (req, res) => {
  * @desc    Calculate user's daily calorie needs
  * @access  Private
  */
-router.get('/calories', authMiddleware, async (req, res) => {
+router.get('/calories', authenticate, async (req, res) => {
   try {
     const userProfile = {
       weight: req.user.weight,
@@ -189,48 +189,43 @@ router.get('/calories', authMiddleware, async (req, res) => {
  * @access  Private
  * @limit   10 requests per 15 minutes
  */
-router.post(
-  '/analyze-meal',
-  authMiddleware,
-  aiRateLimiter,
-  async (req, res) => {
-    try {
-      const { mealDescription } = req.body;
+router.post('/analyze-meal', authenticate, aiRateLimiter, async (req, res) => {
+  try {
+    const { mealDescription } = req.body;
 
-      if (!mealDescription || mealDescription.trim().length < 3) {
-        return res.status(400).json({
-          success: false,
-          error: 'Meal description required (min 3 characters)',
-        });
-      }
-
-      const analysis = await aiNutritionService.analyzeMeal(mealDescription);
-
-      res.json({
-        success: true,
-        data: {
-          analysis,
-          timestamp: new Date().toISOString(),
-        },
-      });
-    } catch (error) {
-      console.error('Meal analysis error:', error);
-      res.status(500).json({
+    if (!mealDescription || mealDescription.trim().length < 3) {
+      return res.status(400).json({
         success: false,
-        error: 'Failed to analyze meal. Please try again.',
-        details:
-          process.env.NODE_ENV === 'development' ? error.message : undefined,
+        error: 'Meal description required (min 3 characters)',
       });
     }
+
+    const analysis = await aiNutritionService.analyzeMeal(mealDescription);
+
+    res.json({
+      success: true,
+      data: {
+        analysis,
+        timestamp: new Date().toISOString(),
+      },
+    });
+  } catch (error) {
+    console.error('Meal analysis error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to analyze meal. Please try again.',
+      details:
+        process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
   }
-);
+});
 
 /**
  * @route   GET /api/v1/nutrition/macro-recommendations
  * @desc    Get macro split recommendations based on goal
  * @access  Private
  */
-router.get('/macro-recommendations', authMiddleware, async (req, res) => {
+router.get('/macro-recommendations', authenticate, async (req, res) => {
   try {
     const { fitnessGoal } = req.query;
     const goal = fitnessGoal || req.user.fitnessGoal;

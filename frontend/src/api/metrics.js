@@ -14,15 +14,25 @@ export async function getWeights() {
 }
 
 export async function addWeight(weight_kg) {
-  const res = await fetch(`${API_URL}/weights`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${getToken()}`,
-    },
-    body: JSON.stringify({ weight_kg }),
-  });
-  return res.json();
+  try {
+    const res = await fetch(`${API_URL}/weights`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify({ weight_kg }),
+    });
+    
+    const data = await res.json();
+    console.log('Backend response:', data); // DEBUG
+    console.log('Sent data:', { weight_kg }); // DEBUG
+    
+    return data;
+  } catch (error) {
+    console.error('Fetch error:', error);
+    throw error;
+  }
 }
 
 export async function deleteWeight(id) {

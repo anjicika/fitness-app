@@ -11,17 +11,17 @@ export default function Nutrition() {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch('http://localhost:3000/api/v1/nutrition/calories', {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
         const result = await response.json();
         if (result.success) {
           setCalorieData({
             dailyCalories: result.data.dailyCalories,
-            target: result.data.dailyCalories // Set target as calculated by AI
+            target: result.data.dailyCalories, // Set target as calculated by AI
           });
         }
       } catch (err) {
-        console.error("Failed to load calorie data", err);
+        console.error('Failed to load calorie data', err);
       }
     };
     fetchCalorieNeeds();
@@ -40,16 +40,21 @@ export default function Nutrition() {
           <div className="basis-1/3 space-y-6">
             {/* Daily Summary Card */}
             <div className="bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-600">
-              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Recommended Daily Intake</h3>
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Recommended Daily Intake
+              </h3>
               <div className="text-3xl font-bold text-gray-800 mt-1">
-                {calorieData.dailyCalories} <span className="text-sm font-normal text-gray-500">kcal / day</span>
+                {calorieData.dailyCalories}{' '}
+                <span className="text-sm font-normal text-gray-500">kcal / day</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
                 <div className="bg-blue-600 h-2 rounded-full" style={{ width: '100%' }}></div>
               </div>
-              <p className="text-xs text-gray-400 mt-2 italic">Calculated based on your profile stats</p>
+              <p className="text-xs text-gray-400 mt-2 italic">
+                Calculated based on your profile stats
+              </p>
             </div>
-            
+
             <MealPlanner />
           </div>
 

@@ -31,22 +31,22 @@ export default function BodyMeasurementTracker() {
     try {
       setLoading(true);
       setError('');
-      
+
       const res = await getBodyMeasurements();
-      
+
       // Tvoj krmilnik vrne { success: true, data: entries }
       if (res && res.success && Array.isArray(res.data)) {
         // Podatke razvrstimo, da so najnovejši na vrhu za seznam
-        const sortedData = res.data.sort((a, b) => 
-          new Date(b.measured_at) - new Date(a.measured_at)
+        const sortedData = res.data.sort(
+          (a, b) => new Date(b.measured_at) - new Date(a.measured_at)
         );
         setMeasurements(sortedData);
       } else {
-        console.error("Neznan format odgovora:", res);
+        console.error('Neznan format odgovora:', res);
         setError('Napak pri nalaganju meritev');
       }
     } catch (err) {
-      console.error("Fetch error:", err);
+      console.error('Fetch error:', err);
       setError('Napaka pri povezavi s strežnikom');
     } finally {
       setLoading(false);
@@ -60,7 +60,7 @@ export default function BodyMeasurementTracker() {
   // --- Add measurement ---
   const handleAddMeasurement = async () => {
     const { chest_cm, waist_cm, hips_cm } = form;
-    
+
     // Osnovno preverjanje na frontendu
     if (!chest_cm || !waist_cm || !hips_cm) {
       setError('Prosim izpolni vsa polja');
@@ -73,11 +73,11 @@ export default function BodyMeasurementTracker() {
         waist_cm: parseFloat(waist_cm),
         hips_cm: parseFloat(hips_cm),
         // Pošljemo ISO niz ali pa pustimo undefined, da krmilnik uporabi new Date()
-        measured_at: new Date().toISOString() 
+        measured_at: new Date().toISOString(),
       });
 
       if (res.success) {
-        setMeasurements(prev => [res.data, ...prev]);
+        setMeasurements((prev) => [res.data, ...prev]);
         setForm({ chest_cm: '', waist_cm: '', hips_cm: '' });
         setError('');
       } else {

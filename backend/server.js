@@ -131,9 +131,11 @@ async function startServer() {
     // Preveri povezavo z bazo
     await sequelize.authenticate();
     console.log('✅ Database connection established');
-    
+
     await sequelize.sync({ alter: true });
-    console.log('✅ All database tables synced (BodyMeasurements, WeightEntries, etc.)');
+    console.log(
+      '✅ All database tables synced (BodyMeasurements, WeightEntries, etc.)'
+    );
 
     // Zaženemo server samo, če nismo v testnem okolju
     if (NODE_ENV !== 'test') {

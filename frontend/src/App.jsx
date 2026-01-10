@@ -25,8 +25,15 @@ function App() {
           </ProtectedRoute>
         }
       />
-      { }
-      <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />
+      {}
+      <Route
+        path="/nutrition"
+        element={
+          <ProtectedRoute>
+            <Nutrition />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

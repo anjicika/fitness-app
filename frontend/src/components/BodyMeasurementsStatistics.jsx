@@ -30,10 +30,10 @@ export default function BodyMeasurementsStatistics({ type = 'waist' }) {
 
         // Mapiramo 'entries' v 'rawData' format, ki ga potrebuje Recharts graf
         if (res.entries && Array.isArray(res.entries)) {
-          const chartData = res.entries.map(entry => ({
+          const chartData = res.entries.map((entry) => ({
             date: new Date(entry.measured_at).toLocaleDateString(),
             // Dinamično vzamemo polje (npr. waist_cm, chest_cm ali hips_cm)
-            value: entry[`${type}_cm`] 
+            value: entry[`${type}_cm`],
           }));
           setRawData(chartData);
         } else {
@@ -45,7 +45,7 @@ export default function BodyMeasurementsStatistics({ type = 'waist' }) {
         setRawData([]);
       }
     } catch (err) {
-      console.error("Napaka pri statistiki:", err);
+      console.error('Napaka pri statistiki:', err);
       setError('Error fetching statistics');
     } finally {
       setLoading(false);

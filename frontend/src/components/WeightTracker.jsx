@@ -20,16 +20,23 @@ export default function WeightTracker() {
   const fetchWeights = async () => {
     try {
       setLoading(true);
+      setError('');
       const res = await getWeights();
-      if (res.success) {
-        setWeights(res.data.sort((a, b) => new Date(b.measured_at) - new Date(a.measured_at)));
+      
+      // Preveri, ali so podatki v res.data ali direktno v res
+      const actualData = res.success ? res.data : (Array.isArray(res) ? res : null);
+
+      if (actualData && Array.isArray(actualData)) {
+        setWeights(actualData.sort((a, b) => new Date(b.measured_at) - new Date(a.measured_at)));
       } else {
-        setError(res.message || 'Error fetching weights');
+        // Če ni podatkov, ne vrži napake, samo nastavi prazno
+        setWeights([]); 
+        if (res.error) setError(res.message || 'Error fetching weights');
       }
-      setLoading(false);
     } catch (err) {
       console.error(err);
-      setError('Error fetching weights');
+      setError('Server connection failed');
+    } finally {
       setLoading(false);
     }
   };

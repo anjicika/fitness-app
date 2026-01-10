@@ -30,17 +30,25 @@ export default function BodyMeasurementTracker() {
   const fetchMeasurements = async () => {
     try {
       setLoading(true);
+      setError('');
+      
       const res = await getBodyMeasurements();
-      if (res.success) {
-        setMeasurements(res.data.sort((a, b) => new Date(b.measured_at) - new Date(a.measured_at)));
-        setError('');
+      
+      // Tvoj krmilnik vrne { success: true, data: entries }
+      if (res && res.success && Array.isArray(res.data)) {
+        // Podatke razvrstimo, da so najnovejši na vrhu za seznam
+        const sortedData = res.data.sort((a, b) => 
+          new Date(b.measured_at) - new Date(a.measured_at)
+        );
+        setMeasurements(sortedData);
       } else {
-        setError(res.message || 'Error fetching measurements');
+        console.error("Neznan format odgovora:", res);
+        setError('Napak pri nalaganju meritev');
       }
-      setLoading(false);
     } catch (err) {
-      console.error(err);
-      setError('Error fetching measurements');
+      console.error("Fetch error:", err);
+      setError('Napaka pri povezavi s strežnikom');
+    } finally {
       setLoading(false);
     }
   };
@@ -52,8 +60,10 @@ export default function BodyMeasurementTracker() {
   // --- Add measurement ---
   const handleAddMeasurement = async () => {
     const { chest_cm, waist_cm, hips_cm } = form;
+    
+    // Osnovno preverjanje na frontendu
     if (!chest_cm || !waist_cm || !hips_cm) {
-      setError('Please fill all fields');
+      setError('Prosim izpolni vsa polja');
       return;
     }
 
@@ -62,17 +72,19 @@ export default function BodyMeasurementTracker() {
         chest_cm: parseFloat(chest_cm),
         waist_cm: parseFloat(waist_cm),
         hips_cm: parseFloat(hips_cm),
+        // Pošljemo ISO niz ali pa pustimo undefined, da krmilnik uporabi new Date()
+        measured_at: new Date().toISOString() 
       });
+
       if (res.success) {
-        setMeasurements([res.data, ...measurements]);
+        setMeasurements(prev => [res.data, ...prev]);
         setForm({ chest_cm: '', waist_cm: '', hips_cm: '' });
         setError('');
       } else {
-        setError(res.message || 'Error adding measurement');
+        setError(res.error?.message || 'Napaka pri shranjevanju');
       }
     } catch (err) {
-      console.error(err);
-      setError('Error adding measurement');
+      setError('Strežniška napaka');
     }
   };
 

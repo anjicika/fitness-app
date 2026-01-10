@@ -5,6 +5,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Home from './components/Home';
 import Dashboard from './components/Dashboard';
+import Nutrition from './components/Nutrition';
 
 function App() {
   return (
@@ -24,6 +25,8 @@ function App() {
           </ProtectedRoute>
         }
       />
+      { }
+      <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />
     </Routes>
   );
 }

@@ -24,14 +24,28 @@ export default function BodyMeasurementsStatistics({ type = 'waist' }) {
 
       const res = await getMeasurementStatistics(p, type);
 
-      if (res.success && res.data) {
-        setStats(res.data);
-        setRawData(res.data.dataPointsArray || []);
+      // Tvoj backend vrne objekt: { success: true, entries: [...], startValue: X, trend: Y, ... }
+      if (res && res.success) {
+        setStats(res); // Shranimo celoten objekt za Start/End/Trend vrednosti
+
+        // Mapiramo 'entries' v 'rawData' format, ki ga potrebuje Recharts graf
+        if (res.entries && Array.isArray(res.entries)) {
+          const chartData = res.entries.map(entry => ({
+            date: new Date(entry.measured_at).toLocaleDateString(),
+            // Dinamično vzamemo polje (npr. waist_cm, chest_cm ali hips_cm)
+            value: entry[`${type}_cm`] 
+          }));
+          setRawData(chartData);
+        } else {
+          setRawData([]);
+        }
       } else {
-        setError(res.error || 'Unexpected API response');
+        // Če ni podatkov, nastavimo stanje, ki ne sesuje komponente
+        setStats({ trend: 'no-data' });
+        setRawData([]);
       }
     } catch (err) {
-      console.error(err);
+      console.error("Napaka pri statistiki:", err);
       setError('Error fetching statistics');
     } finally {
       setLoading(false);

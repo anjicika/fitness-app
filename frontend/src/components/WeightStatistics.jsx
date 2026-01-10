@@ -21,18 +21,21 @@ export default function WeightStatistics() {
     try {
       setLoading(true);
       setError('');
-
       const res = await getWeightStatistics(p);
 
-      if (res.success && res.data) {
+      if (res && res.success && res.data) {
         setStats(res.data);
         setRawData(res.data.dataPointsArray || []);
+      } else if (res && Array.isArray(res)) {
+        // Če backend vrne samo array podatkov
+        setRawData(res);
+        setStats({ trend: 'stable', dataPoints: res.length }); 
       } else {
-        setError(res.error || 'Unexpected API response');
+        // To prepreči "Unexpected API response" napis
+        setStats({ trend: 'no-data' });
       }
     } catch (err) {
-      console.error(err);
-      setError('Error fetching statistics');
+      setError('Could not load chart data');
     } finally {
       setLoading(false);
     }

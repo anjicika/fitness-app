@@ -14,8 +14,11 @@ module.exports = sequelize => {
   Workout.init(
     {
       type: DataTypes.STRING,
+      description: DataTypes.TEXT,
       duration: DataTypes.INTEGER,
       caloriesBurned: DataTypes.INTEGER,
+      intensity: DataTypes.STRING,
+      userId: DataTypes.INTEGER,
       date: DataTypes.DATE,
     },
     {

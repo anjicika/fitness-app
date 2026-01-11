@@ -6,10 +6,261 @@ import {
   XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
-import UserStatsCards from '../components/UserStatsCards';
-import './Dashboard.css';
+import UserStatsCards from './UserStatsCards';
 
 const Dashboard = () => {
+  const styles = {
+    page: {
+      maxWidth: '1400px',
+      margin: '0 auto',
+      padding: '2rem 1rem',
+    },
+    header: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '2.5rem',
+      flexWrap: 'wrap',
+      gap: '1rem',
+    },
+    title: {
+      fontSize: '2.5rem',
+      fontWeight: 800,
+      color: '#2c3e50',
+      marginBottom: '0.25rem',
+      background: 'linear-gradient(135deg, #3498db, #2c3e50)',
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
+      backgroundClip: 'text',
+    },
+    subtitle: {
+      color: '#7f8c8d',
+      fontSize: '1.1rem',
+    },
+    timeRangeSelector: {
+      display: 'flex',
+      gap: '0.5rem',
+      background: '#f8f9fa',
+      padding: '0.5rem',
+      borderRadius: '12px',
+    },
+    timeRangeBtn: {
+      padding: '0.5rem 1.5rem',
+      border: 'none',
+      borderRadius: '8px',
+      background: 'transparent',
+      color: '#6c757d',
+      fontWeight: 600,
+      cursor: 'pointer',
+      transition: 'all 0.3s ease',
+    },
+    timeRangeBtnActive: {
+      background: '#3498db',
+      color: 'white',
+      boxShadow: '0 2px 8px rgba(52, 152, 219, 0.3)',
+    },
+    section: {
+      marginBottom: '3rem',
+    },
+    sectionHeader: {
+      fontSize: '1.75rem',
+      color: '#2c3e50',
+      fontWeight: 700,
+      marginBottom: '1.5rem',
+      paddingBottom: '0.75rem',
+      borderBottom: '2px solid #f0f2f5',
+    },
+    chartsGrid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+      gap: '2rem',
+      marginBottom: '3rem',
+    },
+    chartCard: {
+      background: 'white',
+      borderRadius: '12px',
+      padding: '1.5rem',
+      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+      border: '1px solid #f0f2f5',
+    },
+    activitiesCard: {
+      background: 'white',
+      borderRadius: '12px',
+      padding: '1.5rem',
+      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+      border: '1px solid #f0f2f5',
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    chartHeader: {
+      marginBottom: '1.5rem',
+    },
+    chartTitle: {
+      fontSize: '1.25rem',
+      color: '#2c3e50',
+      fontWeight: 700,
+      marginBottom: '0.25rem',
+    },
+    chartSubtitle: {
+      color: '#7f8c8d',
+      fontSize: '0.9rem',
+    },
+    chartContainer: {
+      height: '300px',
+    },
+    customTooltip: {
+      background: 'white',
+      border: '1px solid #e9ecef',
+      borderRadius: '8px',
+      padding: '1rem',
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+    },
+    tooltipLabel: {
+      fontWeight: 600,
+      color: '#2c3e50',
+      marginBottom: '0.5rem',
+      fontSize: '0.9rem',
+    },
+    tooltipValue: {
+      fontSize: '0.9rem',
+      margin: '0.25rem 0',
+    },
+    activitiesList: {
+      flex: 1,
+      marginBottom: '1.5rem',
+    },
+    activityItem: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '1rem',
+      padding: '1rem',
+      borderBottom: '1px solid #f0f2f5',
+      transition: 'all 0.3s ease',
+    },
+    activityIcon: {
+      fontSize: '1.5rem',
+      width: '40px',
+      height: '40px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: '#f0f7ff',
+      borderRadius: '10px',
+    },
+    activityDetails: {
+      flex: 1,
+    },
+    activityHeader: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '0.5rem',
+    },
+    activityName: {
+      fontSize: '1rem',
+      color: '#2c3e50',
+      margin: 0,
+      fontWeight: 600,
+    },
+    activityDate: {
+      fontSize: '0.85rem',
+      color: '#7f8c8d',
+    },
+    activityInfo: {
+      display: 'flex',
+      gap: '1rem',
+      flexWrap: 'wrap',
+    },
+    activityInfoItem: {
+      fontSize: '0.85rem',
+      color: '#6c757d',
+      padding: '0.25rem 0.75rem',
+      background: '#f8f9fa',
+      borderRadius: '15px',
+    },
+    activityCalories: {
+      color: '#e74c3c',
+      fontWeight: 600,
+      background: '#ffeaea',
+    },
+    viewAllBtn: {
+      alignSelf: 'flex-start',
+      background: 'transparent',
+      border: 'none',
+      color: '#3498db',
+      fontWeight: 600,
+      cursor: 'pointer',
+      padding: '0.5rem 0',
+      transition: 'all 0.3s ease',
+    },
+    goalsSection: {
+      marginTop: '3rem',
+    },
+    goalsGrid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+      gap: '1.5rem',
+    },
+    goalCard: {
+      background: 'white',
+      borderRadius: '12px',
+      padding: '1.5rem',
+      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+      border: '1px solid #f0f2f5',
+    },
+    goalHeader: {
+      display: 'flex',
+      justifycontent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '1rem',
+    },
+    goalTitle: {
+      fontSize: '1.1rem',
+      color: '#2c3e50',
+      margin: 0,
+      fontWeight: 600,
+    },
+    goalProgress: {
+      fontSize: '1.25rem',
+      fontWeight: 700,
+      color: '#3498db',
+    },
+    goalProgressBar: {
+      height: '10px',
+      background: '#f0f2f5',
+      borderRadius: '5px',
+      overflow: 'hidden',
+      marginBottom: '0.75rem',
+    },
+    progressFill: {
+      height: '100%',
+      background: 'linear-gradient(90deg, #3498db, #2ecc71)',
+      borderRadius: '5px',
+      transition: 'width 1s ease-in-out',
+    },
+    goalHint: {
+      color: '#7f8c8d',
+      fontSize: '0.9rem',
+      margin: 0,
+    },
+    loadingContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '400px',
+      gap: '1rem',
+    },
+    loadingSpinner: {
+      width: '50px',
+      height: '50px',
+      border: '3px solid #f0f0f0',
+      borderTop: '3px solid #3498db',
+      borderRadius: '50%',
+      animation: 'spin 1s linear infinite',
+    },
+  };
+
   const [stats, setStats] = useState(null);
   const [chartData, setChartData] = useState({
     weeklyActivity: [],
@@ -63,10 +314,10 @@ const Dashboard = () => {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="custom-tooltip">
-          <p className="tooltip-label">{label}</p>
+        <div style={styles.customTooltip}>
+          <p style={styles.tooltipLabel}>{label}</p>
           {payload.map((entry, index) => (
-            <p key={index} className="tooltip-value" style={{ color: entry.color }}>
+            <p key={index} style={{...styles.tooltipValue, color: entry.color}}>
               {entry.name}: {entry.value}
             </p>
           ))}
@@ -77,11 +328,18 @@ const Dashboard = () => {
   };
 
   const TimeRangeSelector = () => (
-    <div className="time-range-selector">
+    <div style={styles.timeRangeSelector}>
       {['week', 'month', 'year'].map((range) => (
         <button
           key={range}
-          className={`time-range-btn ${timeRange === range ? 'active' : ''}`}
+          style={{
+            ...styles.timeRangeBtn,
+            ...(timeRange === range ? styles.timeRangeBtnActive : {}),
+            ':hover': {
+              background: timeRange === range ? '#3498db' : '#e9ecef',
+              color: timeRange === range ? 'white' : '#495057',
+            },
+          }}
           onClick={() => setTimeRange(range)}
         >
           {range === 'week' ? 'Teden' : range === 'month' ? 'Mesec' : 'Leto'}
@@ -92,38 +350,38 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="dashboard-loading">
-        <div className="loading-spinner"></div>
+      <div style={styles.loadingContainer}>
+        <div style={styles.loadingSpinner}></div>
         <p>Nalaganje podatkov...</p>
       </div>
     );
   }
 
   return (
-    <div className="dashboard-page">
-      <div className="dashboard-header">
+    <div style={styles.page}>
+      <div style={styles.header}>
         <div>
-          <h1 className="dashboard-title">Nadzorna plošča</h1>
-          <p className="dashboard-subtitle">Pregled vašega napredka in aktivnosti</p>
+          <h1 style={styles.title}>Nadzorna plošča</h1>
+          <p style={styles.subtitle}>Pregled vašega napredka in aktivnosti</p>
         </div>
         <TimeRangeSelector />
       </div>
 
       {/* Statistika */}
-      <div className="dashboard-section">
-        <h2 className="section-header">Pregled</h2>
+      <div style={styles.section}>
+        <h2 style={styles.sectionHeader}>Pregled</h2>
         <UserStatsCards stats={stats} loading={loading} />
       </div>
 
       {/* Grafi */}
-      <div className="charts-grid">
+      <div style={styles.chartsGrid}>
         {/* Aktivnost po tednih */}
-        <div className="chart-card">
-          <div className="chart-header">
-            <h3>Aktivnost po tednih</h3>
-            <span className="chart-subtitle">Število vadb in skupni čas</span>
+        <div style={styles.chartCard}>
+          <div style={styles.chartHeader}>
+            <h3 style={styles.chartTitle}>Aktivnost po tednih</h3>
+            <span style={styles.chartSubtitle}>Število vadb in skupni čas</span>
           </div>
-          <div className="chart-container">
+          <div style={styles.chartContainer}>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={chartData.weeklyActivity}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -169,12 +427,12 @@ const Dashboard = () => {
         </div>
 
         {/* Kalorije po dnevih */}
-        <div className="chart-card">
-          <div className="chart-header">
-            <h3>Kalorije po dnevih</h3>
-            <span className="chart-subtitle">Porabljene kalorije v zadnjih 7 dneh</span>
+        <div style={styles.chartCard}>
+          <div style={styles.chartHeader}>
+            <h3 style={styles.chartTitle}>Kalorije po dnevih</h3>
+            <span style={styles.chartSubtitle}>Porabljene kalorije v zadnjih 7 dneh</span>
           </div>
-          <div className="chart-container">
+          <div style={styles.chartContainer}>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={chartData.dailyCalories}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -199,12 +457,12 @@ const Dashboard = () => {
         </div>
 
         {/* Tipi vadb */}
-        <div className="chart-card">
-          <div className="chart-header">
-            <h3>Tipi vadb</h3>
-            <span className="chart-subtitle">Razporeditev vadb po kategorijah</span>
+        <div style={styles.chartCard}>
+          <div style={styles.chartHeader}>
+            <h3 style={styles.chartTitle}>Tipi vadb</h3>
+            <span style={styles.chartSubtitle}>Razporeditev vadb po kategorijah</span>
           </div>
-          <div className="chart-container">
+          <div style={styles.chartContainer}>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
@@ -229,80 +487,82 @@ const Dashboard = () => {
         </div>
 
         {/* Zadnje aktivnosti */}
-        <div className="activities-card">
-          <div className="chart-header">
-            <h3>Zadnje aktivnosti</h3>
-            <span className="chart-subtitle">Vaše nedavne vadbe</span>
+        <div style={styles.activitiesCard}>
+          <div style={styles.chartHeader}>
+            <h3 style={styles.chartTitle}>Zadnje aktivnosti</h3>
+            <span style={styles.chartSubtitle}>Vaše nedavne vadbe</span>
           </div>
-          <div className="activities-list">
+          <div style={styles.activitiesList}>
             {recentActivities.map((activity) => (
-              <div key={activity.id} className="activity-item">
-                <div className="activity-icon">
+              <div key={activity.id} style={styles.activityItem}>
+                <div style={styles.activityIcon}>
                   {activity.type === 'Tek' && '🏃'}
                   {activity.type === 'Vadba z utežmi' && '🏋️'}
                   {activity.type === 'Joga' && '🧘'}
                   {activity.type === 'Kolesarjenje' && '🚴'}
                 </div>
-                <div className="activity-details">
-                  <div className="activity-header">
-                    <h4>{activity.type}</h4>
-                    <span className="activity-date">{activity.date}</span>
+                <div style={styles.activityDetails}>
+                  <div style={styles.activityHeader}>
+                    <h4 style={styles.activityName}>{activity.type}</h4>
+                    <span style={styles.activityDate}>{activity.date}</span>
                   </div>
-                  <div className="activity-info">
-                    <span className="activity-duration">{activity.duration}</span>
+                  <div style={styles.activityInfo}>
+                    <span style={styles.activityInfoItem}>{activity.duration}</span>
                     {activity.distance && (
-                      <span className="activity-distance">{activity.distance}</span>
+                      <span style={styles.activityInfoItem}>{activity.distance}</span>
                     )}
                     {activity.muscle && (
-                      <span className="activity-muscle">{activity.muscle}</span>
+                      <span style={styles.activityInfoItem}>{activity.muscle}</span>
                     )}
-                    <span className="activity-calories">{activity.calories} kcal</span>
+                    <span style={{...styles.activityInfoItem, ...styles.activityCalories}}>
+                      {activity.calories} kcal
+                    </span>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-          <button className="view-all-btn">
+          <button style={styles.viewAllBtn}>
             Ogled vseh aktivnosti →
           </button>
         </div>
       </div>
 
       {/* Cilji in dosežki */}
-      <div className="goals-section">
-        <h2 className="section-header">Cilji za ta mesec</h2>
-        <div className="goals-grid">
-          <div className="goal-card">
-            <div className="goal-header">
-              <h4>Število vadb</h4>
-              <span className="goal-progress">8/12</span>
+      <div style={styles.goalsSection}>
+        <h2 style={styles.sectionHeader}>Cilji za ta mesec</h2>
+        <div style={styles.goalsGrid}>
+          <div style={styles.goalCard}>
+            <div style={styles.goalHeader}>
+              <h4 style={styles.goalTitle}>Število vadb</h4>
+              <span style={styles.goalProgress}>8/12</span>
             </div>
-            <div className="goal-progress-bar">
-              <div className="progress-fill" style={{ width: '67%' }}></div>
+            <div style={styles.goalProgressBar}>
+              <div style={{...styles.progressFill, width: '67%'}}></div>
             </div>
-            <p className="goal-hint">2 vadbi do konca tedna</p>
+            <p style={styles.goalHint}>2 vadbi do konca tedna</p>
           </div>
           
-          <div className="goal-card">
-            <div className="goal-header">
-              <h4>Porabljene kalorije</h4>
-              <span className="goal-progress">3.2k/5k</span>
+          <div style={styles.goalCard}>
+            <div style={styles.goalHeader}>
+              <h4 style={styles.goalTitle}>Porabljene kalorije</h4>
+              <span style={styles.goalProgress}>3.2k/5k</span>
             </div>
-            <div className="goal-progress-bar">
-              <div className="progress-fill" style={{ width: '64%' }}></div>
+            <div style={styles.goalProgressBar}>
+              <div style={{...styles.progressFill, width: '64%'}}></div>
             </div>
-            <p className="goal-hint">1,800 kcal do cilja</p>
+            <p style={styles.goalHint}>1,800 kcal do cilja</p>
           </div>
           
-          <div className="goal-card">
-            <div className="goal-header">
-              <h4>Vadbeni niz</h4>
-              <span className="goal-progress">5/7 dni</span>
+          <div style={styles.goalCard}>
+            <div style={styles.goalHeader}>
+              <h4 style={styles.goalTitle}>Vadbeni niz</h4>
+              <span style={styles.goalProgress}>5/7 dni</span>
             </div>
-            <div className="goal-progress-bar">
-              <div className="progress-fill" style={{ width: '71%' }}></div>
+            <div style={styles.goalProgressBar}>
+              <div style={{...styles.progressFill, width: '71%'}}></div>
             </div>
-            <p className="goal-hint">2 dni do tedenskega niza</p>
+            <p style={styles.goalHint}>2 dni do tedenskega niza</p>
           </div>
         </div>
       </div>

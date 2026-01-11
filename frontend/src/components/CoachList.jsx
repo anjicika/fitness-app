@@ -14,6 +14,40 @@ export default function CoachList({ onSelectCoach }) {
     availability: '',
   });
 
+  const filterCoaches = useCallback(() => {
+    let filtered = coaches;
+
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (coach) =>
+          coach.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          coach.specialty.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          coach.location.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Specialty filter
+    if (filters.specialty) {
+      filtered = filtered.filter((coach) =>
+        coach.specialty.toLowerCase().includes(filters.specialty.toLowerCase())
+      );
+    }
+
+    // Price range filter
+    if (filters.priceRange) {
+      const [min, max] = filters.priceRange.split('-').map(Number);
+      filtered = filtered.filter((coach) => coach.hourlyRate >= min && coach.hourlyRate <= max);
+    }
+
+    // Rating filter
+    if (filters.rating) {
+      filtered = filtered.filter((coach) => coach.rating >= parseFloat(filters.rating));
+    }
+
+    setFilteredCoaches(filtered);
+  }, [coaches, searchTerm, filters]);
+
   useEffect(() => {
     fetchCoaches();
   }, []);
@@ -74,40 +108,6 @@ export default function CoachList({ onSelectCoach }) {
       setLoading(false);
     }
   };
-
-  const filterCoaches = useCallback(() => {
-    let filtered = coaches;
-
-    // Search filter
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (coach) =>
-          coach.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          coach.specialty.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          coach.location.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Specialty filter
-    if (filters.specialty) {
-      filtered = filtered.filter((coach) =>
-        coach.specialty.toLowerCase().includes(filters.specialty.toLowerCase())
-      );
-    }
-
-    // Price range filter
-    if (filters.priceRange) {
-      const [min, max] = filters.priceRange.split('-').map(Number);
-      filtered = filtered.filter((coach) => coach.hourlyRate >= min && coach.hourlyRate <= max);
-    }
-
-    // Rating filter
-    if (filters.rating) {
-      filtered = filtered.filter((coach) => coach.rating >= parseFloat(filters.rating));
-    }
-
-    setFilteredCoaches(filtered);
-  }, [coaches, searchTerm, filters]);
 
   const specialties = [
     'Strength Training',

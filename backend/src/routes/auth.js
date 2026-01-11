@@ -42,8 +42,11 @@ router.post(
           .json({ success: false, message: 'Email already in use' });
       }
 
+      console.log('1. Podatki prejeti, začetek hashiranja...');
       const password_hash = await hashPassword(password);
       const verification_token = uuidv4();
+      console.log('2. Hashiranje uspelo!');
+      
 
       const user = await User.create({
         username,
@@ -96,7 +99,7 @@ router.get('/verify-email', async (req, res) => {
   }
 });
 
-// POST /auth/login
+// POST /api/v1/auth/login
 router.post(
   '/login',
   [
@@ -104,50 +107,60 @@ router.post(
     body('password').notEmpty().withMessage('Password is required'),
   ],
   async (req, res) => {
+    console.log('--- Poskus prijave ---');
+    
+    // Preverjanje validacije vhodnih podatkov
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.array() });
+    }
+
     const { email, password } = req.body;
 
     try {
+      // Poisci uporabnika v bazi
       const user = await User.findOne({ where: { email } });
       if (!user) {
-        return res
-          .status(400)
-          .json({ success: false, message: 'Invalid email or password' });
+        console.log('Uporabnik ne obstaja:', email);
+        return res.status(400).json({ success: false, message: 'Invalid email or password' });
       }
 
+      // Preveri ce je racun potrjen ---------------- komentirano za lazje testiranje
+      /*   
       if (!user.is_verified) {
-        return res
-          .status(400)
-          .json({ success: false, message: 'Account not verified yet' });
+        console.log('Uporabnik še ni potrdil emaila:', email);
+        return res.status(400).json({ success: false, message: 'Account not verified yet' });
+      }
+      */
+
+      // Preveri geslo
+      const isMatch = await comparePassword(password, user.password_hash);
+      if (!isMatch) {
+        console.log('Napačno geslo za:', email);
+        return res.status(400).json({ success: false, message: 'Invalid email or password' });
       }
 
-      const isPasswordValid = await comparePassword(
-        password,
-        user.password_hash
-      );
-      if (!isPasswordValid) {
-        return res
-          .status(400)
-          .json({ success: false, message: 'Invalid email or password' });
-      }
-
-      // Generiraj JWT in ga pošlji v JSON
+      // Generiraj JWT token
       const token = generateToken({ id: user.id, email: user.email });
 
-      res.json({
+      console.log('Prijava uspešna za:', email);
+
+      // Poslji odgovor
+      res.status(200).json({
         success: true,
         message: 'Login successful',
-        token, // <-- token v JSON
+        token,
         user: {
           id: user.id,
           username: user.username,
-          tier: user.tier 
+          email: user.email, 
+          tier: user.tier
         }
       });
+
     } catch (err) {
-      console.error(err);
-      res
-        .status(500)
-        .json({ success: false, message: 'Internal server error' });
+      console.error('KRITIČNA NAPAKA PRI PRIJAVI:', err);
+      res.status(500).json({ success: false, message: 'Internal server error' });
     }
   }
 );

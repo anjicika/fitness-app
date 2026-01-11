@@ -23,12 +23,19 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 app.use(helmet());
 
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:5173'],
+  origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:5173', 'http://localhost:5174'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 app.use(cors(corsOptions));
+
+// debugging ----------
+app.use((req, res, next) => {
+  console.log(`>>> PREJET ZAHTEVEK: ${req.method} ${req.url}`);
+  next();
+});
+// ---------------------
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
@@ -134,7 +141,7 @@ async function startServer() {
     await sequelize.authenticate();
     console.log('✅ Database connection established');
     
-    await sequelize.sync({ force: true });                                                // <-------------------- ({ alter: true }) change to ({ force: true }) when editing models
+    await sequelize.sync({ alter: true });                                                // <-------------------- ({ alter: true }) change to ({ force: true }) when editing models
     console.log('✅ All database tables synced (BodyMeasurements, WeightEntries, etc.)');
 
     // Zaženemo server samo, če nismo v testnem okolju

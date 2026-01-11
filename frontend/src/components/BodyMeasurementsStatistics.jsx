@@ -41,7 +41,7 @@ export default function BodyMeasurementsStatistics({ type = 'waist' }) {
         }
       } else {
         // Če ni podatkov, nastavimo stanje, ki ne sesuje komponente
-        setStats({ trend: 'no-data' });
+        setStats({ trend: 'no-data', change: 0, average: 0, startValue: 0, endValue: 0, dataPoints: 0 });
         setRawData([]);
       }
     } catch (err) {
@@ -84,28 +84,29 @@ export default function BodyMeasurementsStatistics({ type = 'waist' }) {
       </div>
 
       {stats.trend === 'no-data' ? (
-        <p className="text-center text-gray-400">No data available.</p>
+        <p className="text-center text-gray-400">No data available. Add some measurements to see statistics.</p>
       ) : (
         <div className="flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <strong>Start:</strong> {stats.startValue} cm
+              <strong>Start:</strong> {stats.startValue || 0} cm
             </div>
             <div>
-              <strong>End:</strong> {stats.endValue} cm
+              <strong>End:</strong> {stats.endValue || 0} cm
             </div>
             <div>
               <strong>Change:</strong> {stats.change > 0 ? '+' : ''}
-              {stats.change.toFixed(1)} cm
+              {/* Varno klicanje toFixed z operatorjem || 0 */}
+              {(stats.change || 0).toFixed(1)} cm
             </div>
             <div>
-              <strong>Average:</strong> {stats.average.toFixed(1)} cm
+              <strong>Average:</strong> {(stats.average || 0).toFixed(1)} cm
             </div>
             <div>
-              <strong>Trend:</strong> {stats.trend}
+              <strong>Trend:</strong> {stats.trend || 'N/A'}
             </div>
             <div>
-              <strong>Data Points:</strong> {stats.dataPoints}
+              <strong>Data Points:</strong> {stats.dataPoints || 0}
             </div>
             {stats.percentChange !== undefined && (
               <div>

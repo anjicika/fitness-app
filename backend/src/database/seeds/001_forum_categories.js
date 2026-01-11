@@ -62,4 +62,4 @@ const seedCategories = async () => {
   }
 };
 
-module.exports = seedCategories;
+seedCategories()

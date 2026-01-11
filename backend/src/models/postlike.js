@@ -23,7 +23,7 @@ const PostLike = sequelize.define(
       allowNull: false,
       field: 'user_id',
       references: {
-        model: 'users',
+        model: 'Users',
         key: 'id',
       },
     },

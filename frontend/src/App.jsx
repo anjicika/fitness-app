@@ -6,6 +6,9 @@ import Register from './components/Register';
 import Home from './components/Home';
 import Dashboard from './components/Dashboard';
 import Nutrition from './components/Nutrition';
+import Forum from './components/Forum';
+import NewPost from './components/NewPost';
+import TopicDetail from './components/TopicDetail';
 
 function App() {
   return (
@@ -26,7 +29,10 @@ function App() {
         }
       />
       { }
+      <Route path="/forum" element={<ProtectedRoute> <Forum/> </ProtectedRoute>}/>
+      <Route path="/forum/new" element={<ProtectedRoute> <NewPost/> </ProtectedRoute>} />
       <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />
+      <Route path="/topic/:id" element={<ProtectedRoute> <TopicDetail /> </ProtectedRoute>} />
     </Routes>
   );
 }

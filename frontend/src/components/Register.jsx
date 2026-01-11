@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { User, Mail, Lock, CheckCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { register as registerUser } from '../api/auth';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -30,25 +31,20 @@ export default function Register() {
     }
 
     try {
-      const res = await fetch('http://localhost:3000/api/v1/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-        }),
+      const data = await registerUser({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
       });
 
-      const data = await res.json();
-
       if (!data.success) {
-        setError(data.message);
+        setError(data.message || 'Registration failed');
       } else {
         alert('Registration successful! You can now log in.');
         navigate('/login');
       }
-    } catch {
+    } catch (err) {
+      console.error('Registration error:', err);
       setError('Connection error. Please try again.');
     } finally {
       setIsLoading(false);

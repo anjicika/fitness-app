@@ -7,12 +7,12 @@ async function seedCoaches() {
       { availability: JSON.stringify(['morning', 'afternoon', 'evening']) },
       { where: { id: 1 } }
     );
-    
+
     await Coach.update(
       { availability: JSON.stringify(['morning', 'evening']) },
       { where: { id: 2 } }
     );
-    
+
     await Coach.update(
       { availability: JSON.stringify(['afternoon', 'evening']) },
       { where: { id: 3 } }

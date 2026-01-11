@@ -6,11 +6,14 @@ const { body, validationResult } = require('express-validator');
 const router = express.Router();
 
 // POST /bookings - Create a new booking
-router.post('/',
+router.post(
+  '/',
   authenticate,
   [
     body('coachId').isInt().withMessage('Coach ID must be an integer'),
-    body('startTime').isISO8601().withMessage('Start time must be a valid date'),
+    body('startTime')
+      .isISO8601()
+      .withMessage('Start time must be a valid date'),
     body('endTime').isISO8601().withMessage('End time must be a valid date'),
   ],
   async (req, res) => {
@@ -18,7 +21,7 @@ router.post('/',
     if (!errors.isEmpty()) {
       return res.status(400).json({
         success: false,
-        errors: errors.array()
+        errors: errors.array(),
       });
     }
 
@@ -30,7 +33,7 @@ router.post('/',
       if (!coach || !coach.isActive) {
         return res.status(404).json({
           success: false,
-          message: 'Coach not found or not available'
+          message: 'Coach not found or not available',
         });
       }
 
@@ -42,20 +45,20 @@ router.post('/',
           [require('sequelize').Op.or]: [
             {
               startTime: {
-                [require('sequelize').Op.lt]: new Date(endTime)
+                [require('sequelize').Op.lt]: new Date(endTime),
               },
               endTime: {
-                [require('sequelize').Op.gt]: new Date(startTime)
-              }
-            }
-          ]
-        }
+                [require('sequelize').Op.gt]: new Date(startTime),
+              },
+            },
+          ],
+        },
       });
 
       if (conflictingBooking) {
         return res.status(400).json({
           success: false,
-          message: 'Time slot is already booked'
+          message: 'Time slot is already booked',
         });
       }
 
@@ -67,7 +70,7 @@ router.post('/',
         endTime: new Date(endTime),
         price: coach.hourlyRate,
         notes,
-        status: 'confirmed' // Auto-confirm for now
+        status: 'confirmed', // Auto-confirm for now
       });
 
       // Return booking with coach details
@@ -76,20 +79,20 @@ router.post('/',
           {
             model: Coach,
             as: 'Coach',
-            attributes: ['id', 'name', 'specialty', 'hourlyRate']
-          }
+            attributes: ['id', 'name', 'specialty', 'hourlyRate'],
+          },
         ],
       });
 
       res.status(201).json({
         success: true,
-        data: bookingWithDetails
+        data: bookingWithDetails,
       });
     } catch (error) {
       console.error('Error creating booking:', error);
       res.status(500).json({
         success: false,
-        message: 'Internal server error'
+        message: 'Internal server error',
       });
     }
   }
@@ -100,27 +103,27 @@ router.get('/my', authenticate, async (req, res) => {
   try {
     const bookings = await Booking.findAll({
       where: {
-        userId: req.user.id
+        userId: req.user.id,
       },
       include: [
         {
           model: Coach,
           as: 'Coach',
-          attributes: ['id', 'name', 'specialty', 'hourlyRate']
-        }
+          attributes: ['id', 'name', 'specialty', 'hourlyRate'],
+        },
       ],
-      order: [['startTime', 'ASC']]
+      order: [['startTime', 'ASC']],
     });
 
     res.json({
       success: true,
-      data: bookings
+      data: bookings,
     });
   } catch (error) {
     console.error('Error fetching bookings:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -133,7 +136,7 @@ router.delete('/:id', authenticate, async (req, res) => {
     if (!booking) {
       return res.status(404).json({
         success: false,
-        message: 'Booking not found'
+        message: 'Booking not found',
       });
     }
 
@@ -141,7 +144,7 @@ router.delete('/:id', authenticate, async (req, res) => {
     if (booking.userId !== req.user.id) {
       return res.status(403).json({
         success: false,
-        message: 'Not authorized to cancel this booking'
+        message: 'Not authorized to cancel this booking',
       });
     }
 
@@ -149,24 +152,24 @@ router.delete('/:id', authenticate, async (req, res) => {
     if (new Date(booking.startTime) < new Date()) {
       return res.status(400).json({
         success: false,
-        message: 'Cannot cancel past bookings'
+        message: 'Cannot cancel past bookings',
       });
     }
 
     // Update booking status to cancelled
     await booking.update({
-      status: 'cancelled'
+      status: 'cancelled',
     });
 
     res.json({
       success: true,
-      message: 'Booking cancelled successfully'
+      message: 'Booking cancelled successfully',
     });
   } catch (error) {
     console.error('Error cancelling booking:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -175,41 +178,41 @@ router.delete('/:id', authenticate, async (req, res) => {
 router.get('/coach/:id', authenticate, async (req, res) => {
   try {
     const coachId = req.params.id;
-    
+
     // Verify user is the coach or admin
     const coach = await Coach.findOne({
-      where: { userId: req.user.id, id: coachId }
+      where: { userId: req.user.id, id: coachId },
     });
 
     if (!coach) {
       return res.status(403).json({
         success: false,
-        message: 'Not authorized to view these bookings'
+        message: 'Not authorized to view these bookings',
       });
     }
 
     const bookings = await Booking.findAll({
       where: {
-        coachId
+        coachId,
       },
       include: [
         {
           model: User,
-          attributes: ['id', 'username', 'email']
-        }
+          attributes: ['id', 'username', 'email'],
+        },
       ],
-      order: [['startTime', 'ASC']]
+      order: [['startTime', 'ASC']],
     });
 
     res.json({
       success: true,
-      data: bookings
+      data: bookings,
     });
   } catch (error) {
     console.error('Error fetching coach bookings:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });

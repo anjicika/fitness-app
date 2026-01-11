@@ -22,15 +22,15 @@ export default function WeightTracker() {
       setLoading(true);
       setError('');
       const res = await getWeights();
-      
+
       // Preveri, ali so podatki v res.data ali direktno v res
-      const actualData = res.success ? res.data : (Array.isArray(res) ? res : null);
+      const actualData = res.success ? res.data : Array.isArray(res) ? res : null;
 
       if (actualData && Array.isArray(actualData)) {
         setWeights(actualData.sort((a, b) => new Date(b.measured_at) - new Date(a.measured_at)));
       } else {
         // Če ni podatkov, ne vrži napake, samo nastavi prazno
-        setWeights([]); 
+        setWeights([]);
         if (res.error) setError(res.message || 'Error fetching weights');
       }
     } catch (err) {

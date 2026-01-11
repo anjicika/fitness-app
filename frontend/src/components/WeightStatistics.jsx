@@ -29,7 +29,7 @@ export default function WeightStatistics() {
       } else if (res && Array.isArray(res)) {
         // Če backend vrne samo array podatkov
         setRawData(res);
-        setStats({ trend: 'stable', dataPoints: res.length }); 
+        setStats({ trend: 'stable', dataPoints: res.length });
       } else {
         // To prepreči "Unexpected API response" napis
         setStats({ trend: 'no-data' });

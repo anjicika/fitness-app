@@ -29,7 +29,7 @@ export default function BookingCalendar({ selectedCoach, onCoachChange }) {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:3000/api/v1/coaches', {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       const result = await response.json();
       if (result.success) {
@@ -45,12 +45,12 @@ export default function BookingCalendar({ selectedCoach, onCoachChange }) {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`http://localhost:3000/api/v1/coaches/${coachId}/availability`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       const result = await response.json();
       if (result.success) {
         // Transform API slots to FullCalendar format
-        const formattedSlots = result.data.map(slot => ({
+        const formattedSlots = result.data.map((slot) => ({
           id: slot.id,
           title: 'Available',
           start: slot.start,
@@ -59,8 +59,8 @@ export default function BookingCalendar({ selectedCoach, onCoachChange }) {
           borderColor: '#10b981',
           extendedProps: {
             type: 'available',
-            coachId: coachId
-          }
+            coachId: coachId,
+          },
         }));
         setAvailableSlots(formattedSlots);
       } else {
@@ -81,21 +81,21 @@ export default function BookingCalendar({ selectedCoach, onCoachChange }) {
   const generateMockSlots = () => {
     const slots = [];
     const today = new Date();
-    
+
     for (let i = 0; i < 14; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
-      
+
       // Generate 3-4 slots per day
       const slotCount = Math.floor(Math.random() * 2) + 3;
       for (let j = 0; j < slotCount; j++) {
         const hour = 9 + j * 2; // 9 AM, 11 AM, 1 PM, 3 PM
         const startTime = new Date(date);
         startTime.setHours(hour, 0, 0, 0);
-        
+
         const endTime = new Date(date);
         endTime.setHours(hour + 1, 0, 0, 0);
-        
+
         slots.push({
           id: `slot-${i}-${j}`,
           title: 'Available',
@@ -105,12 +105,12 @@ export default function BookingCalendar({ selectedCoach, onCoachChange }) {
           borderColor: '#10b981',
           extendedProps: {
             type: 'available',
-            coachId: selectedCoach?.id
-          }
+            coachId: selectedCoach?.id,
+          },
         });
       }
     }
-    
+
     return slots;
   };
 
@@ -118,12 +118,12 @@ export default function BookingCalendar({ selectedCoach, onCoachChange }) {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:3000/api/v1/bookings/my', {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       const result = await response.json();
       if (result.success) {
         // Transform bookings to FullCalendar format
-        const formattedBookings = result.data.map(booking => ({
+        const formattedBookings = result.data.map((booking) => ({
           id: booking.id,
           title: `Session with ${booking.coach?.name || 'Coach'}`,
           start: booking.startTime,
@@ -132,8 +132,8 @@ export default function BookingCalendar({ selectedCoach, onCoachChange }) {
           borderColor: '#3b82f6',
           extendedProps: {
             type: 'booking',
-            coach: booking.coach
-          }
+            coach: booking.coach,
+          },
         }));
         setBookings(formattedBookings);
       }
@@ -149,7 +149,7 @@ export default function BookingCalendar({ selectedCoach, onCoachChange }) {
         id: event.id,
         start: event.start,
         end: event.end,
-        coachId: event.extendedProps.coachId
+        coachId: event.extendedProps.coachId,
       });
       setShowBookingModal(true);
     }
@@ -164,20 +164,20 @@ export default function BookingCalendar({ selectedCoach, onCoachChange }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           coachId: selectedCoach.id,
           startTime: selectedSlot.start.toISOString(),
-          endTime: selectedSlot.end.toISOString()
-        })
+          endTime: selectedSlot.end.toISOString(),
+        }),
       });
 
       const result = await response.json();
       if (result.success) {
         // Remove the booked slot from available slots
-        setAvailableSlots(slots => slots.filter(slot => slot.id !== selectedSlot.id));
-        
+        setAvailableSlots((slots) => slots.filter((slot) => slot.id !== selectedSlot.id));
+
         // Add to bookings
         const newBooking = {
           id: result.data.id,
@@ -188,14 +188,14 @@ export default function BookingCalendar({ selectedCoach, onCoachChange }) {
           borderColor: '#3b82f6',
           extendedProps: {
             type: 'booking',
-            coach: selectedCoach
-          }
+            coach: selectedCoach,
+          },
         };
         setBookings([...bookings, newBooking]);
-        
+
         setShowBookingModal(false);
         setSelectedSlot(null);
-        
+
         alert('Booking confirmed successfully!');
       } else {
         alert('Booking failed: ' + result.message);
@@ -212,19 +212,17 @@ export default function BookingCalendar({ selectedCoach, onCoachChange }) {
     <div>
       {/* Coach Selection */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Select Coach
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Select Coach</label>
         <select
           value={selectedCoach?.id || ''}
           onChange={(e) => {
-            const coach = coaches.find(c => c.id === parseInt(e.target.value));
+            const coach = coaches.find((c) => c.id === parseInt(e.target.value));
             onCoachChange(coach);
           }}
           className="w-full md:w-64 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
         >
           <option value="">Choose a coach...</option>
-          {coaches.map(coach => (
+          {coaches.map((coach) => (
             <option key={coach.id} value={coach.id}>
               {coach.name} - {coach.specialty} (€{coach.hourlyRate}/hr)
             </option>
@@ -269,7 +267,7 @@ export default function BookingCalendar({ selectedCoach, onCoachChange }) {
             headerToolbar={{
               left: 'prev,next today',
               center: 'title',
-              right: 'dayGridMonth,timeGridWeek,timeGridDay'
+              right: 'dayGridMonth,timeGridWeek,timeGridDay',
             }}
             events={calendarEvents}
             eventClick={handleSlotClick}
@@ -302,19 +300,23 @@ export default function BookingCalendar({ selectedCoach, onCoachChange }) {
                 <p className="text-sm text-gray-600">Coach</p>
                 <p className="font-medium">{selectedCoach.name}</p>
               </div>
-              
+
               <div>
                 <p className="text-sm text-gray-600">Date & Time</p>
                 <p className="font-medium">
-                  {selectedSlot.start.toLocaleDateString()} at {selectedSlot.start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                  {selectedSlot.start.toLocaleDateString()} at{' '}
+                  {selectedSlot.start.toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
                 </p>
               </div>
-              
+
               <div>
                 <p className="text-sm text-gray-600">Duration</p>
                 <p className="font-medium">1 hour</p>
               </div>
-              
+
               <div>
                 <p className="text-sm text-gray-600">Price</p>
                 <p className="font-medium text-lg">€{selectedCoach.hourlyRate}</p>

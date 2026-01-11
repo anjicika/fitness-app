@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+// eslint-disable-next-line no-unused-vars
 import { Search, Filter, Star, MapPin, DollarSign, Clock } from 'lucide-react';
 
 export default function CoachList({ onSelectCoach }) {
@@ -10,7 +11,7 @@ export default function CoachList({ onSelectCoach }) {
     specialty: '',
     priceRange: '',
     rating: '',
-    availability: ''
+    availability: '',
   });
 
   useEffect(() => {
@@ -19,20 +20,20 @@ export default function CoachList({ onSelectCoach }) {
 
   useEffect(() => {
     filterCoaches();
-  }, [coaches, searchTerm, filters]);
+  }, [filterCoaches]);
 
   const fetchCoaches = async () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:3000/api/v1/coaches', {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       const result = await response.json();
       if (result.success) {
         setCoaches(result.data);
       }
-    } catch (err) {
-      console.error('Failed to fetch coaches:', err);
+    } catch {
+      // console.error('Failed to fetch coaches:', err);
       // Mock data for development
       setCoaches([
         {
@@ -44,7 +45,7 @@ export default function CoachList({ onSelectCoach }) {
           location: 'Ljubljana',
           bio: 'Certified strength coach with 10+ years experience',
           availability: ['morning', 'afternoon', 'evening'],
-          image: null
+          image: null,
         },
         {
           id: 2,
@@ -55,7 +56,7 @@ export default function CoachList({ onSelectCoach }) {
           location: 'Maribor',
           bio: 'Yoga instructor specializing in flexibility and mindfulness',
           availability: ['morning', 'evening'],
-          image: null
+          image: null,
         },
         {
           id: 3,
@@ -66,29 +67,30 @@ export default function CoachList({ onSelectCoach }) {
           location: 'Celje',
           bio: 'CrossFit Level 2 trainer with competitive background',
           availability: ['afternoon', 'evening'],
-          image: null
-        }
+          image: null,
+        },
       ]);
     } finally {
       setLoading(false);
     }
   };
 
-  const filterCoaches = () => {
+  const filterCoaches = useCallback(() => {
     let filtered = coaches;
 
     // Search filter
     if (searchTerm) {
-      filtered = filtered.filter(coach => 
-        coach.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        coach.specialty.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        coach.location.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (coach) =>
+          coach.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          coach.specialty.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          coach.location.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     // Specialty filter
     if (filters.specialty) {
-      filtered = filtered.filter(coach => 
+      filtered = filtered.filter((coach) =>
         coach.specialty.toLowerCase().includes(filters.specialty.toLowerCase())
       );
     }
@@ -96,20 +98,25 @@ export default function CoachList({ onSelectCoach }) {
     // Price range filter
     if (filters.priceRange) {
       const [min, max] = filters.priceRange.split('-').map(Number);
-      filtered = filtered.filter(coach => 
-        coach.hourlyRate >= min && coach.hourlyRate <= max
-      );
+      filtered = filtered.filter((coach) => coach.hourlyRate >= min && coach.hourlyRate <= max);
     }
 
     // Rating filter
     if (filters.rating) {
-      filtered = filtered.filter(coach => coach.rating >= parseFloat(filters.rating));
+      filtered = filtered.filter((coach) => coach.rating >= parseFloat(filters.rating));
     }
 
     setFilteredCoaches(filtered);
-  };
+  }, [coaches, searchTerm, filters]);
 
-  const specialties = ['Strength Training', 'Yoga', 'CrossFit', 'Cardio', 'Nutrition', 'Rehabilitation'];
+  const specialties = [
+    'Strength Training',
+    'Yoga',
+    'CrossFit',
+    'Cardio',
+    'Nutrition',
+    'Rehabilitation',
+  ];
   const priceRanges = ['0-50', '50-75', '75-100', '100+'];
 
   return (
@@ -134,32 +141,36 @@ export default function CoachList({ onSelectCoach }) {
             <Filter className="w-4 h-4 text-gray-600" />
             <span className="text-sm font-medium text-gray-700">Filters:</span>
           </div>
-          
+
           <select
             value={filters.specialty}
-            onChange={(e) => setFilters({...filters, specialty: e.target.value})}
+            onChange={(e) => setFilters({ ...filters, specialty: e.target.value })}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
           >
             <option value="">All Specialties</option>
-            {specialties.map(specialty => (
-              <option key={specialty} value={specialty}>{specialty}</option>
+            {specialties.map((specialty) => (
+              <option key={specialty} value={specialty}>
+                {specialty}
+              </option>
             ))}
           </select>
 
           <select
             value={filters.priceRange}
-            onChange={(e) => setFilters({...filters, priceRange: e.target.value})}
+            onChange={(e) => setFilters({ ...filters, priceRange: e.target.value })}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
           >
             <option value="">All Prices</option>
-            {priceRanges.map(range => (
-              <option key={range} value={range}>€{range}/hour</option>
+            {priceRanges.map((range) => (
+              <option key={range} value={range}>
+                €{range}/hour
+              </option>
             ))}
           </select>
 
           <select
             value={filters.rating}
-            onChange={(e) => setFilters({...filters, rating: e.target.value})}
+            onChange={(e) => setFilters({ ...filters, rating: e.target.value })}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
           >
             <option value="">All Ratings</option>
@@ -191,14 +202,20 @@ export default function CoachList({ onSelectCoach }) {
       {/* Coach List */}
       {!loading && (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredCoaches.map(coach => (
-            <div key={coach.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition">
+          {filteredCoaches.map((coach) => (
+            <div
+              key={coach.id}
+              className="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition"
+            >
               {/* Coach Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                     <span className="text-blue-600 font-semibold">
-                      {coach.name.split(' ').map(n => n[0]).join('')}
+                      {coach.name
+                        .split(' ')
+                        .map((n) => n[0])
+                        .join('')}
                     </span>
                   </div>
                   <div>
@@ -239,7 +256,7 @@ export default function CoachList({ onSelectCoach }) {
                           const parsed = JSON.parse(avail);
                           return Array.isArray(parsed) ? parsed.join(', ') : avail;
                         } catch {
-                          return avail.replace(/[\[\"]/g, '').replace(/[\]\"]/g, '');
+                          return avail.replace(/[[\]"]/g, '');
                         }
                       }
                       return 'Not specified';

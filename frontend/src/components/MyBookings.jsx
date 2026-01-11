@@ -16,7 +16,7 @@ export default function MyBookings() {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:3000/api/v1/bookings/my', {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       const result = await response.json();
       if (result.success) {
@@ -31,7 +31,7 @@ export default function MyBookings() {
             endTime: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000 + 60 * 60 * 1000),
             status: 'confirmed',
             price: 80,
-            notes: 'Focus on upper body strength'
+            notes: 'Focus on upper body strength',
           },
           {
             id: 2,
@@ -40,7 +40,7 @@ export default function MyBookings() {
             endTime: new Date(Date.now() - 24 * 60 * 60 * 1000 + 60 * 60 * 1000),
             status: 'completed',
             price: 65,
-            notes: 'Beginner yoga session'
+            notes: 'Beginner yoga session',
           },
           {
             id: 3,
@@ -49,8 +49,8 @@ export default function MyBookings() {
             endTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000 + 60 * 60 * 1000),
             status: 'pending',
             price: 75,
-            notes: 'CrossFit fundamentals'
-          }
+            notes: 'CrossFit fundamentals',
+          },
         ]);
       }
     } catch (err) {
@@ -64,7 +64,7 @@ export default function MyBookings() {
           endTime: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000 + 60 * 60 * 1000),
           status: 'confirmed',
           price: 80,
-          notes: 'Focus on upper body strength'
+          notes: 'Focus on upper body strength',
         },
         {
           id: 2,
@@ -73,8 +73,8 @@ export default function MyBookings() {
           endTime: new Date(Date.now() - 24 * 60 * 60 * 1000 + 60 * 60 * 1000),
           status: 'completed',
           price: 65,
-          notes: 'Beginner yoga session'
-        }
+          notes: 'Beginner yoga session',
+        },
       ]);
     } finally {
       setLoading(false);
@@ -88,12 +88,12 @@ export default function MyBookings() {
       const token = localStorage.getItem('token');
       const response = await fetch(`http://localhost:3000/api/v1/bookings/${selectedBooking.id}`, {
         method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const result = await response.json();
       if (result.success) {
-        setBookings(bookings.filter(b => b.id !== selectedBooking.id));
+        setBookings(bookings.filter((b) => b.id !== selectedBooking.id));
         setShowCancelModal(false);
         setSelectedBooking(null);
         alert('Booking cancelled successfully');
@@ -106,7 +106,7 @@ export default function MyBookings() {
     }
   };
 
-  const filteredBookings = bookings.filter(booking => {
+  const filteredBookings = bookings.filter((booking) => {
     if (filter === 'all') return true;
     if (filter === 'upcoming') return new Date(booking.startTime) > new Date();
     if (filter === 'past') return new Date(booking.startTime) <= new Date();
@@ -155,7 +155,7 @@ export default function MyBookings() {
       {/* Filter Tabs */}
       <div className="mb-6">
         <div className="flex flex-wrap gap-2">
-          {['all', 'upcoming', 'past', 'confirmed', 'pending', 'completed'].map(status => (
+          {['all', 'upcoming', 'past', 'confirmed', 'pending', 'completed'].map((status) => (
             <button
               key={status}
               onClick={() => setFilter(status)}
@@ -177,12 +177,12 @@ export default function MyBookings() {
           <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">No bookings found</h3>
           <p className="text-gray-600">
-            {filter === 'all' 
-              ? "You haven't made any bookings yet." 
+            {filter === 'all'
+              ? "You haven't made any bookings yet."
               : `No ${filter} bookings found.`}
           </p>
           <button
-            onClick={() => window.location.hash = '/coaches'}
+            onClick={() => (window.location.hash = '/coaches')}
             className="mt-4 text-blue-500 hover:text-blue-600 font-medium"
           >
             Find a Coach
@@ -190,12 +190,16 @@ export default function MyBookings() {
         </div>
       ) : (
         <div className="space-y-4">
-          {filteredBookings.map(booking => {
+          {filteredBookings.map((booking) => {
             const isUpcoming = new Date(booking.startTime) > new Date();
-            const canCancel = isUpcoming && (booking.status === 'confirmed' || booking.status === 'pending');
-            
+            const canCancel =
+              isUpcoming && (booking.status === 'confirmed' || booking.status === 'pending');
+
             return (
-              <div key={booking.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition">
+              <div
+                key={booking.id}
+                className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition"
+              >
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   {/* Booking Info */}
                   <div className="flex-1">
@@ -203,22 +207,26 @@ export default function MyBookings() {
                       <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
                         <User className="w-6 h-6 text-blue-600" />
                       </div>
-                      
+
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <h3 className="font-semibold text-gray-900">
                             {booking.Coach?.name || 'Unknown Coach'}
                           </h3>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(booking.status)}`}>
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(booking.status)}`}
+                          >
                             <span className="flex items-center gap-1">
                               {getStatusIcon(booking.status)}
                               {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                             </span>
                           </span>
                         </div>
-                        
-                        <p className="text-sm text-gray-600 mb-1">{booking.Coach?.specialty || 'Unknown Specialty'}</p>
-                        
+
+                        <p className="text-sm text-gray-600 mb-1">
+                          {booking.Coach?.specialty || 'Unknown Specialty'}
+                        </p>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600">
                           <div className="flex items-center gap-2">
                             <Calendar className="w-4 h-4" />
@@ -227,8 +235,15 @@ export default function MyBookings() {
                           <div className="flex items-center gap-2">
                             <Clock className="w-4 h-4" />
                             <span>
-                              {booking.startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - 
-                              {booking.endTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                              {booking.startTime.toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}{' '}
+                              -
+                              {booking.endTime.toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
@@ -236,7 +251,7 @@ export default function MyBookings() {
                             <span>€{booking.price}</span>
                           </div>
                         </div>
-                        
+
                         {booking.notes && (
                           <p className="text-sm text-gray-600 mt-2">
                             <strong>Notes:</strong> {booking.notes}
@@ -259,7 +274,7 @@ export default function MyBookings() {
                         Cancel
                       </button>
                     )}
-                    
+
                     {booking.status === 'completed' && (
                       <button
                         onClick={() => alert('Review feature coming soon!')}
@@ -268,7 +283,7 @@ export default function MyBookings() {
                         Leave Review
                       </button>
                     )}
-                    
+
                     {booking.status === 'pending' && (
                       <button
                         onClick={() => alert('Payment feature coming soon!')}
@@ -303,20 +318,24 @@ export default function MyBookings() {
               <p className="text-gray-600">
                 Are you sure you want to cancel your session with {selectedBooking.coach.name}?
               </p>
-              
+
               <div className="bg-gray-50 p-4 rounded-lg">
                 <p className="text-sm font-medium mb-1">Booking Details:</p>
                 <p className="text-sm text-gray-600">
                   {selectedBooking.startTime.toLocaleDateString()} at{' '}
-                  {selectedBooking.startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                  {selectedBooking.startTime.toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
                 </p>
                 <p className="text-sm text-gray-600">
                   {selectedBooking.coach.name} - {selectedBooking.coach.specialty}
                 </p>
               </div>
-              
+
               <p className="text-sm text-red-600">
-                Note: Cancellation policy may apply. Please check with the coach for refund information.
+                Note: Cancellation policy may apply. Please check with the coach for refund
+                information.
               </p>
             </div>
 

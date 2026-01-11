@@ -18,14 +18,14 @@ export default function Dashboard() {
       await fetch('http://localhost:3000/api/v1/auth/profile', {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ age, height })
+        body: JSON.stringify({ age, height }),
       });
       alert('Profile updated! AI Nutrition feature is now active.');
     } catch (err) {
-      console.error("Failed to update profile", err);
+      console.error('Failed to update profile', err);
     }
   };
 
@@ -45,32 +45,34 @@ export default function Dashboard() {
           <div className="flex flex-wrap gap-4 items-end">
             <div className="flex flex-col">
               <label className="text-sm font-semibold text-gray-600">Age</label>
-              <input 
-                type="number" 
-                value={age} 
+              <input
+                type="number"
+                value={age}
                 onChange={(e) => setAge(e.target.value)}
-                className="p-2 border rounded mt-1 w-24 outline-none focus:ring-2 focus:ring-blue-500" 
+                className="p-2 border rounded mt-1 w-24 outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="25"
               />
             </div>
             <div className="flex flex-col">
               <label className="text-sm font-semibold text-gray-600">Height (cm)</label>
-              <input 
-                type="number" 
-                value={height} 
+              <input
+                type="number"
+                value={height}
                 onChange={(e) => setHeight(e.target.value)}
-                className="p-2 border rounded mt-1 w-24 outline-none focus:ring-2 focus:ring-blue-500" 
+                className="p-2 border rounded mt-1 w-24 outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="180"
               />
             </div>
-            <button 
+            <button
               onClick={handleUpdateBio}
               className="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition"
             >
               Update AI Profile
             </button>
           </div>
-          <p className="text-xs text-gray-400 mt-2 italic">*Nutrition AI needs these to calculate your daily calories correctly.</p>
+          <p className="text-xs text-gray-400 mt-2 italic">
+            *Nutrition AI needs these to calculate your daily calories correctly.
+          </p>
         </section>
 
         {/* Weight Tracking + Statistics (Ostalo nespremenjeno) */}

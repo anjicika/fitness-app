@@ -16,7 +16,7 @@ export default function Coaches() {
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900">
       <Navbar />
-      
+
       <main className="p-8 max-w-7xl mx-auto">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-gray-800">Coach Booking</h1>
@@ -61,20 +61,16 @@ export default function Coaches() {
 
         {/* Tab Content */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          {activeTab === 'list' && (
-            <CoachList onSelectCoach={handleSelectCoach} />
-          )}
-          
+          {activeTab === 'list' && <CoachList onSelectCoach={handleSelectCoach} />}
+
           {activeTab === 'calendar' && (
-            <BookingCalendar 
+            <BookingCalendar
               selectedCoach={selectedCoach}
               onCoachChange={(coach) => setSelectedCoach(coach)}
             />
           )}
-          
-          {activeTab === 'my-bookings' && (
-            <MyBookings />
-          )}
+
+          {activeTab === 'my-bookings' && <MyBookings />}
         </div>
       </main>
     </div>

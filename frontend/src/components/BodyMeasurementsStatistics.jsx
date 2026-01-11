@@ -30,10 +30,10 @@ export default function BodyMeasurementsStatistics({ type = 'waist' }) {
 
         // Mapiramo 'entries' v 'rawData' format, ki ga potrebuje Recharts graf
         if (res.entries && Array.isArray(res.entries)) {
-          const chartData = res.entries.map(entry => ({
+          const chartData = res.entries.map((entry) => ({
             date: new Date(entry.measured_at).toLocaleDateString(),
             // Dinamično vzamemo polje (npr. waist_cm, chest_cm ali hips_cm)
-            value: entry[`${type}_cm`] 
+            value: entry[`${type}_cm`],
           }));
           setRawData(chartData);
         } else {
@@ -41,11 +41,18 @@ export default function BodyMeasurementsStatistics({ type = 'waist' }) {
         }
       } else {
         // Če ni podatkov, nastavimo stanje, ki ne sesuje komponente
-        setStats({ trend: 'no-data', change: 0, average: 0, startValue: 0, endValue: 0, dataPoints: 0 });
+        setStats({
+          trend: 'no-data',
+          change: 0,
+          average: 0,
+          startValue: 0,
+          endValue: 0,
+          dataPoints: 0,
+        });
         setRawData([]);
       }
     } catch (err) {
-      console.error("Napaka pri statistiki:", err);
+      console.error('Napaka pri statistiki:', err);
       setError('Error fetching statistics');
     } finally {
       setLoading(false);
@@ -84,7 +91,9 @@ export default function BodyMeasurementsStatistics({ type = 'waist' }) {
       </div>
 
       {stats.trend === 'no-data' ? (
-        <p className="text-center text-gray-400">No data available. Add some measurements to see statistics.</p>
+        <p className="text-center text-gray-400">
+          No data available. Add some measurements to see statistics.
+        </p>
       ) : (
         <div className="flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-2">

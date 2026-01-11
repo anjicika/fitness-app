@@ -40,7 +40,7 @@ const Coach = sequelize.define(
     },
     rating: {
       type: DataTypes.DECIMAL(3, 2),
-      defaultValue: 0.00,
+      defaultValue: 0.0,
     },
     availability: {
       type: DataTypes.TEXT,
@@ -51,7 +51,7 @@ const Coach = sequelize.define(
       },
       set(value) {
         this.setDataValue('availability', JSON.stringify(value));
-      }
+      },
     },
     isActive: {
       type: DataTypes.BOOLEAN,

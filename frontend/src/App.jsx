@@ -26,9 +26,23 @@ function App() {
           </ProtectedRoute>
         }
       />
-      { }
-      <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />
-      <Route path="/coaches" element={<ProtectedRoute><Coaches /></ProtectedRoute>} />
+      {}
+      <Route
+        path="/nutrition"
+        element={
+          <ProtectedRoute>
+            <Nutrition />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/coaches"
+        element={
+          <ProtectedRoute>
+            <Coaches />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

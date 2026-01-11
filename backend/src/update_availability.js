@@ -6,12 +6,12 @@ async function updateAvailability() {
       { availability: '["morning", "afternoon", "evening"]' },
       { where: { id: 1 } }
     );
-    
+
     await Coach.update(
       { availability: '["morning", "evening"]' },
       { where: { id: 2 } }
     );
-    
+
     await Coach.update(
       { availability: '["afternoon", "evening"]' },
       { where: { id: 3 } }

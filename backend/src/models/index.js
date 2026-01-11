@@ -63,6 +63,26 @@ Booking.belongsTo(Space, {
   as: 'space',
 });
 
+User.hasMany(Booking, {
+  foreignKey: 'user_id',
+  as: 'bookings',
+});
+
+Booking.belongsTo(User, {
+  foreignKey: 'user_id',
+  as: 'user',
+});
+
+Space.hasMany(Booking, {
+  foreignKey: 'space_id',
+  as: 'bookings',
+});
+
+Booking.belongsTo(Space, {
+  foreignKey: 'space_id',
+  as: 'space',
+});
+
 module.exports = {
   sequelize,
   Sequelize,

@@ -12,6 +12,9 @@ const metricsRoutes = require('./src/routes/metrics');
 const statisticsRoutes = require('./src/routes/statistics');
 const nutritionRoutes = require('./src/routes/nutrition');
 const aiTrainerRoutes = require('./src/routes/aiTrainer');
+const workoutsRoutes = require('./src/routes/workouts');
+const exercisesRoutes = require('./src/routes/exercises');
+const progressRoutes = require('./src/routes/progress');
 
 const { sequelize } = require('./src/models');
 
@@ -103,6 +106,9 @@ app.use('/api/v1/metrics', metricsRoutes);
 app.use('/api/v1/statistics', statisticsRoutes);
 app.use('/api/v1/nutrition', nutritionRoutes);
 app.use('/api/v1/ai-trainer', aiTrainerRoutes);
+app.use('/api/v1/workouts', workoutsRoutes);
+app.use('/api/v1/exercises', exercisesRoutes);
+app.use('/api/v1/progress', progressRoutes);
 
 // 404 HANDLER
 app.use((req, res) => {
@@ -140,7 +146,7 @@ async function startServer() {
     // Preveri povezavo z bazo
     await sequelize.authenticate();
     console.log('✅ Database connection established');
-    
+
     await sequelize.sync({ alter: true });                                                // <-------------------- ({ alter: true }) change to ({ force: true }) when editing models
     console.log('✅ All database tables synced (BodyMeasurements, WeightEntries, etc.)');
 
@@ -181,3 +187,4 @@ process.on('SIGINT', () => {
 });
 
 module.exports = app; // Export for tests
+

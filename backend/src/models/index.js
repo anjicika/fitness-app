@@ -9,6 +9,8 @@ const ForumCategory = require('./forumcategory');
 const PostLike = require('./postlike');
 const WeightEntry = require('./weightentry');
 const BodyMeasurement = require('./bodymeasurement');
+const Exercise = require('./exercise')(sequelize);
+const Progress = require('./progress')(sequelize);
 
 // Associations
 User.hasMany(Workout);
@@ -40,6 +42,11 @@ WeightEntry.belongsTo(User, { foreignKey: 'user_id' });
 User.hasMany(BodyMeasurement, { foreignKey: 'user_id' });
 BodyMeasurement.belongsTo(User, { foreignKey: 'user_id' });
 
+User.hasMany(Progress);
+Progress.belongsTo(User);
+
+// Exercises are standalone for now
+
 module.exports = {
   sequelize,
   Sequelize,
@@ -51,4 +58,6 @@ module.exports = {
   PostLike,
   WeightEntry,
   BodyMeasurement,
+  Exercise,
+  Progress,
 };

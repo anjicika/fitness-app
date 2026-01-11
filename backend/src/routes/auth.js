@@ -51,6 +51,7 @@ router.post(
         password_hash,
         verification_token,
         is_verified: false,
+        tier: 'Basic',
       });
 
       console.log(
@@ -136,6 +137,11 @@ router.post(
         success: true,
         message: 'Login successful',
         token, // <-- token v JSON
+        user: {
+          id: user.id,
+          username: user.username,
+          tier: user.tier 
+        }
       });
     } catch (err) {
       console.error(err);
@@ -156,7 +162,7 @@ router.post('/logout', (req, res) => {
 router.get('/me', authenticate, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {
-      attributes: ['id', 'username', 'email', 'is_verified', 'created_at'],
+      attributes: ['id', 'username', 'email','tier', 'is_verified', 'created_at'],
     });
 
     if (!user) {

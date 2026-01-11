@@ -22,6 +22,11 @@ const User = sequelize.define(
         isEmail: true,
       },
     },
+    tier: {
+      type: DataTypes.ENUM('Basic', 'Pro', 'Premium'),
+      defaultValue: 'Basic',
+      field: 'tier',
+    },
     password_hash: {
       type: DataTypes.STRING(255),
       allowNull: false,

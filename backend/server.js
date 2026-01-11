@@ -11,6 +11,7 @@ const forumRoutes = require('./src/routes/forum');
 const metricsRoutes = require('./src/routes/metrics');
 const statisticsRoutes = require('./src/routes/statistics');
 const nutritionRoutes = require('./src/routes/nutrition');
+const aiTrainerRoutes = require('./src/routes/aiTrainer');
 
 const { sequelize } = require('./src/models');
 
@@ -94,6 +95,7 @@ app.use('/api/v1/forum', forumRoutes);
 app.use('/api/v1/metrics', metricsRoutes);
 app.use('/api/v1/statistics', statisticsRoutes);
 app.use('/api/v1/nutrition', nutritionRoutes);
+app.use('/api/v1/ai-trainer', aiTrainerRoutes);
 
 // 404 HANDLER
 app.use((req, res) => {
@@ -132,7 +134,7 @@ async function startServer() {
     await sequelize.authenticate();
     console.log('✅ Database connection established');
     
-    await sequelize.sync({ force: true });                                                // <-------------------- ({ alter: true }) channged to ({ force: true }) so it works
+    await sequelize.sync({ force: true });                                                // <-------------------- ({ alter: true }) change to ({ force: true }) when editing models
     console.log('✅ All database tables synced (BodyMeasurements, WeightEntries, etc.)');
 
     // Zaženemo server samo, če nismo v testnem okolju

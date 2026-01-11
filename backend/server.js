@@ -132,7 +132,7 @@ async function startServer() {
     await sequelize.authenticate();
     console.log('✅ Database connection established');
     
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ force: true });                                                // <-------------------- ({ alter: true }) channged to ({ force: true }) so it works
     console.log('✅ All database tables synced (BodyMeasurements, WeightEntries, etc.)');
 
     // Zaženemo server samo, če nismo v testnem okolju

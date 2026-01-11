@@ -63,7 +63,7 @@ const User = sequelize.define(
     },
   },
   {
-    tableName: 'Users',
+    tableName: 'users', // changed to small letters
     timestamps: true,
     underscored: true,
   }

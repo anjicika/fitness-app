@@ -11,14 +11,17 @@ exports.generateWorkoutPlan = async (req, res) => {
     // Pridobivanje podatkov o uporabniku
     const user = await User.findByPk(userId);
     if (!user) {
-      return res.status(404).json({ success: false, message: 'Uporabnik ni najden.' });
+      return res
+        .status(404)
+        .json({ success: false, message: 'Uporabnik ni najden.' });
     }
 
     // Preverjanje naročnine
     if (user.tier === 'Basic') {
       return res.status(403).json({
         success: false,
-        message: 'Vaša naročnina (Basic) ne vključuje personaliziranih načrtov. Prosimo, nadgradite v Pro ali Premium.',
+        message:
+          'Vaša naročnina (Basic) ne vključuje personaliziranih načrtov. Prosimo, nadgradite v Pro ali Premium.',
       });
     }
 
@@ -42,7 +45,10 @@ exports.generateWorkoutPlan = async (req, res) => {
     };
 
     // Klic AI storitve
-    const workoutPlan = await aiService.generatePersonalizedPlan(user, metricsForAI);
+    const workoutPlan = await aiService.generatePersonalizedPlan(
+      user,
+      metricsForAI
+    );
 
     res.status(200).json({
       success: true,

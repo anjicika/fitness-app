@@ -14,27 +14,34 @@ export default function MealPlanner() {
       const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:3000/api/v1/nutrition/analyze-meal', {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mealDescription })
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mealDescription }),
       });
       const result = await response.json();
       if (result.success) setAnalysis(result.data.analysis);
     } catch (err) {
-      console.error("Meal analysis error:", err);
-    } finally { setLoading(false); }
+      console.error('Meal analysis error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100">
-      <h3 className="text-lg font-bold mb-4 flex items-center gap-2"><Utensils className="text-green-500 w-5 h-5" /> Analyze Meal</h3>
+      <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+        <Utensils className="text-green-500 w-5 h-5" /> Analyze Meal
+      </h3>
       <form onSubmit={handleAnalyzeMeal} className="space-y-3">
-        <textarea 
+        <textarea
           value={mealDescription}
           onChange={(e) => setMealDescription(e.target.value)}
-          placeholder="e.g. 200g Grilled salmon with broccoli" 
-          className="w-full p-2 border rounded-lg h-20 text-sm" 
+          placeholder="e.g. 200g Grilled salmon with broccoli"
+          className="w-full p-2 border rounded-lg h-20 text-sm"
         />
-        <button disabled={loading} className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold flex justify-center items-center">
+        <button
+          disabled={loading}
+          className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold flex justify-center items-center"
+        >
           {loading ? <Loader2 className="animate-spin w-5 h-5" /> : 'Analyze with AI'}
         </button>
       </form>

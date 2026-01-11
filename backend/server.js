@@ -12,6 +12,8 @@ const metricsRoutes = require('./src/routes/metrics');
 const statisticsRoutes = require('./src/routes/statistics');
 const nutritionRoutes = require('./src/routes/nutrition');
 const aiTrainerRoutes = require('./src/routes/aiTrainer');
+const coachesRoutes = require('./src/routes/coaches');
+const bookingsRoutes = require('./src/routes/bookings');
 
 const { sequelize } = require('./src/models');
 
@@ -23,7 +25,10 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 app.use(helmet());
 
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:5173', 'http://localhost:5174'],
+  origin: process.env.CORS_ORIGIN?.split(',') || [
+    'http://localhost:5173',
+    'http://localhost:5174',
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -103,6 +108,8 @@ app.use('/api/v1/metrics', metricsRoutes);
 app.use('/api/v1/statistics', statisticsRoutes);
 app.use('/api/v1/nutrition', nutritionRoutes);
 app.use('/api/v1/ai-trainer', aiTrainerRoutes);
+app.use('/api/v1/coaches', coachesRoutes);
+app.use('/api/v1/bookings', bookingsRoutes);
 
 // 404 HANDLER
 app.use((req, res) => {
@@ -140,9 +147,11 @@ async function startServer() {
     // Preveri povezavo z bazo
     await sequelize.authenticate();
     console.log('✅ Database connection established');
-    
-    await sequelize.sync({ alter: true });                                                // <-------------------- ({ alter: true }) change to ({ force: true }) when editing models
-    console.log('✅ All database tables synced (BodyMeasurements, WeightEntries, etc.)');
+
+    await sequelize.sync({ alter: true }); // <-------------------- ({ alter: true }) change to ({ force: true }) when editing models
+    console.log(
+      '✅ All database tables synced (BodyMeasurements, WeightEntries, etc.)'
+    );
 
     // Zaženemo server samo, če nismo v testnem okolju
     if (NODE_ENV !== 'test') {

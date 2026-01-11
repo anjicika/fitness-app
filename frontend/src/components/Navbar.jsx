@@ -22,6 +22,7 @@ export default function Navbar() {
     { path: '/dashboard', label: 'Dashboard' },
     { path: '/workouts', label: 'Workouts' },
     { path: '/nutrition', label: 'Nutrition' },
+    { path: '/coaches', label: 'Coaches' },
     { path: '/forum', label: 'Forum' },
   ];
 

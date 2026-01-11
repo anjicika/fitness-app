@@ -46,7 +46,6 @@ router.post(
       const password_hash = await hashPassword(password);
       const verification_token = uuidv4();
       console.log('2. Hashiranje uspelo!');
-      
 
       const user = await User.create({
         username,
@@ -108,7 +107,7 @@ router.post(
   ],
   async (req, res) => {
     console.log('--- Poskus prijave ---');
-    
+
     // Preverjanje validacije vhodnih podatkov
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -122,7 +121,9 @@ router.post(
       const user = await User.findOne({ where: { email } });
       if (!user) {
         console.log('Uporabnik ne obstaja:', email);
-        return res.status(400).json({ success: false, message: 'Invalid email or password' });
+        return res
+          .status(400)
+          .json({ success: false, message: 'Invalid email or password' });
       }
 
       // Preveri ce je racun potrjen ---------------- komentirano za lazje testiranje
@@ -137,7 +138,9 @@ router.post(
       const isMatch = await comparePassword(password, user.password_hash);
       if (!isMatch) {
         console.log('Napačno geslo za:', email);
-        return res.status(400).json({ success: false, message: 'Invalid email or password' });
+        return res
+          .status(400)
+          .json({ success: false, message: 'Invalid email or password' });
       }
 
       // Generiraj JWT token
@@ -153,14 +156,15 @@ router.post(
         user: {
           id: user.id,
           username: user.username,
-          email: user.email, 
-          tier: user.tier
-        }
+          email: user.email,
+          tier: user.tier,
+        },
       });
-
     } catch (err) {
       console.error('KRITIČNA NAPAKA PRI PRIJAVI:', err);
-      res.status(500).json({ success: false, message: 'Internal server error' });
+      res
+        .status(500)
+        .json({ success: false, message: 'Internal server error' });
     }
   }
 );
@@ -175,7 +179,14 @@ router.post('/logout', (req, res) => {
 router.get('/me', authenticate, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {
-      attributes: ['id', 'username', 'email','tier', 'is_verified', 'created_at'],
+      attributes: [
+        'id',
+        'username',
+        'email',
+        'tier',
+        'is_verified',
+        'created_at',
+      ],
     });
 
     if (!user) {

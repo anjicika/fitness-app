@@ -230,17 +230,17 @@ export default function MyBookings() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600">
                           <div className="flex items-center gap-2">
                             <Calendar className="w-4 h-4" />
-                            <span>{booking.startTime.toLocaleDateString()}</span>
+                            <span>{new Date(booking.startTime).toLocaleDateString()}</span>
                           </div>
                           <div className="flex items-center gap-2">
                             <Clock className="w-4 h-4" />
                             <span>
-                              {booking.startTime.toLocaleTimeString([], {
+                              {new Date(booking.startTime).toLocaleTimeString([], {
                                 hour: '2-digit',
                                 minute: '2-digit',
                               })}{' '}
                               -
-                              {booking.endTime.toLocaleTimeString([], {
+                              {new Date(booking.endTime).toLocaleTimeString([], {
                                 hour: '2-digit',
                                 minute: '2-digit',
                               })}

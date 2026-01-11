@@ -6,6 +6,7 @@ import Register from './components/Register';
 import Home from './components/Home';
 import Dashboard from './components/Dashboard';
 import Nutrition from './components/Nutrition';
+import Coaches from './components/Coaches';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
       />
       { }
       <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />
+      <Route path="/coaches" element={<ProtectedRoute><Coaches /></ProtectedRoute>} />
     </Routes>
   );
 }

@@ -9,6 +9,8 @@ const ForumCategory = require('./forumcategory');
 const PostLike = require('./postlike');
 const WeightEntry = require('./weightentry');
 const BodyMeasurement = require('./bodymeasurement');
+const Coach = require('./coach');
+const Booking = require('./booking');
 
 // Associations
 User.hasMany(Workout);
@@ -40,6 +42,16 @@ WeightEntry.belongsTo(User, { foreignKey: 'user_id' });
 User.hasMany(BodyMeasurement, { foreignKey: 'user_id' });
 BodyMeasurement.belongsTo(User, { foreignKey: 'user_id' });
 
+// Coach associations
+User.hasOne(Coach, { foreignKey: 'userId' });
+Coach.belongsTo(User, { foreignKey: 'userId' });
+
+// Booking associations
+User.hasMany(Booking, { foreignKey: 'userId' });
+Booking.belongsTo(User, { foreignKey: 'userId' });
+Coach.hasMany(Booking, { foreignKey: 'coachId' });
+Booking.belongsTo(Coach, { foreignKey: 'coachId' });
+
 module.exports = {
   sequelize,
   Sequelize,
@@ -51,4 +63,6 @@ module.exports = {
   PostLike,
   WeightEntry,
   BodyMeasurement,
+  Coach,
+  Booking,
 };

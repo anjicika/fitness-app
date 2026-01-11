@@ -6,6 +6,7 @@ import Register from './components/Register';
 import Home from './components/Home';
 import Dashboard from './components/Dashboard';
 import Nutrition from './components/Nutrition';
+import Workouts from './components/Workouts';
 
 function App() {
   return (
@@ -16,7 +17,7 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/home" element={<Home />} />
 
-      {/* Zaščiteno */}
+      {/* Za�citeno */}
       <Route
         path="/dashboard"
         element={
@@ -25,8 +26,8 @@ function App() {
           </ProtectedRoute>
         }
       />
-      { }
       <Route path="/nutrition" element={<ProtectedRoute><Nutrition /></ProtectedRoute>} />
+      <Route path="/workouts" element={<ProtectedRoute><Workouts /></ProtectedRoute>} />
     </Routes>
   );
 }
